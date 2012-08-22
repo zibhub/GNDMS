@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.dspace;
+package de.zib.gndms.common.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -18,10 +18,10 @@ package de.zib.gndms.logic.model.dspace;
 
 
 import de.zib.gndms.common.logic.config.Configuration;
-import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.model.dspace.Slice;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
+
+import java.io.Serializable;
 
 /**
  * The slice configuration checks and accesses a ConfigHolder for a slice, which
@@ -34,7 +34,9 @@ import org.joda.time.format.ISODateTimeFormat;
  * 
  */
 
-public class SliceConfiguration implements Configuration {
+public class SliceConfiguration implements Configuration, Serializable {
+
+    private static final long serialVersionUID = 7556343794310284647L;
 
 	/**
 	 * The key for the slice's size.
@@ -49,7 +51,7 @@ public class SliceConfiguration implements Configuration {
     /**
 	 * The maximum size of the slice.
 	 */
-	private long size;
+	private Long size;
 	/**
 	 * The termination time of the slice.
 	 */
@@ -62,7 +64,6 @@ public class SliceConfiguration implements Configuration {
      * To construct standard instances
      */
     public SliceConfiguration() {
-
     }
 
 
@@ -74,10 +75,9 @@ public class SliceConfiguration implements Configuration {
 	 * @param termination
 	 *            The termination time.
 	 */
-	public SliceConfiguration(final long size,
-			final long termination) {
-		this.size = size;
-		setTerminationTime(termination);
+	public SliceConfiguration( final Long size, final Long termination ) {
+		setSize( size );
+		setTerminationTime( termination );
 	}
 
 	/**
@@ -88,45 +88,25 @@ public class SliceConfiguration implements Configuration {
 	 * @param termination
 	 *            The termination time.
 	 */
-	public SliceConfiguration(final long size, final DateTime termination) {
-		this.size = size;
-		this.terminationTime = termination;
+	public SliceConfiguration( final Long size, final DateTime termination ) {
+		setSize( size );
+		setTerminationTime( termination );
 	}
 
-	/**
-	 * Converts a Configuration into a SliceConfiguration, if possible, and
-	 * returns it, if valid.
-	 * 
-	 * @param config
-	 *            The given configuration.
-	 * @return The valid SliceConfiguration.
-	 */
-	public static SliceConfiguration checkSliceConfig(final Configuration config) {
-		try {
-			SliceConfiguration sliceConfig = (SliceConfiguration) config;
-			if (sliceConfig.isValid()) {
-				return sliceConfig;
-			} else {
-				throw new WrongConfigurationException(
-						"Wrong slice configuration");
-			}
-		} catch (ClassCastException e) {
-			throw new WrongConfigurationException(
-					"Wrong slice configuration");
-		}
-	}
 
-	@Override
-	public final boolean isValid() {
-		return (size >= 0 && terminationTime != null);
-	}
+    public boolean isValid() {
+        if( size != null && size < 0 )
+            return false;
+        return true;
+    }
+
 
 	/**
 	 * Returns the size of a slice configuration.
 	 * 
 	 * @return The size.
 	 */
-	public final long getSize() {
+	public final Long getSize() {
 		return size;
 	}
 
@@ -136,7 +116,7 @@ public class SliceConfiguration implements Configuration {
 	 * @param size
 	 *            The size.
 	 */
-	public final void setSize(final long size) {
+	public final void setSize( final Long size ) {
 		this.size = size;
 	}
 
@@ -154,7 +134,9 @@ public class SliceConfiguration implements Configuration {
 	 * 
 	 * @return The termination time.
 	 */
-	public final long getTerminationTimeAsLong() {
+	public final Long getTerminationTimeAsLong() {
+        if( null == terminationTime )
+            return null;
 		return terminationTime.getMillis();
 	}
 
@@ -164,7 +146,7 @@ public class SliceConfiguration implements Configuration {
 	 * @param terminationTime
 	 *            The termination time.
 	 */
-	public final void setTerminationTime(final DateTime terminationTime) {
+	public final void setTerminationTime( final DateTime terminationTime ) {
 		this.terminationTime = terminationTime;
 	}
 
@@ -181,22 +163,13 @@ public class SliceConfiguration implements Configuration {
 	@Override
 	public final String getStringRepresentation() {
         StringBuilder s = new StringBuilder();
-        s.append( SLICE_SIZE ).append( ": '" ).append( size ).append( "'; " );
-        s.append( TERMINATION_TIME ).append( ": '" ).append(
+        if( null != getSize() )
+            s.append( SLICE_SIZE ).append( ": '" ).append( size ).append( "'; " );
+        if( null != getTerminationTime() )
+            s.append( TERMINATION_TIME ).append( ": '" ).append(
                 ISODateTimeFormat.dateTime().print( terminationTime ) ).append( "'; "
         );
 		return s.toString();
-	}
-
-	/**
-	 * Returns the slice configuration of a given slice.
-	 * 
-	 * @param slice
-	 *            The slice.
-	 * @return The slice configuration.
-	 */
-	public static SliceConfiguration getSliceConfiguration(Slice slice) {
-		return new SliceConfiguration(slice.getTotalStorageSize(), slice.getTerminationTime());
 	}
 
 	/*
@@ -224,9 +197,20 @@ public class SliceConfiguration implements Configuration {
 		}
 		if (obj.getClass() == getClass()) {
 			SliceConfiguration config = (SliceConfiguration) obj;
-			return (config.getSize() == size
-					&& config.getTerminationTime().equals(terminationTime));
-		} else {
+
+            if( ( config.getSize() == null ) != ( getSize() == null ) )
+                return false;
+            if( ( config.getTerminationTime() == null ) != ( getTerminationTime() == null ) )
+                return false;
+            
+            if( config.getSize() != null && !config.getSize().equals( getSize() ) )
+                return false;
+            if( config.getTerminationTime() != null && !config.getTerminationTime().equals( getTerminationTime() ) )
+                return false;
+
+            return true;
+        }
+        else {
 			return false;
 		}
 	}
