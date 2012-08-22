@@ -2,9 +2,11 @@
 
 args=( "-uri" "https://localhost:8443/gndms/c3grid/" )
 
-cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-0.6.2.jar:$cp"
-cp="$GNDMS_SOURCE/lib/stuff/gndms-stuff-0.6.2.jar:$cp"
-cp="$GNDMS_SOURCE/lib/common/gndms-common-0.6.2.jar:$cp"
+VERSION=0.6.3
+
+cp="$GNDMS_SOURCE/lib/gndmc-rest/gndms-gndmc-rest-$VERSION.jar:$cp"
+cp="$GNDMS_SOURCE/lib/stuff/gndms-stuff-$VERSION.jar:$cp"
+cp="$GNDMS_SOURCE/lib/common/gndms-common-$VERSION.jar:$cp"
 cp="$HOME/.m2/repository/args4j/args4j/2.0.14/args4j-2.0.14.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/slf4j-log4j12/1.6.1/slf4j-log4j12-1.6.1.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar:$cp"

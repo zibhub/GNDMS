@@ -14,7 +14,7 @@
 # the License.
 
 
-require 'buildr/java'
+#require 'buildr/java'
 include Java
 include Commands
 
