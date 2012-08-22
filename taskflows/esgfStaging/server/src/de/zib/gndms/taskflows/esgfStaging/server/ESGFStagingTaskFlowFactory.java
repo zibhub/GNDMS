@@ -16,6 +16,7 @@ import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 import de.zib.gndms.voldmodel.Adis;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -49,16 +50,32 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
 
     public ESGFStagingQuoteCalculator getQuoteCalculator() throws MandatoryOptionMissingException {
-        ESGFStagingTFAction action = createAction();
-
-        final String trustStoreLocation = action.getOfferTypeConfig().getOption( "trustStoreLocation" );
-        final String trustStorePassword = action.getOfferTypeConfig().getOption( "trustStorePassword" );
+¹        final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
+        final String trustStorePassword = getOfferTypeConfig().getOption( "trustStorePassword" );
 
         ESGFStagingQuoteCalculator qc = new ESGFStagingQuoteCalculator( trustStoreLocation, trustStorePassword );
 
         getInjector().injectMembers( qc );
 
         return qc;
+    }
+
+
+    public @NotNull
+    MapConfig getOfferTypeConfig() {
+        return new MapConfig( getTaskFlowTypeConfigMapData() );
+    }
+
+
+    public Map<String, String> getTaskFlowTypeConfigMapData() {
+        final Session session = getDao().beginSession();
+        try {
+            final TaskFlowType ot = session.findTaskFlowType( ESGFStagingTaskFlowMeta.TASK_FLOW_TYPE_KEY );
+            final Map<String,String> configMapData = ot.getConfigMapData();
+            session.finish();
+            return configMapData;
+        }
+        finally { session.success(); }
     }
 
 
