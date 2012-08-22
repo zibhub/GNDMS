@@ -50,7 +50,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
 
     public ESGFStagingQuoteCalculator getQuoteCalculator() throws MandatoryOptionMissingException {
-¹        final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
+        final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
         final String trustStorePassword = getOfferTypeConfig().getOption( "trustStorePassword" );
 
         ESGFStagingQuoteCalculator qc = new ESGFStagingQuoteCalculator( trustStoreLocation, trustStorePassword );
