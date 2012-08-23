@@ -107,7 +107,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
     public ResponseEntity< SliceInformation > getSliceInformation( final Specifier< Void > slice,
                                                                           final String dn ) {
         return (ResponseEntity< SliceInformation >) (Object)
-                unifiedGet( Map.class, slice.getUrl(), dn );
+                unifiedGet( SliceInformation.class, slice.getUrl(), dn );
     }
 
 	@SuppressWarnings("unchecked")
