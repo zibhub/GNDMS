@@ -64,7 +64,8 @@ public class SliceReaper extends PeriodicalJob {
         EntityManager em = emf.createEntityManager();
         Query query = em.createNamedQuery( LIST_ALL_SLICES );
         for( Object o : query.getResultList() ) {
-            final Slice slice = Slice.class.cast( o );
+            final Slice sliceModel = Slice.class.cast( o );
+            final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
 
             if( null == slice ) {
                 // this is not happening
@@ -77,14 +78,9 @@ public class SliceReaper extends PeriodicalJob {
                     continue;
             }
 
-            try {
-                if( sliceProvider.getDiskUsage( slice.getSubspace().getId(), slice.getId() ) > slice.getTotalStorageSize() ) {
-                    if( onSliceTooBig( slice ) )
-                        continue;
-                }
-            } catch( NoSuchElementException e ) {
-                logger.error( "There seems to be some error in DSpace database.", e );
-            }
+            if( slice.getDiskUsage() > slice.getTotalStorageSize() )
+                if( onSliceTooBig( slice ) )
+                    continue;
         }
     }
 
@@ -100,8 +96,8 @@ public class SliceReaper extends PeriodicalJob {
     }
 
 
-    private boolean onSliceTooBig( Slice sliceModel ) {
-        de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+    private boolean onSliceTooBig( de.zib.gndms.infra.dspace.Slice slice ) {
+
 
         final Properties props = new Properties();
         final Session session = Session.getDefaultInstance( props );
