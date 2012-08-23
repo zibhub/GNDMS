@@ -129,7 +129,7 @@ public class SliceServiceImpl implements SliceService {
 	}
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.PUT )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/config", method = RequestMethod.PUT )
     @Secured( "ROLE_USER" )
     public ResponseEntity<Void> setSliceConfiguration(
             @PathVariable final String subspaceId,
@@ -155,17 +155,17 @@ public class SliceServiceImpl implements SliceService {
     }
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}/_{slice}/config", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/config", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
     public ResponseEntity< SliceInformation > getSliceInformation(
             @PathVariable final String subspaceId,
-            @PathVariable final String sliceKind,
+            @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
             @RequestHeader("DN") final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn);
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn);
 
         try {
-            Slice sliceModel = findSliceOfKind( subspaceId, sliceKind, sliceId );
+            Slice sliceModel = findSliceOfKind( subspaceId, sliceKindId, sliceId );
             de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
 
             return new ResponseEntity< SliceInformation >( slice.getSliceInformation(), headers, HttpStatus.OK );
@@ -176,7 +176,7 @@ public class SliceServiceImpl implements SliceService {
     }
 
 	@Override
-	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}", method = RequestMethod.POST)
+	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Specifier<Void>> transformSlice(
 			@PathVariable final String subspaceId,
