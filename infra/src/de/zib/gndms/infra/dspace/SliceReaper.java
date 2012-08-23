@@ -124,7 +124,7 @@ public class SliceReaper extends PeriodicalJob {
             if( sentToOwner )
                 sendQuotaMail( recipient, slice, "\n\nAlso sent a message to owner." );
             else
-                sendQuotaMail( recipient, slice );
+                sendQuotaMail( recipient, slice, "\n\nA message has also been sent to system administrator." );
         }
         catch( MessagingException e ) {
             logger.error( "Could not send message to " + recipient + ".", e );
@@ -164,8 +164,8 @@ public class SliceReaper extends PeriodicalJob {
                 slice.getSubspace().getId() + "/" +
                 slice.getKind().getId() + "/" + slice.getId() + " exceeds Quota.\n\n" +
                 "Owner: " + slice.getOwner() + "\n" +
-                "Size: " + slice.getTotalStorageSize() + "\n" +
-                "DiskUsage: " + slice.getDiskUsage() + "\n" +
+                "Size: " + slice.getTotalStorageSize() + " Bytes\n" +
+                "DiskUsage: " + slice.getDiskUsage() + " Bytes\n" +
                 "TerminationTime: " + slice.getTerminationTime() +
                 additionalMessage,
                 "text/plain" );
