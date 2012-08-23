@@ -119,12 +119,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                         = sliceClient.getSliceInformation( order.getSourceSlice(), getOrder().getDNFromContext() );
                 final ResponseEntity< SliceInformation > destinationSliceConfigResponse
                         = sliceClient.getSliceInformation( order.getDestinationSpecifier(), getOrder().getDNFromContext() );
-                final long sliceSize = Long.parseLong(
-                        destinationSliceConfigResponse.getHeaders().get( "totalStorageSize" ).get( 0 ) );
-                final long sliceUsage = Long.parseLong(
-                        destinationSliceConfigResponse.getHeaders().get( "DiskUsage" ).get( 0 ) );
-                final long needSize = Long.parseLong(
-                        sourceSliceConfigResponse.getHeaders().get( "DiskUsage" ).get( 0 ) );
+                final long sliceSize = destinationSliceConfigResponse.getBody().getSize();
+                final long sliceUsage = destinationSliceConfigResponse.getBody().getDiskUsage();
+                final long needSize = sourceSliceConfigResponse.getBody().getDiskUsage();
 
                 if( sliceUsage + needSize > sliceSize )
                     throw new IllegalStateException(
