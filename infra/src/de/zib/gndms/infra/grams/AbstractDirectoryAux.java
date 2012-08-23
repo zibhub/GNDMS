@@ -154,7 +154,7 @@ public abstract class AbstractDirectoryAux implements DirectoryAux {
 
             final List<String> content = listContent(path);
             for( String c: content ) {
-                size += diskUsage( uid, c );
+                size += diskUsage( uid, path + File.separatorChar + c );
             }
 
             return size;
