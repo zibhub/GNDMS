@@ -39,7 +39,6 @@ import java.io.OutputStream;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 
 /**
  * The slice client implementing the slice service.
@@ -81,7 +80,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	@Override
 	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
 			final String sliceKind, final String slice, final SliceConfiguration config, final String dn) {
-		return unifiedPut( Void.class, config, genSliceUrl( subspace, sliceKind, slice ), dn );
+		return unifiedPut( Void.class, config, makeConfigFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn );
 	}
 
 
@@ -91,7 +90,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
                                                        final String dn )
     {
 
-		return unifiedPut( Void.class, config, slice.getUrl(), dn );
+		return unifiedPut( Void.class, config, makeConfigFacet( slice.getUrl() ), dn );
 	}
 
     @Override
@@ -100,14 +99,14 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
                                                                           final String slice,
                                                                           final String dn ) {
         return (ResponseEntity< SliceInformation >) (Object)
-                unifiedGet( Map.class, genSliceUrl( subspace, sliceKind, slice ), dn );
+                unifiedGet( SliceInformation.class, makeConfigFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn );
     }
 
     @Override
     public ResponseEntity< SliceInformation > getSliceInformation( final Specifier< Void > slice,
                                                                           final String dn ) {
         return (ResponseEntity< SliceInformation >) (Object)
-                unifiedGet( SliceInformation.class, slice.getUrl(), dn );
+                unifiedGet( SliceInformation.class, makeConfigFacet( slice.getUrl() ), dn );
     }
 
 	@SuppressWarnings("unchecked")
@@ -300,8 +299,13 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
         return uri + "/files";
     }
-
-
+    
+    
+    private String makeConfigFacet( final String uri ) {
+        return uri + "/config";
+    }
+    
+    
     private String makeGsiFtpFacet( final String uri ) {
 
         return uri + "/gsiftp";
