@@ -84,8 +84,9 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
                             // the x509 cert from the previous filter must have been a user cert
                             // check if the dn's match
                             if (! dn.equals( gndmsUserDetails.getUsername() ) )
-                                throw new UsernameNotFoundException( "Certificate vs HttpHeader: dn " +
-                                                                 "mismatch");
+                                throw new UsernameNotFoundException(
+                                        "Certificate vs HttpHeader: dn mismatch ('"
+                                                + dn + "' vs. '" + gndmsUserDetails.getUsername() + "'.");
                     }
                 }
                 return userDetailsService.loadUserByUsername( dn );
