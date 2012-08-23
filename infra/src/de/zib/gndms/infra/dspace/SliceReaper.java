@@ -97,31 +97,79 @@ public class SliceReaper extends PeriodicalJob {
 
 
     private boolean onSliceTooBig( de.zib.gndms.infra.dspace.Slice slice ) {
+        boolean sentToOwner = false;
+        try {
+            // send that mail to owner too
+            final String dn = slice.getOwner();
+
+            int i = dn.indexOf( "E=" );
+            if( -1 != i ) {
+                i += 2;
+
+                int j = dn.indexOf( "/", i );
+                if( -1 == j )
+                    j = dn.length();
+
+                final String email = dn.subSequence( i, j ).toString();
+
+                sendQuotaMail( email, slice );
+
+                sentToOwner = true;
+            }
+        } catch( MessagingException e ) {
+            logger.error( "Could not send message to " + slice.getOwner() + ". ", e );
+        }
+
+        try {
+            if( sentToOwner )
+                sendQuotaMail( recipient, slice, "\n\nAlso sent a message to owner." );
+            else
+                sendQuotaMail( recipient, slice );
+        }
+        catch( MessagingException e ) {
+            logger.error( "Could not send message to " + recipient + ".", e );
+        }
+
+        return false;
+    }
 
 
+    public void sendQuotaMail(
+            final String recipient,
+            final de.zib.gndms.infra.dspace.Slice slice )
+            throws MessagingException
+    {
+        sendQuotaMail( recipient, slice, "" );
+    }
+
+
+    public void sendQuotaMail(
+            final String recipient,
+            final de.zib.gndms.infra.dspace.Slice slice,
+            final String additionalMessage )
+            throws MessagingException
+    {
         final Properties props = new Properties();
         final Session session = Session.getDefaultInstance( props );
         final Message msg = new MimeMessage( session );
         props.put( "mail.smtp.host", smtpServer );
 
-        try {
-            final InternetAddress addressFrom = new InternetAddress( from );
-            final InternetAddress addressTo = new InternetAddress( recipient );
+        final InternetAddress addressFrom = new InternetAddress( from );
+        final InternetAddress addressTo = new InternetAddress( recipient );
 
-            msg.setFrom( addressFrom );
-            msg.setRecipient( Message.RecipientType.TO, addressTo );
-            msg.setSubject( subject );
-            msg.setContent( "Slice " +
-                    slice.getSubspace().getId() + "/" +
-                    slice.getKind().getId() + "/" + slice.getId() + " exceeds Quota. " +
-                    "Size: " + slice.getTotalStorageSize() + "; DiskUsage: " + slice.getDiskUsage(),
-                    "text/plain" );
-            Transport.send( msg );
-        } catch( MessagingException e ) {
-            return false;
-        }
-
-        return false;
+        msg.setFrom( addressFrom );
+        msg.setRecipient( Message.RecipientType.TO, addressTo );
+        msg.setSubject( subject );
+        msg.setContent( "Slice " +
+                slice.getSubspace().getId() + "/" +
+                slice.getKind().getId() + "/" + slice.getId() + " exceeds Quota.\n\n" +
+                "Owner: " + slice.getOwner() + "\n" +
+                "Size: " + slice.getTotalStorageSize() + "\n" +
+                "DiskUsage: " + slice.getDiskUsage() + "\n" +
+                "TerminationTime: " + slice.getTerminationTime() +
+                additionalMessage,
+                "text/plain" );
+        Transport.send( msg );
     }
 
 
@@ -143,6 +191,7 @@ public class SliceReaper extends PeriodicalJob {
     public void setSmtpServer( String smtpServer ) {
         this.smtpServer = smtpServer;
     }
+
 
     public String getFrom() {
         return from;
@@ -178,6 +227,7 @@ public class SliceReaper extends PeriodicalJob {
         return emf;
     }
 
+
     @Inject
     public void setEmf( EntityManagerFactory emf ) {
         this.emf = emf;
@@ -187,6 +237,7 @@ public class SliceReaper extends PeriodicalJob {
     public SliceProvider getSliceProvider() {
         return sliceProvider;
     }
+
 
     @Inject
     public void setSliceProvider(SliceProvider sliceProvider) {
