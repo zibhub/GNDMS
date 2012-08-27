@@ -71,8 +71,14 @@ public class X509DnConverter {
 
     private static String extractCn( final String dn, final String sep ) {
 
-        Pattern pattern = Pattern.compile( ".*CN=([^" +sep+ "]*).*", Pattern.CASE_INSENSITIVE );
+        Pattern pattern = Pattern.compile( ".*CN=host/([^" +sep+ "]*).*", Pattern.CASE_INSENSITIVE );
         Matcher matcher = pattern.matcher( dn );
+
+        if( matcher.matches() )
+            return matcher.group( 1 );
+
+        pattern = Pattern.compile( ".*CN=([^" +sep+ "]*).*", Pattern.CASE_INSENSITIVE );
+        matcher = pattern.matcher( dn );
 
         if( matcher.matches() )
             return matcher.group( 1 );
