@@ -364,7 +364,7 @@ define 'gndms' do
 
     desc 'Advanced Discovery Service (ADiS) with VolD backend'
     define 'voldmodel', :layout => dmsLayout( 'voldmodel', 'gndms-voldmodel' ) do
-       compile.with VOLD_CLIENT, SLF4J, JCOMMANDER
+       compile.with VOLD_CLIENT, SLF4J, JCOMMANDER, SPRING
 
        package :jar
     end
