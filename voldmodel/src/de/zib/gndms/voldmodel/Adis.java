@@ -20,6 +20,7 @@ import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanFactory;
 
 import java.util.*;
 
@@ -34,6 +35,12 @@ public class Adis extends ABIi {
 
     private VolDClient voldi;
     private String grid;
+    
+    public Adis( final BeanFactory context ) {
+        this.voldi = new VolDClient( context );
+        this.voldi.setEnc( "utf-8" );
+        this.grid = "c3grid";
+    }
 
     public Adis() {
         this.voldi = new VolDClient();
