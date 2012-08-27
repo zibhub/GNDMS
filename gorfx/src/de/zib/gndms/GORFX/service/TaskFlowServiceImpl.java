@@ -212,6 +212,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 } catch ( UnsatisfiableOrderException e ) {
                     DelegatingOrder o = tf.getOrder();
                     logger.debug( "Unsatisfiable order: " + o.getLoggableDescription() );
+                    logger.debug( e.getStackTrace().toString() );
                     tf.setUnfulfillableOrder( true );
                     hs = HttpStatus.BAD_REQUEST;
                 } catch ( Exception e ) {
