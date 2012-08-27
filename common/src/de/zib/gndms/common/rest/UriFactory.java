@@ -19,6 +19,8 @@ import org.springframework.web.util.UriTemplate;
 
 import java.net.URI;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author try ma ik jo rr a zib
@@ -266,6 +268,28 @@ public class UriFactory {
 
 
     /**
+     * Creates a valid subspace specifier
+     *
+     * Both uriMap and url are populated given the provided information.
+     *
+     * @param baseUrl The service base url (including gndms/_grid-name_)
+     * @param subspace The subspace name
+     *
+     * @return A subspace specifier
+     */
+    public static Specifier<Void> createSubspaceSpecifier( final String baseUrl, final String subspace ) {
+
+        Specifier<Void> specifier = new Specifier<Void>();
+        addSubspaceMapping( baseUrl, subspace, specifier );
+
+        specifier.setUrl(  new UriTemplate( baseUrl + SUBSPACE_TEMPLATE ).expand( specifier
+                .getUriMap() ).toString() );
+
+        return specifier;
+    }
+
+
+    /**
      * Creates a valid slice kind specifier
      *
      * Both uriMap and url are populated given the provided information.
@@ -348,6 +372,48 @@ public class UriFactory {
 
         specifier.addMapping( BASE_URL, baseUrl );
         specifier.addMapping( SERVICE, "dspace" );
+    }
+
+
+    public static Specifier< Void > parseSliceSpecifier( final String uri ) {
+        Pattern pattern = Pattern.compile( "(.*)/([^/]+)/([^/]+)/([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher( uri );
+
+        if( matcher.matches() )
+            return createSliceSpecifier(
+                    matcher.group( 1 ),
+                    matcher.group( 2 ),
+                    matcher.group( 3 ),
+                    matcher.group( 4 ) );
+        else
+            throw new IllegalArgumentException( "URL describes no valid Slice specifier: " + uri );
+    }
+
+
+    public static Specifier< Void > parseSliceKindSpecifier( final String uri ) {
+        Pattern pattern = Pattern.compile( "(.*)/([^/]+)/([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher( uri );
+
+        if( matcher.matches() )
+            return createSliceKindSpecifier(
+                    matcher.group( 1 ),
+                    matcher.group( 2 ),
+                    matcher.group( 3 ) );
+        else
+            throw new IllegalArgumentException( "URL describes no valid SliceKind specifier: " + uri );
+    }
+
+
+    public static Specifier< Void > parseSubspaceSpecifier( final String uri ) {
+        Pattern pattern = Pattern.compile( "(.*)/([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher( uri );
+
+        if( matcher.matches() )
+            return createSubspaceSpecifier(
+                    matcher.group( 1 ),
+                    matcher.group( 2 ) );
+        else
+            throw new IllegalArgumentException( "URL describes no valid Subspace specifier: " + uri );
     }
 }
 
