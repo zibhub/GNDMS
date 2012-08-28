@@ -17,15 +17,14 @@ package de.zib.gndms.taskflows.staging.client.tools;
  */
 
 
-
-import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyReader;
 import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
+import de.zib.gndms.common.model.gorfx.types.io.SliceOrderPropertyReader;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 
-import java.util.Properties;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * @author  try ma ik jo rr a zib
@@ -33,7 +32,7 @@ import java.io.IOException;
  * <p/>
  * User: mjorra, Date: 18.09.2008, Time: 15:21:09
  */
-public class ProviderStageInOrderPropertyReader extends OrderPropertyReader<ProviderStageInOrder> {
+public class ProviderStageInOrderPropertyReader extends SliceOrderPropertyReader<ProviderStageInOrder> {
 
     public ProviderStageInOrderPropertyReader() {
         super( ProviderStageInOrder.class );

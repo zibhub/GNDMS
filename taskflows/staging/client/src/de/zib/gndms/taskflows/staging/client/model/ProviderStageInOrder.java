@@ -18,7 +18,7 @@ package de.zib.gndms.taskflows.staging.client.model;
 
 
 
-import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.SliceOrder;
 import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.NotNull;
  * <p/>
  * User: bzcjorra Date: Sep 5, 2008 3:55:45 PM
  */
-public class ProviderStageInOrder extends AbstractOrder {
+public class ProviderStageInOrder extends SliceOrder {
 
     private static final long serialVersionUID = -5318593349599919368L;
 
