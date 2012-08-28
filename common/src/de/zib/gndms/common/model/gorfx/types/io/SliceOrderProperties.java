@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2008-2012 Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,8 @@
  *
  */
 
-package de.zib.gndms.taskflows.esgfStaging.client.tools;
+package de.zib.gndms.common.model.gorfx.types.io;
 
-import de.zib.gndms.common.model.gorfx.types.io.SliceOrderProperties;
 import de.zib.gndms.stuff.misc.DocumentedKey;
 
 import java.io.PrintWriter;
@@ -25,41 +24,41 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @date: 12.03.12
- * @time: 16:13
+ * @date: 28.08.12
+ * @time: 10:06
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class ESGFStagingOrderProperties extends SliceOrderProperties {
+public class SliceOrderProperties {
+    public final static DocumentedKey SLICE_ID;
+    public final static DocumentedKey SLICE_SIZE;
+    public final static DocumentedKey SLICE_TERMINATION_TIME;
 
-    public final static DocumentedKey ESGF_STAGING_URL;
-    public final static DocumentedKey ESGF_STAGING_CHECKSUM;
-    public final static List<DocumentedKey> ESGF_STAGING_KEYS;
+    public final static List< DocumentedKey > SLICE_KEYS;
 
     static {
         ArrayList< DocumentedKey > keys = new ArrayList< DocumentedKey >( 2 );
-        ESGF_STAGING_URL = DocumentedKey.createAndRegisterKey(
+        SLICE_ID = DocumentedKey.createAndRegisterKey(
                 keys,
-                "c3grid.ESGFStagingRequest.URL",
-                "URL of a file for an ESGF request"
+                "c3grid.SliceRequest.id",
+                "SliceId of the slice for the request."
         );
-        ESGF_STAGING_CHECKSUM = DocumentedKey.createAndRegisterKey(
+        SLICE_SIZE = DocumentedKey.createAndRegisterKey(
                 keys,
-                "c3grid.ESGFStagingRequest.Checksum",
-                "Checksum of a file"
+                "c3grid.SliceRequest.size",
+                "Size of the slice for request."
         );
-        ESGF_STAGING_KEYS = Collections.unmodifiableList( keys );
+        SLICE_TERMINATION_TIME = DocumentedKey.createAndRegisterKey(
+                keys,
+                "c3grid.SliceRequest.terminationTime",
+                "Termination time of the slice for request."
+        );
+        SLICE_KEYS = Collections.unmodifiableList( keys );
     }
 
 
     public static void createTemplate( PrintWriter out ) {
-        SliceOrderProperties.createTemplate( out );
-
-        for ( DocumentedKey dk : ESGF_STAGING_KEYS )
+        for ( DocumentedKey dk : SLICE_KEYS )
             dk.asPropertiesTemplate( out );
-    }
-
-    // no instance of this one
-    private ESGFStagingOrderProperties() {
     }
 }

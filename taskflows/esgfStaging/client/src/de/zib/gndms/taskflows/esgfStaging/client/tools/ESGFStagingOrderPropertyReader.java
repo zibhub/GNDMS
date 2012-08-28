@@ -16,7 +16,7 @@
 
 package de.zib.gndms.taskflows.esgfStaging.client.tools;
 
-import de.zib.gndms.common.model.gorfx.types.io.OrderPropertyReader;
+import de.zib.gndms.common.model.gorfx.types.io.SliceOrderPropertyReader;
 import de.zib.gndms.stuff.propertytree.PropertyTree;
 import de.zib.gndms.stuff.propertytree.PropertyTreeFactory;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
@@ -29,7 +29,7 @@ import java.util.Properties;
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public class ESGFStagingOrderPropertyReader extends OrderPropertyReader< ESGFStagingOrder > {
+public class ESGFStagingOrderPropertyReader extends SliceOrderPropertyReader< ESGFStagingOrder > {
 
     protected ESGFStagingOrderPropertyReader( ) {
         super( ESGFStagingOrder.class );

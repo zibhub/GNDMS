@@ -22,6 +22,7 @@ import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
@@ -56,6 +57,9 @@ import java.io.File;
 public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends TaskFlowAction< K > {
 
     public static final long DEFAULT_SLICE_SIZE = 100*1024*1024; // 100MB
+
+
+    private GridConfig gridConfig;
 
 
     private AbstractQuoteCalculator<? extends Order> quoteCalculator;
@@ -124,16 +128,16 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected void setSliceSpecifier( final Specifier< Void > sliceId, final Session session ) {
+    protected void setSliceSpecifier( final Specifier< Void > sliceSpec, final Session session ) {
         final Task task = getTask( session );
-        task.setPayload(sliceId);
+        task.setPayload(sliceSpec);
     }
 
 
-    protected void setSliceSpecifier( Specifier<Void> sliceId ) {
+    protected void setSliceSpecifier( Specifier<Void> sliceSpec) {
         final Session session = getDao().beginSession();
         try {
-            setSliceSpecifier( sliceId, session );
+            setSliceSpecifier(sliceSpec, session );
             session.success();
         }
         finally {
@@ -141,28 +145,44 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         }
     }
 
+    
+    protected void attachSlice( final String sliceId ) throws Exception {
+        final ConfigProvider config = getOfferTypeConfig();
+
+        final String subspaceId = config.getOption( "subspace" );
+        String sliceKindKey = config.getOption( "sliceKind" );
+
+        Specifier< Void > sliceSpec = UriFactory.createSliceSpecifier(
+                getGridConfig().getBaseUrl(),
+                subspaceId,
+                sliceKindKey,
+                sliceId );
+
+        setSliceSpecifier( sliceSpec );
+    }
+    
 
     protected void createNewSlice() throws MandatoryOptionMissingException {
         final ConfigProvider config = getOfferTypeConfig();
 
-        final String subspaceUrl = config.getOption( "subspace" );
-        String sliceKindKey = config.getOption( "sliceKind" );
+        final String subspaceId = config.getOption( "subspace" );
+        String sliceKindId = config.getOption( "sliceKind" );
 
 
         SliceConfiguration sconf = new SliceConfiguration();
         sconf.setTerminationTime( getContract().getResultValidity() );
         sconf.setSize( DEFAULT_SLICE_SIZE );
 
-        ResponseEntity< Specifier< Void > > sliceSpec = subspaceService.createSlice(
-                subspaceUrl,
-                sliceKindKey,
+        ResponseEntity< Specifier< Void > > sliceResponseEntity = subspaceService.createSlice(
+                subspaceId,
+                sliceKindId,
                 sconf.getStringRepresentation(),
                 getOrder().getDNFromContext() );
 
-        if (! HttpStatus.CREATED.equals( sliceSpec.getStatusCode() ) )
+        if (! HttpStatus.CREATED.equals( sliceResponseEntity.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
 
-        setSliceSpecifier( sliceSpec.getBody() );
+        setSliceSpecifier( sliceResponseEntity.getBody() );
 
         // to provoke nasty test condition uncomment the following line
         //throw new NullPointerException( );
@@ -270,5 +290,16 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 
     public void setQuoteCalculator( AbstractQuoteCalculator<? extends Order> quoteCalculator ) {
         this.quoteCalculator = quoteCalculator;
+    }
+
+
+    public GridConfig getGridConfig() {
+        return gridConfig;
+    }
+
+
+    @Inject
+    public void setGridConfig( GridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
     }
 }

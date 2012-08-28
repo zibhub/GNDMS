@@ -23,11 +23,11 @@ import de.zib.gndms.common.model.gorfx.types.SliceResultImpl;
 import de.zib.gndms.common.rest.MyProxyToken;
 import de.zib.gndms.gndmc.utils.DownloadResponseExtractor;
 import de.zib.gndms.gndmc.utils.HTTPGetter;
+import de.zib.gndms.infra.action.SlicedTaskFlowAction;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.security.CredentialProvider;
 import de.zib.gndms.kit.security.GetCredentialProviderFor;
 import de.zib.gndms.kit.security.SSLCredentialInstaller;
-import de.zib.gndms.infra.action.SlicedTaskFlowAction;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -79,7 +79,12 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
 
 
     @Override
-    protected void onCreated( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
+    protected void onCreated(
+            @NotNull String wid,
+            @NotNull TaskState state,
+            boolean isRestartedTask,
+            boolean altTaskState ) throws Exception
+    {
 
         ensureOrder();
 
@@ -99,7 +104,17 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
             super.onCreated( wid, state, isRestartedTask, altTaskState );    // overridden method implementation
         }
 
-        createNewSlice();
+        if( getOrderBean().hasSliceId() ) {
+            attachSlice( getOrderBean().getSliceId() );
+        }
+        else {
+            createNewSlice();
+
+            if( getOrderBean().hasSliceConfiguration() ) {
+                findSlice().setConfiguration( getOrderBean().getSliceConfiguration() );
+            }
+        }
+
         super.onCreated(wid, state, isRestartedTask, altTaskState);
     }
 

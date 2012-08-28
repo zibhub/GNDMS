@@ -1,6 +1,6 @@
 package de.zib.gndms.taskflows.esgfStaging.client.model;
 
-import de.zib.gndms.common.model.gorfx.types.AbstractOrder;
+import de.zib.gndms.common.model.gorfx.types.SliceOrder;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,7 +15,7 @@ import java.util.Map;
  * The dummy taskflow echos a given message a given number of times ^^ with some delay.
  * It can also fail on demand;
  */
-public class ESGFStagingOrder extends AbstractOrder {
+public class ESGFStagingOrder extends SliceOrder {
 
     private static final long serialVersionUID = -1925988463350176270L;
 

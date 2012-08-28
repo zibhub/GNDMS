@@ -133,4 +133,19 @@ public class Slice extends TimedGridResource {
     public void setTotalStorageSize( long totalStorageSize ) {
         this.totalStorageSize = totalStorageSize;
     }
+    
+    
+    public void setConfiguration( SliceConfiguration sliceConfiguration ) {
+        if( sliceConfiguration.getSize() != null )
+            setTotalStorageSize(sliceConfiguration.getSize());
+        if( sliceConfiguration.getTerminationTime() != null )
+            setTerminationTime( sliceConfiguration.getTerminationTime() );
+    }
+
+
+    public SliceConfiguration getConfiguration( ) {
+        return new SliceConfiguration(
+                getTotalStorageSize(),
+                getTerminationTime() );
+    }
 }
