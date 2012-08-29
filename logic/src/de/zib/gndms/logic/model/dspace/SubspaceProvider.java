@@ -54,5 +54,5 @@ public interface SubspaceProvider {
     
     void invalidate( String subspaceId );
 
-    long getDiskUsage( String subspaceId );
+    //long getDiskUsage( String subspaceId );
 }

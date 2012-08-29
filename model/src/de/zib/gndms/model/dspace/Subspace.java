@@ -26,14 +26,13 @@ package de.zib.gndms.model.dspace;
  * User: stepn Date: 24.07.2008 Time: 11:17:22
  */
 
+import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.common.GridResource;
 
+import javax.persistence.*;
 import java.io.File;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.*;
 
 /**
  *
@@ -223,4 +222,27 @@ public class Subspace extends GridResource {
         this.creatableSliceKinds = creatableSliceKinds;
     }
 
+
+    public SubspaceConfiguration getConfiguration() {
+        return new SubspaceConfiguration(
+                getPath(),
+                getGsiFtpPath(),
+                isVisibleToPublic(),
+                getTotalSize(),
+                "READ",
+                getId()
+        );
+    }
+    
+    
+    public void setConfiguration( final SubspaceConfiguration configuration ) {
+        if( configuration.getPath() != null )
+            setPath( configuration.getPath() );
+        if( configuration.getGsiFtpPath() != null )
+            setGsiFtpPath( configuration.getGsiFtpPath() );
+        if( configuration.isVisible() != null )
+            setVisibleToPublic( configuration.isVisible() );
+        if( configuration.getSize() != null )
+            setTotalSize( configuration.getSize() );
+    }
 }

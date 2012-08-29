@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.dspace;
+package de.zib.gndms.common.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,7 +19,8 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.model.dspace.Subspace;
+
+import java.io.Serializable;
 
 /**
  * The subspace configuration checks and accesses a ConfigHolder for a subspace,
@@ -34,7 +35,11 @@ import de.zib.gndms.model.dspace.Subspace;
  * 
  */
 
-public class SubspaceConfiguration implements Configuration {
+public class SubspaceConfiguration implements Configuration, Serializable {
+
+    private static final long serialVersionUID = -405659161163187118L;
+
+
     /**
 	 * The key for the subspace's path.
 	 */
@@ -56,7 +61,7 @@ public class SubspaceConfiguration implements Configuration {
 	 */
 	public static final String MODE = "mode";
 
-	/**
+    /**
 	 * The path of the subspace.
 	 */
 	private String path;
@@ -67,11 +72,11 @@ public class SubspaceConfiguration implements Configuration {
 	/**
 	 * The visibility of the subspace.
 	 */
-	private boolean visible;
+	private Boolean visible;
 	/**
 	 * The size of the subspace.
 	 */
-	private long size;
+	private Long size;
 	/**
 	 * The setup mode of the subspace.
 	 */
@@ -86,14 +91,14 @@ public class SubspaceConfiguration implements Configuration {
 	 * @param size the size.
 	 * @param mode The setup mode.
 	 */
-	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
-			final boolean visible, final long size, final SetupMode mode, final String subspace) {
+	public SubspaceConfiguration( final String path, final String gsiFtpPath,
+			final boolean visible, final long size, final SetupMode mode, final String subspace ) {
 		this.path = path;
 		this.gsiFtpPath = gsiFtpPath;
 		this.visible = visible;
 		this.size = size;
 		this.mode = mode;
-        this.subspace = subspace;
+        setSubspace( subspace );
 	}
 
 	/**
@@ -104,8 +109,8 @@ public class SubspaceConfiguration implements Configuration {
 	 * @param size the size.
 	 * @param mode The setup mode.
 	 */
-	public SubspaceConfiguration(final String path, final String gsiFtpPath, 
-			final boolean visible, final long size, final String mode, final String subspace) {
+	public SubspaceConfiguration( final String path, final String gsiFtpPath,
+			final boolean visible, final long size, final String mode, final String subspace ) {
 		this.path = path;
 		this.gsiFtpPath = gsiFtpPath;
 		this.visible = visible;
@@ -189,7 +194,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * Returns the visibility of a subspace configuration.
 	 * @return the visible
 	 */
-	public final boolean isVisible() {
+	public final Boolean isVisible() {
 		return visible;
 	}
 
@@ -205,7 +210,7 @@ public class SubspaceConfiguration implements Configuration {
 	 * Returns the size of a subspace configuration.
 	 * @return the size
 	 */
-	public final long getSize() {
+	public final Long getSize() {
 		return size;
 	}
 
@@ -255,16 +260,6 @@ public class SubspaceConfiguration implements Configuration {
 	@Override
 	public final String toString() {
 		return getStringRepresentation();
-	}
-
-	/**
-	 * Constructs the subspace configuration of a subspace.
-	 * 
-	 * @param subspace The subspace.
-	 * @return The configuration.
-	 */
-    public static SubspaceConfiguration getSubspaceConfiguration(Subspace subspace) {
-		return new SubspaceConfiguration(subspace.getPath(), subspace.getGsiFtpPath(), subspace.isVisibleToPublic(), subspace.getTotalSize(), "READ", subspace.getId());
 	}
 
 	/*

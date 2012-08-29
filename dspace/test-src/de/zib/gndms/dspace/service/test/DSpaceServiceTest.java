@@ -16,6 +16,7 @@
 
 package de.zib.gndms.dspace.service.test;
 
+import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;

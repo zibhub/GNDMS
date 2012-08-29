@@ -110,10 +110,9 @@ public interface SubspaceService {
 	 *            The subspace identifier.
 	 * @param dn
 	 *            The dn of the user invoking the method.
-	 * @return The subspace configuration.
+	 * @return The subspace information (including configuration).
 	 */
-	ResponseEntity<Configuration> listSubspaceConfiguration(String subspace,
-			String dn);
+	ResponseEntity< SubspaceInformation > getSubspaceInformation( String subspace, String dn );
 
 	/**
 	 * Changes a subspace configuration.

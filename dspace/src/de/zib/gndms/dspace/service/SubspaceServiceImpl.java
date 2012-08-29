@@ -17,7 +17,9 @@
 package de.zib.gndms.dspace.service;
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
+import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindService;
+import de.zib.gndms.common.dspace.service.SubspaceInformation;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
@@ -239,26 +241,21 @@ public class SubspaceServiceImpl implements SubspaceService {
     @Override
 	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Configuration> listSubspaceConfiguration(
-			@PathVariable final String subspace,
-			@RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
+	public ResponseEntity< SubspaceInformation > getSubspaceInformation(
+            @PathVariable final String subspaceId,
+            @RequestHeader("DN") final String dn) {
+		GNDMSResponseHeader headers = getSubspaceHeaders( subspaceId, dn );
 		
-		if (!subspaceProvider.exists(subspace)) {
-			logger.warn("Subspace " + subspace + " not found");
-			return new ResponseEntity<Configuration>(null, headers,
-					HttpStatus.NOT_FOUND);
+		if ( !subspaceProvider.exists( subspaceId ) ) {
+			logger.warn("Subspace " + subspaceId + " not found");
+			return new ResponseEntity< SubspaceInformation >( null, headers, HttpStatus.NOT_FOUND );
 		}
 
-		Subspace sub = subspaceProvider.get( subspace );
-    	SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(sub);
+		Subspace subspaceModel = subspaceProvider.get( subspaceId );
+        de.zib.gndms.infra.dspace.Subspace subspace = new de.zib.gndms.infra.dspace.Subspace( subspaceModel );
+    	SubspaceInformation information = subspace.getInformation();
 
-        // get disk usage
-        {
-            headers.set( "DiskUsage", String.valueOf( subspaceProvider.getDiskUsage( subspace ) ) );
-        }
-
-		return new ResponseEntity<Configuration>(config, headers, HttpStatus.OK);
+		return new ResponseEntity< SubspaceInformation >( information, headers, HttpStatus.OK );
 	}
 
 
@@ -275,8 +272,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 		try {
 			SubspaceConfiguration subspaceConfig = SubspaceConfiguration.checkSubspaceConfig(config);
 
-			if (subspaceProvider.exists(subspace)
-					|| subspaceConfig.getMode() != SetupMode.UPDATE) {
+			if( !subspaceProvider.exists(subspace)
+					|| subspaceConfig.getMode() != SetupMode.UPDATE ) {
 				logger.warn("Subspace " + subspace + " cannot be updated");
 				return new ResponseEntity<Void>(null, headers,
 						HttpStatus.FORBIDDEN);

@@ -16,12 +16,12 @@ package de.zib.gndms.logic.model.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.logic.model.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.dspace.Subspace;
 
 
@@ -217,7 +217,7 @@ public class SubspaceConfigurationTest {
 		dummy.setAvailableSize(size);
 		String mode = "READ";		
 				
-		SubspaceConfiguration config = SubspaceConfiguration.getSubspaceConfiguration(dummy);
+		SubspaceConfiguration config = dummy.getConfiguration();
 
 		AssertJUnit.assertEquals(true, config.isValid());
 		AssertJUnit.assertEquals(path, config.getPath());

@@ -16,6 +16,7 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.service.SubspaceInformation;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Facets;
@@ -85,10 +86,10 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
     }
 
     @Override
-	public final ResponseEntity<Configuration> listSubspaceConfiguration(
-			final String subspace, final String dn) {
-		return unifiedGet(Configuration.class, getServiceURL() + "/dspace/_"
-				+ subspace + "/config", dn);
+	public final ResponseEntity<SubspaceInformation> getSubspaceInformation(
+            final String subspace, final String dn) {
+		return unifiedGet( SubspaceInformation.class, getServiceURL() + "/dspace/_"
+				+ subspace + "/config", dn );
 	}
 
 	@Override

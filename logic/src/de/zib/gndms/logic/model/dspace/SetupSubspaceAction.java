@@ -18,6 +18,7 @@ package de.zib.gndms.logic.model.dspace;
 
 
 
+import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.ModelChangedAction;
 import de.zib.gndms.logic.model.config.ConfigActionHelp;

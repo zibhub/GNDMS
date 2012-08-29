@@ -18,7 +18,6 @@ package de.zib.gndms.logic.model.dspace;
 
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.infra.system.GNDMSystem;
-import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.GridResourceCache;
@@ -102,7 +101,7 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
     }
 
 
-    @Override
+/*    @Override
     public long getDiskUsage( final String subspaceId ) {
         EntityManager em = emf.createEntityManager();
         Query query = em.createNamedQuery( LIST_ALL_SLICES );
@@ -118,7 +117,7 @@ public class SubspaceProviderImpl extends GridResourceDAO< Subspace > implements
 
         return usage;
     }
-
+*/
 
     public EntityManagerFactory getEmf( ) {
         return emf;
