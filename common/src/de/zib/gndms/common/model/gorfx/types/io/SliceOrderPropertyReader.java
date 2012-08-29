@@ -50,14 +50,13 @@ public abstract class SliceOrderPropertyReader< M extends SliceOrder > extends O
         
         final String sliceId = properties.getProperty( SliceOrderProperties.SLICE_ID.key );
         final String sliceSize = properties.getProperty( SliceOrderProperties.SLICE_SIZE.key );
-        final String _sliceTermTime = properties.getProperty( SliceOrderProperties.SLICE_TERMINATION_TIME.key );
-        final DateTime sliceTermTime = DateTime.parse( _sliceTermTime );
-        
+        final String sliceTermTime = properties.getProperty( SliceOrderProperties.SLICE_TERMINATION_TIME.key );
+
         if( sliceId != null )
             sliceOrder.setSliceId( sliceId );
         else if( sliceSize != null || sliceTermTime != null ) {
             sliceOrder.setSliceConfiguration(
-                    new SliceConfiguration( Long.parseLong( sliceSize ), sliceTermTime )
+                    new SliceConfiguration( Long.parseLong( sliceSize ), DateTime.parse( sliceTermTime ) )
             );
         }
     }
