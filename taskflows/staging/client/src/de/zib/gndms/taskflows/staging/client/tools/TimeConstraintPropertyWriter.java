@@ -52,6 +52,11 @@ public class TimeConstraintPropertyWriter extends AbstractPropertyIO implements 
     public void writeMaxTime( DateTime dt ) {
         writeMaxTimeToProperties( getProperties( ), dt );
     }
+    
+    
+    public void writeAggregation( String aggregation ) {
+        writeAggregationToProperties( getProperties(), aggregation );
+    }
 
 
     public static void writeMinTimeToProperties( Properties prop, DateTime dt  ) {
@@ -71,6 +76,11 @@ public class TimeConstraintPropertyWriter extends AbstractPropertyIO implements 
 
     public static void writeMaxTimeToProperties( Properties prop, String dt  ) {
         prop.setProperty( SfrProperty.TIME_MAX.key, dt );
+    }
+    
+    
+    public static void writeAggregationToProperties( Properties prop, String aggregation ) {
+        prop.setProperty( SfrProperty.TIME_AGGREGATION.key, aggregation );
     }
 
 

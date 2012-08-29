@@ -40,6 +40,7 @@ public enum SfrProperty {
 	ALT_VCRS("c3grid.StageFileRequest.SpaceConstr.Altitude.VerticalCRS"),
 	TIME_MIN("c3grid.StageFileRequest.TimeConstr.MinTime"),
 	TIME_MAX("c3grid.StageFileRequest.TimeConstr.MaxTime"),
+    TIME_AGGREGATION("c3grid.StageFileRequest.TimeConstr.Aggregation"),
 	CFLIST_OLD("c3grid.StageFileRequest.CFList"),
 	CFLIST_ITEMS("c3grid.StageFileRequest.CFList.CFItem"),
 	CONSTRAINT_LIST("c3grid.StageFileRequest.ConstraintList","<undocumented>"),

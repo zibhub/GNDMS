@@ -48,6 +48,13 @@ public class TimeConstraint implements Serializable {
      */
     private String maxTime;
 
+    /**
+     * The time aggregation for the span.
+     *
+     * Contains something like monthly or 3hours.
+     */
+    private String aggregation;
+
     private static final long serialVersionUID = 2682486067028199165L;
 
 
@@ -138,5 +145,20 @@ public class TimeConstraint implements Serializable {
      */
     public void setMaxTime( DateTime maxTime ) {
         this.maxTime = maxTime.toString( );
+    }
+
+    
+    public boolean hasAggregation() {
+        return aggregation != null;
+    }
+    
+
+    public String getAggregation() {
+        return aggregation;
+    }
+    
+
+    public void setAggregation( String aggregation ) {
+        this.aggregation = aggregation;
     }
 }

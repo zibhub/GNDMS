@@ -37,4 +37,5 @@ public interface TimeConstraintWriter extends GORFXWriterBase {
 
     public abstract void writeMinTime( DateTime dt );
     public abstract void writeMaxTime( DateTime dt );
+    public abstract void writeAggregation( String aggregation );
 }

@@ -49,12 +49,15 @@ public class TimeConstraintPropertyReader extends AbstractPropertyReader<TimeCon
 
         // DateTime max = PropertyReadWriteAux.readISODateTime( getProperties(), SfrProperty.TIME_MAX.key );
         String max = getProperties().getProperty( SfrProperty.TIME_MAX.key );
+        
+        String aggregation = getProperties().getProperty( SfrProperty.TIME_AGGREGATION.key );
 
-        if( min == null && max == null ) {
+        if( min == null && max == null || aggregation == null ) {
             deleteProduct( );
         } else {
             getProduct( ).setMinTime( min );
             getProduct( ).setMaxTime( max );
+            getProduct( ).setAggregation( aggregation );
         }
     }
 
