@@ -223,6 +223,7 @@ public class Subspace extends GridResource {
     }
 
 
+    @Transient
     public SubspaceConfiguration getConfiguration() {
         return new SubspaceConfiguration(
                 getPath(),
@@ -233,8 +234,9 @@ public class Subspace extends GridResource {
                 getId()
         );
     }
-    
-    
+
+
+    @Transient
     public void setConfiguration( final SubspaceConfiguration configuration ) {
         if( configuration.getPath() != null )
             setPath( configuration.getPath() );
