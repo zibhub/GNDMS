@@ -8,12 +8,11 @@ datafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetBaseDataFile | cut -
 metafile=$(echo "$sfr" | grep c3grid.StageFileRequest.TargetMetaDataFile | cut -d= -f2-)
 
 
-# fake execution: seconds to wait
-sleep 10
-
-
 echo "$sfr" > $datafile
-echo "$sfr" > $metafile
+cp "${GNDMS_SOURCE}/etc/sfr/sample.meta.xml" $metafile
+
+# fake execution: seconds to wait
+sleep 5
 
 
 # Uncomment to test dummy-cancel.sh
