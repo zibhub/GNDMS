@@ -105,7 +105,7 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
             if (visible == null && (isCreating() || hasOption("visible")))
                 setIsVisibleToPublic(isBooleanOptionSet("visible", true));
             if (size == null && (isCreating() || hasOption("size"))) {
-                size = new Long( getIntOption("size") );
+                size = new Long( getLongOption("size") );
             }
             if (path == null && (isCreating() || hasOption("path"))) {
                 setPath(getOption("path"));
@@ -153,8 +153,11 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
                 if (isVisibleToPublic() != null)
                     space.setVisibleToPublic(isVisibleToPublic());
 
-                if (size != null)
-                    space.setTotalSize(getSize());
+                if (size != null) {
+                    final long diff = getSize() - space.getTotalSize();
+                    space.setTotalSize( getSize() );
+                    space.setAvailableSize( space.getAvailableSize() + diff );
+                }
 
                 if (path != null)
                     space.setPath(getPath());
@@ -207,8 +210,9 @@ public class SetupSubspaceAction extends SetupAction<ConfigActionResult> {
             //avail.setAmount(getSize().getAmount());
             //avail.setUnit(getSize().getUnit());
             //subspace.setAvailableSize(avail);
-            final long avail = getSize( );
-            space.setAvailableSize(avail);
+            final long size = getSize( );
+            space.setAvailableSize( size );
+            space.setTotalSize( size );
         }
 
         return space;

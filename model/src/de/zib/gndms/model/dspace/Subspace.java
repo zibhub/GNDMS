@@ -158,6 +158,9 @@ public class Subspace extends GridResource {
      * @param availableSize The size to set.
      */
     public void setAvailableSize(final long availableSize) {
+//        if( availableSize < 0 )
+//            throw new QuotaExceededException();
+
         this.availableSize = availableSize;
     }
 

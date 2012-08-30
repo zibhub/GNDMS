@@ -154,6 +154,7 @@ public class SliceProviderImpl implements SliceProvider {
 
         final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
         actionConfigurer.configureAction( createSliceAction );
+        system.getInstanceDir().getSystemAccessInjector().injectMembers( createSliceAction );
         createSliceAction.setModel( subspace );
         createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
 

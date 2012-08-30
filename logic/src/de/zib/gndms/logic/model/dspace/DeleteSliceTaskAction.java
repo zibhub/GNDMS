@@ -36,6 +36,7 @@ import java.io.File;
  */
 public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> {
 
+    private SubspaceProvider subspaceProvider;
     private SliceProvider sliceProvider;
 
 
@@ -109,13 +110,23 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
         deleteModelEntity( Slice.class );
         sliceProvider.invalidate( slice.getId() );
+        
+        slice.getSubspace().setAvailableSize( slice.getSubspace().getAvailableSize() + slice.getTotalStorageSize() );
+        
+        subspaceProvider.invalidate( slice.getSubspace().getId() );
 
-        autoTransitWithPayload( new VoidTaskResult() );
+        autoTransitWithPayload(new VoidTaskResult());
     }
 
 
     @Inject
     public void setSliceProvider( SliceProvider sliceProvider ) {
         this.sliceProvider = sliceProvider;
+    }
+
+
+    @Inject
+    public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
+        this.subspaceProvider = subspaceProvider;
     }
 }

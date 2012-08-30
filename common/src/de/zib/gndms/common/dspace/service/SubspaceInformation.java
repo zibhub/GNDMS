@@ -32,6 +32,7 @@ public class SubspaceInformation extends SubspaceConfiguration implements Serial
     private static final long serialVersionUID = -7527037415644965567L;
 
     private Long diskUsage;
+    private Long potentialUsage;
 
 
     /**
@@ -70,5 +71,15 @@ public class SubspaceInformation extends SubspaceConfiguration implements Serial
 
     public void setDiskUsage( Long diskUsage ) {
         this.diskUsage = diskUsage;
+    }
+
+
+    public Long getPotentialUsage() {
+        return potentialUsage;
+    }
+
+
+    public void setPotentialUsage( Long potentialUsage ) {
+        this.potentialUsage = potentialUsage;
     }
 }

@@ -138,7 +138,7 @@ public class Slice extends TimedGridResource {
     @Transient
     public void setConfiguration( SliceConfiguration sliceConfiguration ) {
         if( sliceConfiguration.getSize() != null )
-            setTotalStorageSize(sliceConfiguration.getSize());
+            setTotalStorageSize( sliceConfiguration.getSize() );
         if( sliceConfiguration.getTerminationTime() != null )
             setTerminationTime( sliceConfiguration.getTerminationTime() );
     }

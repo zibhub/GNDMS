@@ -26,6 +26,7 @@ import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
 import java.util.UUID;
@@ -48,6 +49,8 @@ import java.util.UUID;
  * User: mjorra, Date: 13.08.2008, Time: 10:21:36
  */
 public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, Slice> {
+
+    private SubspaceProvider subspaceProvider;
 
     private SliceKind sliceKind;     // kind of the slice to create
     private long storageSize;
@@ -177,13 +180,19 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
+        
+        sp.setAvailableSize( sp.getAvailableSize() - sl.getTotalStorageSize() );
 
-        addChangedModel( sl );
+
+        addChangedModel(sl);
 
         // maybe this isn't of interest
         addChangedModel( sp );
 
         em.persist( sl );
+        em.persist( sp );
+        
+        subspaceProvider.invalidate( sp.getId() );
 
         return  sl;
     }
@@ -233,5 +242,15 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     public void setDirectoryAux( DirectoryAux da ) {
         directoryAux = da;
     }
-    
+
+
+    public SubspaceProvider getSubspaceProvider() {
+        return subspaceProvider;
+    }
+
+
+    @Inject
+    public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
+        this.subspaceProvider = subspaceProvider;
+    }
 }
