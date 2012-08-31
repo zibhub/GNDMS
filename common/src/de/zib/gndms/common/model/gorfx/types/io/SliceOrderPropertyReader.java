@@ -18,7 +18,7 @@ package de.zib.gndms.common.model.gorfx.types.io;
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.model.gorfx.types.SliceOrder;
-import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.Properties;
 
@@ -51,12 +51,14 @@ public abstract class SliceOrderPropertyReader< M extends SliceOrder > extends O
         final String sliceId = properties.getProperty( SliceOrderProperties.SLICE_ID.key );
         final String sliceSize = properties.getProperty( SliceOrderProperties.SLICE_SIZE.key );
         final String sliceTermTime = properties.getProperty( SliceOrderProperties.SLICE_TERMINATION_TIME.key );
-
+        
         if( sliceId != null )
             sliceOrder.setSliceId( sliceId );
         else if( sliceSize != null || sliceTermTime != null ) {
             sliceOrder.setSliceConfiguration(
-                    new SliceConfiguration( Long.parseLong( sliceSize ), DateTime.parse( sliceTermTime ) )
+                    new SliceConfiguration(
+                            Long.parseLong( sliceSize ),
+                            ISODateTimeFormat.dateTimeParser().parseDateTime(sliceTermTime) )
             );
         }
     }
