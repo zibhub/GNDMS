@@ -247,7 +247,7 @@ GT4_XML     = []
 GT4_USEAGE  = []
 GT4_MDS     = []
 
-VOLD_CLIENT = voldjars([ 'VolDClient.jar' ])
+VOLD_CLIENT = voldjars([ 'vold-common-0.1.0.jar', 'vold-client-0.1.0.jar' ])
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
