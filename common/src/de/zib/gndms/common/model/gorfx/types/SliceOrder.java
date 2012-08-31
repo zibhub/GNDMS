@@ -18,13 +18,17 @@ package de.zib.gndms.common.model.gorfx.types;
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
 
+import java.io.Serializable;
+
 /**
  * @date: 28.08.12
  * @time: 09:03
  * @author: Jörg Bachmann
  * @email: bachmann@zib.de
  */
-public abstract class SliceOrder extends AbstractOrder {
+public abstract class SliceOrder extends AbstractOrder implements Serializable {
+
+    private static final long serialVersionUID = 4957727458569414504L;
 
     private String sliceId;
     private SliceConfiguration sliceConfiguration;
