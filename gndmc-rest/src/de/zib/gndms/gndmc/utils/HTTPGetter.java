@@ -25,6 +25,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.client.ClientHttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 
@@ -189,27 +190,32 @@ public class HTTPGetter {
         requestFactory.setConnectTimeout( getTimeout() );
         requestFactory.setReadTimeout( getTimeout() );
 
-        return rt.execute( url, method, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
+        try {
+            return rt.execute( url, method, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
 
-            // call the EnhancedResponseExtractor registered for this response.statusCode
-            @Override
-            public EnhancedResponseExtractor extractData( ClientHttpResponse response ) throws IOException {
-                int statusCode = response.getStatusCode().value();
+                // call the EnhancedResponseExtractor registered for this response.statusCode
+                @Override
+                public EnhancedResponseExtractor extractData( ClientHttpResponse response ) throws IOException {
+                    int statusCode = response.getStatusCode().value();
 
-                EnhancedResponseExtractor enhancedResponseExtractor = extractorMap.get( statusCode );
-                if( null == enhancedResponseExtractor )
-                    enhancedResponseExtractor = extractorMap.get( statusCode / 100 );
-                if( null == enhancedResponseExtractor )
-                    enhancedResponseExtractor = extractorMap.get( 0 );
-                if( null == enhancedResponseExtractor )
-                    throw new IllegalStateException( "No default ResponseExtractor registered. THIS IS NOT HAPPENING :/" );
+                    EnhancedResponseExtractor enhancedResponseExtractor = extractorMap.get( statusCode );
+                    if( null == enhancedResponseExtractor )
+                        enhancedResponseExtractor = extractorMap.get( statusCode / 100 );
+                    if( null == enhancedResponseExtractor )
+                        enhancedResponseExtractor = extractorMap.get( 0 );
+                    if( null == enhancedResponseExtractor )
+                        throw new IllegalStateException( "No default ResponseExtractor registered. THIS IS NOT HAPPENING :/" );
 
-                enhancedResponseExtractor.extractData(url, response);
+                    enhancedResponseExtractor.extractData(url, response);
 
-                return enhancedResponseExtractor;
-            }
+                    return enhancedResponseExtractor;
+                }
 
-        } );
+            } );
+        }
+        catch( ResourceAccessException e ) {
+            throw new RuntimeException( "Could not connect to " + url + ".", e );
+        }
     }
 
 

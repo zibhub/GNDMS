@@ -218,7 +218,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 } catch ( Exception e ) {
                     logger.warn( "Exception on order calculation for " + tf.getOrder()
                             .getLoggableDescription(), e );
-                    throw new RuntimeException( e );
+                    throw new RuntimeException( "Could not calculate quotes for order.", e );
                 }
             }
         }
