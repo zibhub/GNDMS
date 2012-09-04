@@ -214,7 +214,7 @@ public class HTTPGetter {
             } );
         }
         catch( ResourceAccessException e ) {
-            throw new RuntimeException( "Could not connect to " + url + ".", e );
+            throw new RuntimeException( "Could not connect to " + url + ": " + e.getMessage(), e );
         }
     }
 
