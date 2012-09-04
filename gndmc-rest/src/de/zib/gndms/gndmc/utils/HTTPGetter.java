@@ -49,6 +49,8 @@ public class HTTPGetter {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     
+    private int timeout = 10000; // default: 10ms
+    
     private String keyStoreLocation;
     private String trustStoreLocation;
     private String password; // TODO: don't use same password for keystore and key?!
@@ -114,7 +116,7 @@ public class HTTPGetter {
 
 
     public int head( String url ) throws NoSuchAlgorithmException, KeyManagementException {
-        return get( HttpMethod.HEAD, url, ( HttpHeaders )null );
+        return get(HttpMethod.HEAD, url, (HttpHeaders) null);
     }
 
 
@@ -184,6 +186,8 @@ public class HTTPGetter {
     {
         CustomSSLContextRequestFactory requestFactory = new CustomSSLContextRequestFactory( sslContext );
         RestTemplate rt = new RestTemplate( requestFactory );
+        requestFactory.setConnectTimeout( getTimeout() );
+        requestFactory.setReadTimeout( getTimeout() );
 
         return rt.execute( url, method, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
 
@@ -231,5 +235,15 @@ public class HTTPGetter {
 
     public void setPassword( String password ) {
         this.password = password;
+    }
+
+
+    public int getTimeout() {
+        return timeout;
+    }
+
+
+    public void setTimeout( int timeout ) {
+        this.timeout = timeout;
     }
 }
