@@ -104,7 +104,12 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
     @Override
     public C getQuoteCalculator() throws MandatoryOptionMissingException {
         try {
-            return calculatorClass.newInstance();
+            C quoteCalculator = calculatorClass.newInstance();
+
+            injectMembers( quoteCalculator );
+
+            return quoteCalculator;
+
         // one of the two exceptions are thrown s.th. is wrong with the calculator class
         // and need debugging, so rethrowing is ok
         } catch ( InstantiationException e ) {
