@@ -83,6 +83,10 @@
         <property name="url" value="${baseUrl}/gorfx/tasks"/>
     </bean>
 
+    <bean id="gorfxClient" class="de.zib.gndms.gndmc.gorfx.GORFXClient" >
+        <property name="restTemplate" ref="restTemplate" />
+    </bean>
+
     <bean id="taskFlowClient" class="de.zib.gndms.gndmc.gorfx.TaskFlowClient" >
         <property name="restTemplate" ref="restTemplate" />
     </bean>
