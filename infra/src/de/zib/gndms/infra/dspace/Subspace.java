@@ -17,6 +17,7 @@
 package de.zib.gndms.infra.dspace;
 
 import de.zib.gndms.common.dspace.service.SubspaceInformation;
+import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.kit.util.DirectoryAux;
 
 /**
@@ -37,6 +38,8 @@ public class Subspace extends de.zib.gndms.model.dspace.Subspace {
         setTotalSize( subspaceModel.getTotalSize() );
         setId( subspaceModel.getId() );
         setCreatableSliceKinds( subspaceModel.getCreatableSliceKinds() );
+
+        directoryAux = new LinuxDirectoryAux();
     }
 
 
