@@ -147,10 +147,10 @@ public class SliceServiceImpl implements SliceService {
             if( config.getSize() != null )
                 slice.setTotalStorageSize( config.getSize() );
 
-            return new ResponseEntity< Integer >( null, headers, HttpStatus.OK );
+            return new ResponseEntity< Integer >( 0, headers, HttpStatus.OK );
         } catch( NoSuchElementException e ) {
             logger.warn( e.getMessage() );
-            return new ResponseEntity< Integer >( null, headers, HttpStatus.NOT_FOUND );
+            return new ResponseEntity< Integer >( 0, headers, HttpStatus.NOT_FOUND );
         }
     }
 
@@ -322,16 +322,16 @@ public class SliceServiceImpl implements SliceService {
 
                 file.transferTo( newFile );
             }
-            return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<Integer>(0, headers, HttpStatus.OK);
         } catch (NoSuchElementException ne) {
             logger.warn(ne.getMessage(), ne);
-            return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Integer>(0, headers, HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<Integer>(0, headers, HttpStatus.FORBIDDEN);
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<Integer>(0, headers, HttpStatus.FORBIDDEN);
         }
     }
 
@@ -356,14 +356,14 @@ public class SliceServiceImpl implements SliceService {
                 String p = path + File.separatorChar + s;
                 if ( !directoryAux.deleteDirectory( dn, p ) ) {
                     logger.warn("Some file in directory " + p + " could not be deleted.");
-                    return new ResponseEntity<Integer>(null, headers, HttpStatus.CONFLICT);
+                    return new ResponseEntity<Integer>(0, headers, HttpStatus.CONFLICT);
                 }
             }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.NOT_FOUND);
 		}
-        return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
+        return new ResponseEntity<Integer>(0, headers, HttpStatus.OK);
 	}
 
     @Override
@@ -444,25 +444,25 @@ public class SliceServiceImpl implements SliceService {
                     FileCopyUtils.copy( new FileInputStream( file ), out );
 				}
                 
-				return new ResponseEntity<Integer>(null, headers,
+				return new ResponseEntity<Integer>(0, headers,
 						HttpStatus.OK);
 			} else {
 				logger.warn("File " + file + " cannot be read or is no file.");
-				return new ResponseEntity<Integer>(null, headers,
+				return new ResponseEntity<Integer>(0, headers,
 						HttpStatus.FORBIDDEN);
 			}
 
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<Integer>(null, headers,
+			return new ResponseEntity<Integer>(0, headers,
 					HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Integer>(null, headers,
+			return new ResponseEntity<Integer>(0, headers,
 					HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Integer>(null, headers,
+			return new ResponseEntity<Integer>(0, headers,
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -501,16 +501,16 @@ public class SliceServiceImpl implements SliceService {
 
 			//dos.write(file.getBytes());
 			//dos.close();
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
 			logger.warn(e.getMessage(), e);
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
 			logger.warn(e.getMessage(), e);
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.FORBIDDEN);
 		}
 	}
 
@@ -531,14 +531,14 @@ public class SliceServiceImpl implements SliceService {
 			String path = space.getPathForSlice( slice );
 
             if( directoryAux.deleteDirectory( dn, path + File.separator + fileName ) ) {
-                return new ResponseEntity< Integer >( null, headers, HttpStatus.OK );
+                return new ResponseEntity< Integer >( 0, headers, HttpStatus.OK );
             } else {
                 logger.warn( "File " + path + " could not be deleted." );
-                return new ResponseEntity< Integer >( null, headers, HttpStatus.FORBIDDEN );
+                return new ResponseEntity< Integer >( 0, headers, HttpStatus.FORBIDDEN );
             }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
-			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(0, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 
