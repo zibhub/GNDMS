@@ -76,7 +76,7 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> setSliceKindConfig(String subspace, String sliceKind,
+	ResponseEntity< Integer > setSliceKindConfig(String subspace, String sliceKind,
 			Configuration config, String dn);
 
 	/**

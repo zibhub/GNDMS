@@ -146,7 +146,7 @@ public class SliceKindServiceImpl implements SliceKindService {
     @Override
     @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.POST )
     @Secured( "ROLE_ADMIN" )
-    public final ResponseEntity<Void> setSliceKindConfig( @PathVariable final String subspace,
+    public final ResponseEntity<Integer> setSliceKindConfig( @PathVariable final String subspace,
                                                           @PathVariable final String sliceKind, final Configuration config, final String dn ) {
         GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
 
@@ -167,17 +167,17 @@ public class SliceKindServiceImpl implements SliceKindService {
             spec.setUriMap( new HashMap<String, String>( urimap ) );
             spec.setUrl( uriFactory.quoteUri( urimap ) );
 
-            return new ResponseEntity<Void>( null, headers,
+            return new ResponseEntity<Integer>( 0, headers,
                                              HttpStatus.OK );
         }
         catch( NoSuchElementException ne ) {
             logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
-            return new ResponseEntity<Void>( null, headers,
+            return new ResponseEntity<Integer>( 0, headers,
                                              HttpStatus.NOT_FOUND );
         }
         catch( WrongConfigurationException e ) {
             logger.warn( "Wrong slice kind configuration" );
-            return new ResponseEntity<Void>( null, headers,
+            return new ResponseEntity<Integer>( 0, headers,
                                              HttpStatus.BAD_REQUEST );
         }
 

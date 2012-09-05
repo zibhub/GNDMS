@@ -77,11 +77,11 @@ public class SliceKindClient extends AbstractClient implements SliceKindServiceC
     }
 
     @Override
-    public final ResponseEntity<Void> setSliceKindConfig(final String subspace,
+    public final ResponseEntity< Integer > setSliceKindConfig(final String subspace,
                                                          final String sliceKind,
                                                          final Configuration config,
                                                          final String dn) {
-        return unifiedPut(Void.class, config, getServiceURL() + "/dspace/_" + subspace + "/_"
+        return unifiedPut( Integer.class, config, getServiceURL() + "/dspace/_" + subspace + "/_"
                 + sliceKind, dn);
     }
 
