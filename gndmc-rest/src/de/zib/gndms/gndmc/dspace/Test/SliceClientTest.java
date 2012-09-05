@@ -201,7 +201,7 @@ public class SliceClientTest {
 
         // upload file
         {
-            final ResponseEntity<Void> responseEntity = sliceClient.setFileContent(
+            final ResponseEntity<Integer> responseEntity = sliceClient.setFileContent(
                     subspaceId,
                     sliceKindId,
                     sliceId,
@@ -261,7 +261,7 @@ public class SliceClientTest {
         // download file and compare with uploaded file
         {
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            final ResponseEntity<Void> responseEntity = sliceClient.listFileContent(
+            final ResponseEntity<Integer> responseEntity = sliceClient.listFileContent(
                     subspaceId,
                     sliceKindId,
                     sliceId,
@@ -281,7 +281,7 @@ public class SliceClientTest {
 
         // delete uploaded file
         {
-            final ResponseEntity< Void > responseEntity =
+            final ResponseEntity< Integer > responseEntity =
                     sliceClient.deleteFile(subspaceId, sliceKindId, sliceId, sliceFileName, admindn);
 
             Assert.assertNotNull( responseEntity );

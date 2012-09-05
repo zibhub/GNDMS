@@ -78,19 +78,19 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	
 
 	@Override
-	public final ResponseEntity<Void> setSliceConfiguration(final String subspace,
+	public final ResponseEntity<Integer> setSliceConfiguration(final String subspace,
 			final String sliceKind, final String slice, final SliceConfiguration config, final String dn) {
-		return unifiedPut( Void.class, config, makeConfigFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn );
+		return unifiedPut( Integer.class, config, makeConfigFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn );
 	}
 
 
     @Override
-    public ResponseEntity<Void> setSliceConfiguration( final Specifier<Void> slice,
+    public ResponseEntity<Integer> setSliceConfiguration( final Specifier<Void> slice,
                                                        final SliceConfiguration config,
                                                        final String dn )
     {
 
-		return unifiedPut( Void.class, config, makeConfigFacet( slice.getUrl() ), dn );
+		return unifiedPut( Integer.class, config, makeConfigFacet( slice.getUrl() ), dn );
 	}
 
     @Override
@@ -170,14 +170,14 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	}
 
 	@Override
-	public final ResponseEntity<Void> deleteFiles(final String subspace, final String sliceKind,
+	public final ResponseEntity<Integer> deleteFiles(final String subspace, final String sliceKind,
 			final String slice, final String dn) {
 		return unifiedDelete( makeFilesFacet( genSliceUrl( subspace, sliceKind, slice ) ), dn);
 	}
 
 
     @Override
-    public ResponseEntity<Void> deleteFiles( final Specifier<Void> slice,  final String dn )
+    public ResponseEntity<Integer> deleteFiles( final Specifier<Void> slice,  final String dn )
     {
 		return unifiedDelete( makeFilesFacet( slice.getUrl() ), dn);
 	}
@@ -207,7 +207,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 	}
 
 	@Override
-	public final ResponseEntity<Void> listFileContent(final String subspace,
+	public final ResponseEntity<Integer> listFileContent(final String subspace,
                                                       final String sliceKind, final String slice,
                                                       final String fileName, final List<String> attrs,
                                                       final String dn, final OutputStream out)
@@ -223,7 +223,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 
     @Override
-    public ResponseEntity<Void> listFileContent( final Specifier<Void> slice, final String fileName,
+    public ResponseEntity<Integer> listFileContent( final Specifier<Void> slice, final String fileName,
                                                  final List<String> attrs, final String dn,
                                                  final OutputStream out )
             throws NoSuchAlgorithmException, KeyManagementException, IOException
@@ -246,31 +246,31 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
         httpGetter.get( makeFileNameFacet( slice.getUrl(), fileName ), headers );
 
-        return new ResponseEntity< Void >(
-                null,
+        return new ResponseEntity< Integer >(
+                0,
                 responseExtractor.getHeaders(),
                 HttpStatus.valueOf( responseExtractor.getStatusCode() ) );
 	}
 
 	@Override
-	public final ResponseEntity<Void> setFileContent(final String subspace,
+	public final ResponseEntity<Integer> setFileContent(final String subspace,
 			final String sliceKind, final String slice, final String fileName,
 			final MultipartFile file, final String dn ) {
 
-        return postFile(Void.class, file.getName(), file.getOriginalFilename(),
+        return postFile(Integer.class, file.getName(), file.getOriginalFilename(),
                 makeFileNameFacet(genSliceUrl(subspace, sliceKind, slice), fileName), dn);
 	}
 
 
     @Override
-    public ResponseEntity<Void> setFileContent( final Specifier<Void> slice, final String fileName,
+    public ResponseEntity<Integer> setFileContent( final Specifier<Void> slice, final String fileName,
                                                 final MultipartFile file, final String dn )
     {
-		return unifiedPut(Void.class, file, makeFileNameFacet( slice.getUrl(), fileName ), dn);
+		return unifiedPut(Integer.class, file, makeFileNameFacet( slice.getUrl(), fileName ), dn);
 	}
 
 	@Override
-	public final ResponseEntity<Void> deleteFile(final String subspace,
+	public final ResponseEntity<Integer> deleteFile(final String subspace,
 			final String sliceKind, final String slice, final String fileName, final String dn ) {
 
         return unifiedDelete(
@@ -279,7 +279,7 @@ public class SliceClient extends AbstractClient implements SliceServiceClient {
 
 
     @Override
-    public ResponseEntity<Void> deleteFile( final Specifier<Void> slice, final String fileName,
+    public ResponseEntity<Integer> deleteFile( final Specifier<Void> slice, final String fileName,
                                             final String dn ) {
 
         return unifiedDelete( makeFileNameFacet( slice.getUrl(), fileName ), dn);

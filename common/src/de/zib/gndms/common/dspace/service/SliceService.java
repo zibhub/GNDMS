@@ -79,7 +79,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> setSliceConfiguration(String subspace, String sliceKind,
+	ResponseEntity<Integer> setSliceConfiguration(String subspace, String sliceKind,
 			String slice, SliceConfiguration config, String dn);
 
             /**
@@ -169,7 +169,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteFiles(String subspace, String sliceKind,
+	ResponseEntity<Integer> deleteFiles(String subspace, String sliceKind,
 			String slice, String dn);
 
 	/**
@@ -221,7 +221,7 @@ public interface SliceService {
      * 			  The outputstream the file information shall be written to.
      * @return The file.
 	 */
-	ResponseEntity<Void> listFileContent(String subspace, String sliceKind,
+	ResponseEntity<Integer> listFileContent(String subspace, String sliceKind,
                                          String slice, String fileName, List<String> attrs, String dn, OutputStream out)
             throws NoSuchAlgorithmException, KeyManagementException, IOException;
 
@@ -242,7 +242,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> setFileContent(String subspace, String sliceKind,
+	ResponseEntity<Integer> setFileContent(String subspace, String sliceKind,
 			String slice, String fileName, MultipartFile file, String dn);
 
 	/**
@@ -260,7 +260,7 @@ public interface SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteFile(String subspace, String sliceKind,
+	ResponseEntity<Integer> deleteFile(String subspace, String sliceKind,
 			String slice, String fileName, String dn);
 
 }

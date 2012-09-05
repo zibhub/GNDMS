@@ -131,7 +131,7 @@ public class SliceServiceImpl implements SliceService {
     @Override
     @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/config", method = RequestMethod.PUT )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> setSliceConfiguration(
+    public ResponseEntity< Integer > setSliceConfiguration(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
@@ -147,10 +147,10 @@ public class SliceServiceImpl implements SliceService {
             if( config.getSize() != null )
                 slice.setTotalStorageSize( config.getSize() );
 
-            return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
+            return new ResponseEntity< Integer >( null, headers, HttpStatus.OK );
         } catch( NoSuchElementException e ) {
             logger.warn( e.getMessage() );
-            return new ResponseEntity< Void >( null, headers, HttpStatus.NOT_FOUND );
+            return new ResponseEntity< Integer >( null, headers, HttpStatus.NOT_FOUND );
         }
     }
 
@@ -294,7 +294,7 @@ public class SliceServiceImpl implements SliceService {
 
     @RequestMapping(value = "/_{subspace}/_{sliceKind}/_{sliceId}/files", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> setFileContents(
+    public ResponseEntity<Integer> setFileContents(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKind,
             @PathVariable final String sliceId,
@@ -322,23 +322,23 @@ public class SliceServiceImpl implements SliceService {
 
                 file.transferTo( newFile );
             }
-            return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+            return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
         } catch (NoSuchElementException ne) {
             logger.warn(ne.getMessage(), ne);
-            return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+            return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
         } catch (FileNotFoundException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
         } catch (IOException e) {
             logger.warn(e.getMessage(), e);
-            return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+            return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
         }
     }
 
 	@Override
 	@RequestMapping(value = "/_{subspace}/_{sliceKind}/_{slice}/files", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Void> deleteFiles(
+	public ResponseEntity<Integer> deleteFiles(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKind,
 			@PathVariable final String sliceId,
@@ -356,14 +356,14 @@ public class SliceServiceImpl implements SliceService {
                 String p = path + File.separatorChar + s;
                 if ( !directoryAux.deleteDirectory( dn, p ) ) {
                     logger.warn("Some file in directory " + p + " could not be deleted.");
-                    return new ResponseEntity<Void>(null, headers, HttpStatus.CONFLICT);
+                    return new ResponseEntity<Integer>(null, headers, HttpStatus.CONFLICT);
                 }
             }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
 		}
-        return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+        return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
 	}
 
     @Override
@@ -414,7 +414,7 @@ public class SliceServiceImpl implements SliceService {
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}",
             method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Void> listFileContent(
+	public ResponseEntity<Integer> listFileContent(
             @PathVariable final String subspaceId,
             @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
@@ -444,25 +444,25 @@ public class SliceServiceImpl implements SliceService {
                     FileCopyUtils.copy( new FileInputStream( file ), out );
 				}
                 
-				return new ResponseEntity<Void>(null, headers,
+				return new ResponseEntity<Integer>(null, headers,
 						HttpStatus.OK);
 			} else {
 				logger.warn("File " + file + " cannot be read or is no file.");
-				return new ResponseEntity<Void>(null, headers,
+				return new ResponseEntity<Integer>(null, headers,
 						HttpStatus.FORBIDDEN);
 			}
 
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage());
-			return new ResponseEntity<Void>(null, headers,
+			return new ResponseEntity<Integer>(null, headers,
 					HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Void>(null, headers,
+			return new ResponseEntity<Integer>(null, headers,
 					HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
 			logger.warn(e.getMessage());
-			return new ResponseEntity<Void>(null, headers,
+			return new ResponseEntity<Integer>(null, headers,
 					HttpStatus.FORBIDDEN);
 		}
 	}
@@ -470,7 +470,7 @@ public class SliceServiceImpl implements SliceService {
 	@Override
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}", method = RequestMethod.POST)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Void> setFileContent(
+	public ResponseEntity<Integer> setFileContent(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
@@ -501,23 +501,23 @@ public class SliceServiceImpl implements SliceService {
 
 			//dos.write(file.getBytes());
 			//dos.close();
-			return new ResponseEntity<Void>(null, headers, HttpStatus.OK);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.OK);
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
 		} catch (FileNotFoundException e) {
 			logger.warn(e.getMessage(), e);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
 		} catch (IOException e) {
 			logger.warn(e.getMessage(), e);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.FORBIDDEN);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.FORBIDDEN);
 		}
 	}
 
 	@Override
 	@RequestMapping(value = "/_{subspaceId}/_{sliceKindId}/_{sliceId}/_{fileName:.*}", method = RequestMethod.DELETE)
     @Secured( "ROLE_USER" )
-	public ResponseEntity<Void> deleteFile(
+	public ResponseEntity<Integer> deleteFile(
 			@PathVariable final String subspaceId,
 			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
@@ -531,14 +531,14 @@ public class SliceServiceImpl implements SliceService {
 			String path = space.getPathForSlice( slice );
 
             if( directoryAux.deleteDirectory( dn, path + File.separator + fileName ) ) {
-                return new ResponseEntity< Void >( null, headers, HttpStatus.OK );
+                return new ResponseEntity< Integer >( null, headers, HttpStatus.OK );
             } else {
                 logger.warn( "File " + path + " could not be deleted." );
-                return new ResponseEntity< Void >( null, headers, HttpStatus.FORBIDDEN );
+                return new ResponseEntity< Integer >( null, headers, HttpStatus.FORBIDDEN );
             }
 		} catch (NoSuchElementException ne) {
 			logger.warn(ne.getMessage(), ne);
-			return new ResponseEntity<Void>(null, headers, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Integer>(null, headers, HttpStatus.NOT_FOUND);
 		}
 	}
 

@@ -75,7 +75,7 @@ public interface SliceServiceClient extends SliceService {
      *            The dn of the user invoking the method.
      * @return A confirmation.
      */
-    ResponseEntity<Void> setSliceConfiguration( Specifier<Void> slice, SliceConfiguration config, String dn);
+    ResponseEntity<Integer> setSliceConfiguration( Specifier<Void> slice, SliceConfiguration config, String dn);
 
     /**
      * Get the slice configuration.
@@ -132,7 +132,7 @@ public interface SliceServiceClient extends SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteFiles( Specifier<Void> slice, String dn);
+	ResponseEntity<Integer> deleteFiles( Specifier<Void> slice, String dn);
 
 	/**
 	 * Returns the URL of the slice for GridFTP access.
@@ -161,7 +161,7 @@ public interface SliceServiceClient extends SliceService {
      * 			  The outputstream the file information shall be written to.
      * @return The file.
 	 */
-	ResponseEntity<Void> listFileContent(
+	ResponseEntity<Integer> listFileContent(
             Specifier<Void> slice,
             String fileName,
             List<String> attrs,
@@ -182,7 +182,7 @@ public interface SliceServiceClient extends SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> setFileContent( Specifier<Void> slice, String fileName, MultipartFile file, String dn);
+	ResponseEntity<Integer> setFileContent( Specifier<Void> slice, String fileName, MultipartFile file, String dn);
 
 	/**
 	 * Deletes a specific file.
@@ -195,6 +195,6 @@ public interface SliceServiceClient extends SliceService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Void> deleteFile( Specifier<Void> slice, String fileName, String dn);
+	ResponseEntity<Integer> deleteFile( Specifier<Void> slice, String fileName, String dn);
 
 }

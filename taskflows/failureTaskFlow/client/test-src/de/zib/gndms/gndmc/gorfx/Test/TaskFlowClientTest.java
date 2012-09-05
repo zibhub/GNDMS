@@ -121,7 +121,7 @@ public class TaskFlowClientTest {
             order.setMessage( ORDER_MESSAGE );
             order.setWhere( FailureOrder.FailurePlace.NOWHERE );
 
-            final ResponseEntity< Void > responseEntity = taskFlowClient.setOrder(
+            final ResponseEntity< Integer > responseEntity = taskFlowClient.setOrder(
                     FailureTaskFlowMeta.TASK_FLOW_TYPE_KEY,
                     taskFlowId,
                     order,

@@ -218,9 +218,9 @@ public abstract class AbstractClient {
 	 * @param dn The user name.
 	 * @return The response as entity with Void body.
 	 */
-	protected final ResponseEntity<Void> unifiedDelete(final String url,
+	protected final ResponseEntity<Integer> unifiedDelete(final String url,
 			final String dn) {
-		return unifiedX(HttpMethod.DELETE, Void.class, null, url, dn, null);
+		return unifiedX(HttpMethod.DELETE, Integer.class, null, url, dn, null);
 	}
 
 	/**
