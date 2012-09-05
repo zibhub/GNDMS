@@ -165,7 +165,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
 
     @RequestMapping( value = "/_{type}/_{id}/order", method = RequestMethod.POST )
     @Secured( "ROLE_USER" )
-    public ResponseEntity<Void> setOrder( @PathVariable String type, @PathVariable String id,
+    public ResponseEntity< Integer > setOrder( @PathVariable String type, @PathVariable String id,
                                           @RequestBody Order orq, @RequestHeader( "DN" ) String dn,
                                           @RequestHeader( "WId" ) String wid ) {
 
@@ -177,7 +177,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 hs = TaskFlowServiceAux.setAndValidateOrder( orq, tf, tff );
         }
 
-        return new ResponseEntity<Void>( null, getHeader( type, id, "order", dn, wid ), hs );
+        return new ResponseEntity< Integer >( 0, getHeader( type, id, "order", dn, wid ), hs );
     }
 
 

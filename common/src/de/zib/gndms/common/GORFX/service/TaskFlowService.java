@@ -95,7 +95,7 @@ public interface TaskFlowService {
      *      - 400 if it wasn't successfully  validated
      *      - 404 if type or id are not valid.
      */
-    ResponseEntity<Void> setOrder( String type, String id, Order orq, String dn, String wid );
+    ResponseEntity< Integer > setOrder( String type, String id, Order orq, String dn, String wid );
 
     /** 
      * @brief Delivers all quotes for the order.
