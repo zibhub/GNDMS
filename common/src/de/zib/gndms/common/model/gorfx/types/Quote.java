@@ -35,6 +35,8 @@ public class Quote implements Cloneable {
     private Long expectedSize;
     // map for additional notes
     private Map<String,String> additionalNotes;
+    // what is the origin of the quote
+    private String site;
 
 
     public DateTime getAccepted() {
@@ -122,4 +124,14 @@ public class Quote implements Cloneable {
 			clone.setExpectedSize(getExpectedSize());
 		return clone;
 	}
+
+
+    public String getSite() {
+        return site;
+    }
+
+
+    public void setSite( String site ) {
+        this.site = site;
+    }
 }

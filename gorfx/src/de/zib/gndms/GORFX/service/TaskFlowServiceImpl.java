@@ -6,6 +6,7 @@ import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
+import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.security.SpringSecurityContextHolder;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
@@ -78,6 +79,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private TaskExecutionService executorService;
     private Dao dao;
+    private GridConfig gridConfig;
 
 
     @PostConstruct
@@ -187,13 +189,19 @@ public class TaskFlowServiceImpl implements TaskFlowService {
         WidAux.initWid( wid );
         logger.debug( "quote called" );
         HttpStatus hs = HttpStatus.NOT_FOUND;
-        List<Specifier<Quote>> res = null;
+        List< Specifier< Quote > > res = null;
         if ( taskFlowProvider.exists( type ) ) {
             TaskFlowFactory tff = taskFlowProvider.getFactoryForTaskFlow( type );
             TaskFlow tf = tff.find( id );
             if ( tf != null ) {
                 try {
-                    List<Quote> quoteList = TaskFlowServiceAux.createQuotes( tff, tf );
+                    List< Quote > quoteList = TaskFlowServiceAux.createQuotes( tff, tf );
+
+                    // set origin of quotes if not already set
+                    for( Quote quote: quoteList ) {
+                        if( quote.getSite() == null )
+                            quote.setSite( getGridConfig().getBaseUrl() );
+                    }
 
                     res = new ArrayList<Specifier<Quote>>( quoteList.size() );
                     HashMap<String, String> urimap = new HashMap<String, String>( 3 );
@@ -202,7 +210,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                     urimap.put( "type", type );
                     for ( int i = 0; i < quoteList.size(); ++i ) {
                         urimap.put( "idx", String.valueOf( i ) );
-                        Specifier<Quote> sq = new Specifier<Quote>();
+                        Specifier< Quote > sq = new Specifier< Quote >();
                         sq.setUriMap( Collections.unmodifiableMap( urimap ) );
                         sq.setUrl( uriFactory.quoteUri( urimap ) );
                         sq.setPayload( quoteList.get( i ) );
@@ -331,13 +339,16 @@ public class TaskFlowServiceImpl implements TaskFlowService {
                 else {
                     tf.getOrder().setSecurityContextHolder( new SpringSecurityContextHolder(
                             SecurityContextHolder.getContext() ) );
-                    TaskAction ta = tff.createAction();
+                    TaskAction ta;
                     Taskling taskling;
                     if ( tf.hasQuotes() ) {
                         logger.debug( "submitting using quote: " + quoteId);
+                        ta = tff.createAction( ( Quote )tf.getQuotes().get( quoteId == null ? 0 : quoteId ) );
                         taskling = submitTaskActionWithQuotes( quoteId, tf, ta, wid );
-                    } else
+                    } else {
+                        ta = tff.createAction();
                         taskling = executorService.submitTaskAction( dao, ta, tf.getOrder(), wid );
+                    }
                     hs = HttpStatus.CREATED;
                     Specifier<Facets> spec = null;
                     try {
@@ -545,5 +556,16 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     @Inject
     public void setTaskClient( TaskClient taskClient ) {
         this.taskClient = taskClient;
+    }
+
+
+    public GridConfig getGridConfig() {
+        return gridConfig;
+    }
+
+
+    @Inject
+    public void setGridConfig( GridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
     }
 }
