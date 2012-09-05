@@ -180,14 +180,14 @@ public class SliceServiceImpl implements SliceService {
     @Secured( "ROLE_USER" )
 	public ResponseEntity<Specifier<Void>> transformSlice(
 			@PathVariable final String subspaceId,
-			@PathVariable final String sliceKind,
+			@PathVariable final String sliceKindId,
 			@PathVariable final String sliceId,
             @RequestBody final Specifier<Void> newSliceKind,
             @RequestHeader("DN") final String dn) {
-		GNDMSResponseHeader headers = setHeaders(subspaceId, sliceKind, sliceId, dn);
+		GNDMSResponseHeader headers = setHeaders(subspaceId, sliceKindId, sliceId, dn);
 
 		try {
-			Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+			Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 
 			SliceKind newSliceK = sliceKindProvider.get( subspaceId,
                     newSliceKind.getUrl());
@@ -217,7 +217,7 @@ public class SliceServiceImpl implements SliceService {
 			HashMap<String, String> urimap = new HashMap<String, String>(2);
 			urimap.put("service", "dspace");
 			urimap.put(UriFactory.SUBSPACE, subspaceId );
-			urimap.put(UriFactory.SLICE_KIND, sliceKind );
+			urimap.put(UriFactory.SLICE_KIND, sliceKindId );
 			urimap.put(UriFactory.SLICE, sliceId );
 			spec.setUriMap(new HashMap<String, String>(urimap));
 			spec.setUrl(uriFactory.quoteUri(urimap));
