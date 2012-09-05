@@ -239,7 +239,7 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 
     @Override
-	@RequestMapping(value = "/_{subspace}/config", method = RequestMethod.GET)
+	@RequestMapping(value = "/_{subspaceId}/config", method = RequestMethod.GET)
     @Secured( "ROLE_USER" )
 	public ResponseEntity< SubspaceInformation > getSubspaceInformation(
             @PathVariable final String subspaceId,

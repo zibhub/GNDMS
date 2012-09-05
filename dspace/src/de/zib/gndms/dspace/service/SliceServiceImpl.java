@@ -133,14 +133,14 @@ public class SliceServiceImpl implements SliceService {
     @Secured( "ROLE_USER" )
     public ResponseEntity<Void> setSliceConfiguration(
             @PathVariable final String subspaceId,
-            @PathVariable final String sliceKind,
+            @PathVariable final String sliceKindId,
             @PathVariable final String sliceId,
             @RequestBody final SliceConfiguration config,
             @RequestHeader( "DN" ) final String dn ) {
-        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKind, sliceId, dn );
+        GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
         try {
-            Slice slice = findSliceOfKind( subspaceId, sliceKind, sliceId );
+            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
 
             if( null != config.getTerminationTime() )
                 slice.setTerminationTime( config.getTerminationTime() );
