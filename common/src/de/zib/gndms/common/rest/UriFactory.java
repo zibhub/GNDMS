@@ -376,7 +376,7 @@ public class UriFactory {
 
 
     public static Specifier< Void > parseSliceSpecifier( final String uri ) {
-        Pattern pattern = Pattern.compile( "(.*)/_([^/]+)/_([^/]+)/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile( "(.*)/dspace/_([^/]+)/_([^/]+)/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher( uri );
 
         if( matcher.matches() )
@@ -391,7 +391,7 @@ public class UriFactory {
 
 
     public static Specifier< Void > parseSliceKindSpecifier( final String uri ) {
-        Pattern pattern = Pattern.compile( "(.*)/_([^/]+)/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile( "(.*)/dspace/_([^/]+)/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher( uri );
 
         if( matcher.matches() )
@@ -405,7 +405,7 @@ public class UriFactory {
 
 
     public static Specifier< Void > parseSubspaceSpecifier( final String uri ) {
-        Pattern pattern = Pattern.compile( "(.*)/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
+        Pattern pattern = Pattern.compile( "(.*)/dspace/_([^/]+)/?", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher( uri );
 
         if( matcher.matches() )
