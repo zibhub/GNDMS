@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.filetransfer.server;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
@@ -75,7 +76,7 @@ public class FileTransferTaskFlowFactory
 
 
     @Override
-    public TaskAction createAction() {
+    public TaskAction createAction( final Quote quote ) {
         FileTransferTaskAction action = new FileTransferTaskAction();
         getInjector().injectMembers( action );
         return action;

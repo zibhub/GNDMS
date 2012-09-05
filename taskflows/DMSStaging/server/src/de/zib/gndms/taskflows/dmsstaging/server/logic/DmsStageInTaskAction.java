@@ -16,10 +16,7 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
-import de.zib.gndms.common.model.gorfx.types.TaskFlowFailure;
-import de.zib.gndms.common.model.gorfx.types.TaskFlowStatus;
-import de.zib.gndms.common.model.gorfx.types.TaskResult;
-import de.zib.gndms.common.model.gorfx.types.TaskStatus;
+import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
@@ -57,6 +54,8 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     private TaskFlowClient taskFlowClient;
     private TaskClient taskClient;
     private GORFXClient gorfxClient;
+    
+    private Quote acceptedQuote;
 
     public DmsStageInTaskAction( ) {
         super( DmsStageInMeta.DMS_STAGE_IN_KEY );
@@ -74,6 +73,8 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
             throws Exception
     {
         ensureOrder();
+
+        super.onCreated( wid, state,  isRestartedTask,  altTaskState );
     }
 
 
@@ -84,24 +85,31 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     {
         ensureOrder();
 
-        GORFXClient tmpGorfxClient = new GORFXClient( getOrderBean().getGridSite() );
+        GORFXClient tmpGorfxClient = new GORFXClient( getAcceptedQuote().getSite() );
         tmpGorfxClient.setRestTemplate( gorfxClient.getRestTemplate() );
         
-        TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( getOrderBean().getGridSite() );
+        TaskFlowClient tmpTaskFlowClient = new TaskFlowClient( getAcceptedQuote().getSite() );
         tmpTaskFlowClient.setRestTemplate( taskFlowClient.getRestTemplate() );
         
-        TaskClient tmpTaskClient = new TaskClient( getOrderBean().getGridSite() );
+        TaskClient tmpTaskClient = new TaskClient( getAcceptedQuote().getSite() );
         tmpTaskClient.setRestTemplate( taskClient.getRestTemplate() );
 
         if( !isRestartedTask || !getOrderBean().hasWorkflowId() ) {
             final ResponseEntity< Specifier< Facets > > responseEntity = tmpGorfxClient.createTaskFlow(
                     ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                    getOrderBean(),
+                    getOrderBean().createProviderStagInOrder(),
                     getOrder().getDNFromContext(),
                     getOrder().getActId(),
                     LanguageAlgebra.getMultiValueMapFromMap(getOrder().getActContext() ) );
 
             getOrderBean().setWorkflowId( responseEntity.getBody().getUriMap().get( "id" ) );
+            
+            tmpTaskFlowClient.setQuote(
+                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                    responseEntity.getBody().getUriMap().get( UriFactory.TASKFLOW_ID ),
+                    getAcceptedQuote(),
+                    getOrder().getDNFromContext(),
+                    getOrder().getActId() );
         }
 
         if( !isRestartedTask || !getOrderBean().hasTaskId() ) {
@@ -214,5 +222,15 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     @Inject
     public void setDao( Dao dao ) {
         this.dao = dao;
+    }
+
+
+    public Quote getAcceptedQuote() {
+        return acceptedQuote;
+    }
+
+
+    public void setAcceptedQuote( Quote acceptedQuote ) {
+        this.acceptedQuote = acceptedQuote;
     }
 }

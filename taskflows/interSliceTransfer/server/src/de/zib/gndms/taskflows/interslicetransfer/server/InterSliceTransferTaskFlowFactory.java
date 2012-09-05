@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.interslicetransfer.server;
  */
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
@@ -77,7 +78,7 @@ public class InterSliceTransferTaskFlowFactory
 
 
     @Override
-    public TaskAction createAction() {
+    public TaskAction createAction( final Quote quote ) {
         InterSliceTransferTaskAction action = new InterSliceTransferTaskAction();
         getInjector().injectMembers( action );
         action.setMessageConverter( getInjector().getInstance( "converter", HttpMessageConverter.class ) );

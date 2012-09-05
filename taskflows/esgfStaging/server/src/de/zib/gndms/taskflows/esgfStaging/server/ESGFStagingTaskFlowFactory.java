@@ -1,6 +1,7 @@
 package de.zib.gndms.taskflows.esgfStaging.server;
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.infra.GridConfig;
@@ -142,7 +143,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
 
 
     @Override
-    public ESGFStagingTFAction createAction() {
+    public ESGFStagingTFAction createAction( final Quote quote ) {
         ESGFStagingTFAction action = new ESGFStagingTFAction(  );
         getInjector().injectMembers( action );
 

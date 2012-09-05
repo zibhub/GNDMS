@@ -87,9 +87,12 @@ public class ExternalProviderStageInQuoteCalculator extends
                 throw new IllegalArgumentException( "Invalid estimationCommand script: " + estCommandFile.getPath() );
 			result = createOfferViaEstScript(estCommandFile, cont);
         }
-        else
+        else {
+            if( null == cont )
+                throw new IllegalStateException( "Cannot create quotes without estimationCommand. Perhaps, the data provider should be configured." );
             /* Use plain copy if no estimation script has been specified */ 
             result = cont.clone();
+        }
         return Collections.singletonList( result );
     }
 

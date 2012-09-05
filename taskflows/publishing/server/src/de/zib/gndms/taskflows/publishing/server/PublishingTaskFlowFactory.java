@@ -1,6 +1,7 @@
 package de.zib.gndms.taskflows.publishing.server;
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.infra.GridConfig;
@@ -101,7 +102,7 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
 
 
     @Override
-    public TaskAction createAction() {
+    public TaskAction createAction( final Quote quote ) {
         PublishingTFAction action = new PublishingTFAction(  );
         getInjector().injectMembers(action);
 

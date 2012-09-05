@@ -16,6 +16,7 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server;
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
@@ -60,8 +61,11 @@ public class DmsStageInTaskFlowFactory
 
 
     @Override
-    public TaskAction createAction( ) {
+    public TaskAction createAction( Quote quote ) {
         DmsStageInTaskAction taskAction = new DmsStageInTaskAction();
+        
+        taskAction.setAcceptedQuote( quote );
+        
         injectMembers( taskAction );
         return taskAction;
     }

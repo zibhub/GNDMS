@@ -31,10 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @date: 19.06.12
@@ -68,7 +65,7 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
                 // todo: perhaps, these taskFlows should be deleted at the end...
                 final ResponseEntity< Specifier< Facets > > taskFlow = tmpGorfxClient.createTaskFlow(
                         ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                        getOrderBean(),
+                        getOrderBean().createProviderStagInOrder(),
                         getOrder().getDNFromContext(),
                         getOrder().getActId(),
                         LanguageAlgebra.getMultiValueMapFromMap( getOrder().getActContext( ) ) );
@@ -88,42 +85,18 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
                         getOrder().getDNFromContext(),
                         getOrder().getActId() );
 
-                for( int idx = 0; idx < responseEntity.getBody().size(); ++idx ) {
-                    Specifier< Quote > spec = responseEntity.getBody().get( idx );
+                for( Specifier< Quote > specifier: responseEntity.getBody() ) {
+                    final Quote quote = specifier.getPayload();
 
-                    // get quote with index idx
-                    try {
-                        final ResponseEntity<Quote> responseEntityQuote = tmpTaskFlowClient.getQuote(
-                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                                taskFlowId,
-                                idx,
-                                getOrder().getDNFromContext(),
-                                getOrder().getActId() );
-
-                        // THIS IS IT - A NEW QUOTE :)
-                        quotes.add( responseEntityQuote.getBody() );
-                        
-                        tmpTaskFlowClient.deleteTaskflow(
-                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                                taskFlowId,
-                                getOrder().getDNFromContext(),
-                                getOrder().getActId() );
-                    }
-                    catch( Exception e ) {
-                        logger.debug( "Could not get Quote[" + idx + "] from site '" + gorfxID + "'", e );
-
-                        tmpTaskFlowClient.deleteTaskflow(
-                                ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                                taskFlowId,
-                                getOrder().getDNFromContext(),
-                                getOrder().getActId() );
-
-                        continue;
-                    }
+                    // THIS IS IT - A NEW QUOTE :)
+                    quotes.add( quote );
+                    
+                    // make sure, site is set correctly
+                    quote.setSite( gorfxID );
                 }
             }
             catch( Exception e ) {
-                logger.debug( "Could not get quotes from site '" + gorfxID + "'", e );
+                logger.debug( "Could not get Quotes from site '" + gorfxID + "'", e );
 
                 tmpTaskFlowClient.deleteTaskflow(
                         ProviderStageInMeta.PROVIDER_STAGING_KEY,
@@ -133,8 +106,15 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
 
                 continue;
             }
-        }
 
+            tmpTaskFlowClient.deleteTaskflow(
+                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
+                    taskFlowId,
+                    getOrder().getDNFromContext(),
+                    getOrder().getActId() );
+
+        }
+        
         return quotes;
     }
 

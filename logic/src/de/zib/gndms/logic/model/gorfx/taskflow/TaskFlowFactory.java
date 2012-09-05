@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model.gorfx.taskflow;
  */
 
 import de.zib.gndms.common.model.gorfx.types.Order;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.logic.model.TaskAction;
@@ -120,7 +121,16 @@ public interface TaskFlowFactory<O extends Order, C extends AbstractQuoteCalcula
      *
      * @return The newly created action.
      */
-    TaskAction createAction();
+    TaskAction createAction( );
+
+    /**
+     * @brief Creates a task action.
+     *
+     * @param quote The accepted quote to create the action for.
+     *
+     * @return The newly created action.
+     */
+    TaskAction createAction( Quote quote );
 
     /**
      * @brief Delivers a list of keys of taskflows, this taskflow depends on.

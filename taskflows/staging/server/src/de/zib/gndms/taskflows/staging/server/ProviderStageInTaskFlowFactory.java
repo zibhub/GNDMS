@@ -17,6 +17,7 @@ package de.zib.gndms.taskflows.staging.server;
  */
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.infra.SettableGridConfig;
 import de.zib.gndms.kit.config.MapConfig;
@@ -143,7 +144,7 @@ public class ProviderStageInTaskFlowFactory
 
 
     @Override
-    public TaskAction createAction() {
+    public TaskAction createAction( final Quote quote ) {
         
         final @NotNull MapConfig config = new MapConfig(getDao().getTaskFlowTypeConfig( getTaskFlowKey() ));
         final Class<? extends AbstractProviderStageInAction> instanceClass;

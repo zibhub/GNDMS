@@ -17,11 +17,11 @@ package de.zib.gndms.taskflows.dmsstaging.client.model;
  */
 
 
-
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
 import org.jetbrains.annotations.NotNull;
 
-import java.lang.String;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,6 +34,8 @@ public class DmsStageInOrder extends ProviderStageInOrder {
     private static final long serialVersionUID = 4197416353040463983L;
 
     private String gridSite;
+    private Map< String, Quote > quotes;
+    
     private String workflowId;
     private String taskId;
 
@@ -42,6 +44,21 @@ public class DmsStageInOrder extends ProviderStageInOrder {
         super();
         super.setTaskFlowType( DmsStageInMeta.DMS_STAGE_IN_KEY );
     }
+
+
+    public ProviderStageInOrder createProviderStagInOrder() {
+        ProviderStageInOrder order = new ProviderStageInOrder();
+
+        order.setActDataFile( getActDataFile() );
+        order.setActMetadataFile( getActMetadataFile() );
+        order.setDataDescriptor( getDataDescriptor() );
+        order.setJustEstimate( isJustEstimate() );
+        order.setSliceConfiguration( getSliceConfiguration() );
+        order.setSliceId( getSliceId() );
+
+        return order;
+    }
+
 
     @Override
     public @NotNull String getDescription() {
@@ -91,6 +108,16 @@ public class DmsStageInOrder extends ProviderStageInOrder {
 
     public boolean  hasTaskId( ) {
         return taskId != null;
+    }
+
+
+    public Map<String, Quote> getQuotes() {
+        return quotes;
+    }
+
+
+    public void setQuotes( Map< String, Quote > quotes ) {
+        this.quotes = quotes;
     }
 }
 

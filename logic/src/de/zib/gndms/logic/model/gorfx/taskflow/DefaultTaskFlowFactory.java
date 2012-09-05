@@ -21,6 +21,7 @@ import com.google.common.cache.CacheLoader;
 import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
+import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.model.common.repository.Dao;
 import de.zib.gndms.model.common.repository.TransientDao;
@@ -279,5 +280,11 @@ public abstract class DefaultTaskFlowFactory<O extends Order, C extends Abstract
         public void setId( String id ) {
             super.setId( id );
         }
+    }
+    
+
+    @Override
+    public TaskAction< O > createAction( ) {
+        return createAction( null );
     }
 }

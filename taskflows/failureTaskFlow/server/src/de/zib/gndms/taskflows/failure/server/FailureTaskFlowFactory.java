@@ -1,6 +1,7 @@
 package de.zib.gndms.taskflows.failure.server;
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.logic.model.TaskAction;
@@ -85,7 +86,7 @@ public class FailureTaskFlowFactory extends DefaultTaskFlowFactory< FailureOrder
 
 
     @Override
-    public TaskAction createAction() {
+    public TaskAction createAction( final Quote quote ) {
         FailureTFAction action = new FailureTFAction(  );
         getInjector().injectMembers( action );
 

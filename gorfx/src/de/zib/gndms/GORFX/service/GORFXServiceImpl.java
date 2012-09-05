@@ -292,6 +292,7 @@ public class GORFXServiceImpl implements GORFXService {
         TaskFlow tf = tff.create();
         TaskFlowServiceAux.setOrderAsDelegate( order, tf, tff );
         tf.getOrder().setMyProxyToken( GNDMSResponseHeader.extractTokenFromMap( context ) );
+        tf.getOrder().setActId( wid );
         Map< String, String> ctx = new HashMap<String, String>( 2 );
         ctx.put( "DN", dn );
         tf.getOrder().setActContext( ctx );
