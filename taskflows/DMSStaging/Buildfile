@@ -38,7 +38,7 @@ define 'dmsstaging' do
 
     desc 'The server side of the plugin'
     define 'server', :layout => dmsLayout('server', 'dmsStaging-server') do
-        compile.with project('client'), GNDMS_COMMON, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_VOLDMODEL, GNDMS_GNDMC_REST, GNDMS_STUFF, STAGING_CLIENT, INJECT, OPENJPA, JETBRAINS_ANNOTATIONS, SLF4J, SPRING
+        compile.with project('client'), GNDMS_COMMON, GNDMS_KIT, GNDMS_LOGIC, GNDMS_INFRA, GNDMS_MODEL, GNDMS_NEOMODEL, GNDMS_INFRA, GNDMS_VOLDMODEL, GNDMS_GNDMC_REST, GNDMS_STUFF, STAGING_CLIENT, INJECT, OPENJPA, JETBRAINS_ANNOTATIONS, SLF4J, SPRING
 
         compile
         meta_inf << file( _( 'src/META-INF/services' ) )

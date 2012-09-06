@@ -118,7 +118,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
         etcf.setTfClient( tmpTaskFlowClient );
 
         MapConfig config = new MapConfig( getConfigMapData() );
-        final Integer updateInterval = config.getIntOption( "updateInterval", 3000 );
+        final Integer updateInterval = config.getIntOption( "pollingInterval", 3000 );
         etcf.setPollingDelay( updateInterval );
         
         etcf.execTF(
