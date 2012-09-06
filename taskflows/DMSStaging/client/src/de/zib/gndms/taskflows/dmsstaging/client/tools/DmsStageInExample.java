@@ -99,7 +99,7 @@ public class DmsStageInExample extends GORFXTaskFlowExample {
     private void showResult( final Specifier<Void> result ) {
 
         SliceClient sliceClient = createBean( SliceClient.class );
-        sliceClient.setServiceURL( gorfxEpUrl );
+        sliceClient.setServiceURL( result.getUriMap().get( UriFactory.BASE_URL ) );
         final ResponseEntity<List<FileStats>> listResponseEntity =
                 sliceClient.listFiles( result.getUriMap().get( UriFactory.SUBSPACE ),
                         result.getUriMap().get( UriFactory.SLICE_KIND ),

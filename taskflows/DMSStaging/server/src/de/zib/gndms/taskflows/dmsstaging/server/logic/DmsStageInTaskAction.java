@@ -16,13 +16,12 @@
 
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
-import de.zib.gndms.common.model.gorfx.types.*;
-import de.zib.gndms.common.rest.Facets;
-import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskResult;
+import de.zib.gndms.common.rest.CertificatePurpose;
+import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.UriFactory;
-import de.zib.gndms.gndmc.gorfx.GORFXClient;
-import de.zib.gndms.gndmc.gorfx.TaskClient;
-import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.gndmc.gorfx.*;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.gorfx.types.TaskState;
@@ -30,13 +29,12 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import de.zib.gndms.stuff.misc.LanguageAlgebra;
 import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInMeta;
 import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
-import de.zib.gndms.taskflows.staging.client.ProviderStageInMeta;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInResult;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInResult;
 import de.zib.gndms.voldmodel.Adis;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.http.ResponseEntity;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -54,6 +52,8 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     private TaskFlowClient taskFlowClient;
     private TaskClient taskClient;
     private GORFXClient gorfxClient;
+
+    private ProviderStageInResult result;
     
     private Quote acceptedQuote;
 
@@ -94,78 +94,44 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
         TaskClient tmpTaskClient = new TaskClient( getAcceptedQuote().getSite() );
         tmpTaskClient.setRestTemplate( taskClient.getRestTemplate() );
 
-        if( !isRestartedTask || !getOrderBean().hasWorkflowId() ) {
-            final ResponseEntity< Specifier< Facets > > responseEntity = tmpGorfxClient.createTaskFlow(
-                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                    getOrderBean().createProviderStagInOrder(),
-                    getOrder().getDNFromContext(),
-                    getOrder().getActId(),
-                    LanguageAlgebra.getMultiValueMapFromMap(getOrder().getActContext() ) );
+        AbstractTaskFlowExecClient etcf = new ExampleTaskFlowExecClient() {
+            @Override
+            public void handleResult( TaskResult res ) {
 
-            getOrderBean().setWorkflowId( responseEntity.getBody().getUriMap().get( "id" ) );
-            
-            tmpTaskFlowClient.setQuote(
-                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                    responseEntity.getBody().getUriMap().get( UriFactory.TASKFLOW_ID ),
-                    getAcceptedQuote(),
-                    getOrder().getDNFromContext(),
-                    getOrder().getActId() );
-        }
-
-        if( !isRestartedTask || !getOrderBean().hasTaskId() ) {
-            final ResponseEntity<Specifier<Facets>> responseEntity = tmpTaskFlowClient.createTask(
-                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                    getOrderBean().getWorkflowId(),
-                    0,
-                    getOrder().getDNFromContext(),
-                    getOrder().getActId());
-            
-            getOrderBean().setTaskId( responseEntity.getBody().getUriMap().get( UriFactory.TASK_ID ) );
-        }
-                
-        while( true ) {
-            final ResponseEntity< TaskFlowStatus > status = tmpTaskFlowClient.getStatus(
-                    ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                    getOrderBean().getWorkflowId(),
-                    getOrder().getDNFromContext(),
-                    getOrder().getActId() );
-
-            if( status.getBody().getState().equals( TaskFlowStatus.State.TASK_DONE ) ) {
-                
-                if( status.getBody().getTaskStatus().getStatus().equals( TaskStatus.Status.FAILED ) ) {
-                    
-                    transit( TaskState.FAILED );
-                    final ResponseEntity< TaskFlowFailure > errors = tmpTaskFlowClient.getErrors(
-                            ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                            getOrderBean().getWorkflowId(),
-                            getOrder().getDNFromContext(),
-                            getOrder().getActId() );
-                    failWithPayload(null, new Exception(errors.getBody().getFailureMessage()));
-                }
-                else if( status.getBody().getTaskStatus().getStatus().equals( TaskStatus.Status.FINISHED ) ) {
-
-                    final ResponseEntity< Specifier< TaskResult > > responseEntity = tmpTaskFlowClient.getResult(
-                            ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                            getOrderBean().getWorkflowId(),
-                            getOrder().getDNFromContext(),
-                            getOrder().getActId() );
-
-                    transitWithPayload( responseEntity.getBody().getPayload(), TaskState.FINISHED );
-                }
-
-                tmpTaskFlowClient.deleteTaskflow(
-                        ProviderStageInMeta.PROVIDER_STAGING_KEY,
-                        getOrderBean().getWorkflowId(),
-                        getOrder().getDNFromContext(),
-                        getOrder().getActId() );
-
-                break;
+                result = ProviderStageInResult.class.cast( res );
             }
 
-            MapConfig config = new MapConfig( getConfigMapData() );
-            final Integer updateInterval = config.getIntOption( "updateInterval", 60000 );
-            Thread.sleep( updateInterval );
-        }
+
+            @Override
+            protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
+
+                context.addMyProxyToken(
+                        CertificatePurpose.C3GRID.toString(),
+                        getOrder().getMyProxyToken().get( CertificatePurpose.C3GRID.toString().toLowerCase() )
+                );
+                return context;
+            }
+        };
+
+        etcf.setGorfxClient( tmpGorfxClient );
+        etcf.setTaskClient( tmpTaskClient );
+        etcf.setTfClient( tmpTaskFlowClient );
+
+        MapConfig config = new MapConfig( getConfigMapData() );
+        final Integer updateInterval = config.getIntOption( "updateInterval", 3000 );
+        etcf.setPollingDelay( updateInterval );
+        
+        etcf.execTF(
+                getOrderBean().createProviderStagInOrder(),
+                getOrder().getDNFromContext(),
+                true,
+                getAcceptedQuote(),
+                getOrder().getActId() );
+        
+        // ensure correct base URL
+        result.getSliceSpecifier().getUriMap().put( UriFactory.BASE_URL, getAcceptedQuote().getSite() );
+
+        transitWithPayload(new DmsStageInResult(result.getSliceSpecifier()), TaskState.FINISHED);
     }
 
 

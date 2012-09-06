@@ -54,7 +54,7 @@ public class DmsStageInTaskFlowFactory
     public Map< String, String > getDefaultConfig( ) {
         HashMap< String, String > config = new HashMap< String, String >( 0 );
 
-        config.put( "updateInterval", "60000" ); // default: every minute
+        config.put( "updateInterval", "1000" ); // default: every second
 
         return config;
     }
