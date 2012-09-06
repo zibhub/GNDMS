@@ -1,30 +1,30 @@
 #!/bin/bash
 
-SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
+SCRIPTDIR="$(dirname $0)/../" ;
+source "$SCRIPTDIR"internal/script-setup.sh
 
 # %{} is shell variable substitution at container runtime
+# $STAGING_COMMAND runs in the slice working dir.
 
-#MDS_URL="http://c3grid.it.irf.tu-dortmund.de:8080/webmds/webmds?info=indexinfo"
-MDS_URL="http://csr-pc25.zib.de/~bzcjorra/mds/webmds.xml"
-# old: MDS_URL="http://c3grid-gt.e-technik.uni-dortmund.de:8080/webmds/webmds?info=indexinfo"
-MDS_PREFIX="g2."
-DMS_AREA_PATH="/tmp"
-DMS_AREA_SIZE="10000" # Unused
+# In- and Output format for script properties
+# currently only PROPS (java-properties) and XML are supported
+SCRIPT_IO_FORMAT="PROPERTIES"
+#SCRIPT_IO_FORMAT="XML"
 
-# One can set the $GRIDHOST variable manually
-# if the detected value isn't the desired one
-# GRIDHOST=""
+# Set your hostname if it is not detected correctly
+#GRIDHOST="$(hostname -f)"
 
-DMS_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$DMS_AREA_PATH"
+# default time to live for slices of the Staging slice kind (in milliseconds)
+# default: one day
+TTL=86400000
 
-# Do not edit below this line unless very sure ------------------------------------------------------------------------------------------------------------
+POLLING_INTERVAL=2000
 
-c3grid_generic
-enable_slicestagein
-enable_filetransfer
-enable_interslicetransfer
-enable_mdscatalog
+
+# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+
+#c3grid_generic
+enable_dmsstaging
 enable_permissions
 enable_sliceChown
-enable_gsiftpDeadlockPrevention
 refresh_system
