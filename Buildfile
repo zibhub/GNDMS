@@ -707,6 +707,11 @@ task 'c3grid-publisher-setupdb' do
 end
 
 
+task 'c3grid-centraldms-setupdb' do
+    system "#{ENV['GNDMS_SOURCE']}/scripts/c3grid/setup-central-dms-site.sh CREATE"
+end
+    
+    
 desc 'Test the c3 data-provider setup'
 task 'c3grid-dp-test' do
     puts ''
