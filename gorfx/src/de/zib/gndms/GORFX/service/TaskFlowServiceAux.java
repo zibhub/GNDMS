@@ -46,8 +46,12 @@ public final class TaskFlowServiceAux {
 
     public static <T extends Order> DelegatingOrder<T> setOrderAsDelegate( Order order, TaskFlow<T> taskFlow, TaskFlowFactory<T, ?> factory ) {
         Class<T> orderClass = factory.getOrderClass();
-        //DelegatingOrder<T> delegate = factory.getOrderDelegate( orderClass.cast( order ) );
-        taskFlow.getOrder().setOrderBean( orderClass.cast( order ) );
+        if( taskFlow.getOrder() == null ) {
+            DelegatingOrder<T> delegate = factory.getOrderDelegate( orderClass.cast( order ) );
+            taskFlow.setOrder( delegate );
+        }
+        else
+            taskFlow.getOrder().setOrderBean( orderClass.cast( order ) );
 
         return taskFlow.getOrder();
     }
