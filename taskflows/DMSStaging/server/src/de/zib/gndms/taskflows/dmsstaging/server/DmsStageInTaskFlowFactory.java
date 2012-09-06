@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.dmsstaging.server;
 
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.SettableGridConfig;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.DefaultTaskFlowFactory;
@@ -58,6 +59,20 @@ public class DmsStageInTaskFlowFactory
         super( DmsStageInMeta.DMS_STAGE_IN_KEY,
                 DmsStageInQuoteCalculator.class,
                 DmsStageInOrder.class );
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setGridConfig( final SettableGridConfig gridConfig ) {
+        this.gridConfig = gridConfig;
+    }
+
+
+    @SuppressWarnings( "SpringJavaAutowiringInspection" )
+    @Inject
+    public void setAdis( final Adis adis ) {
+        this.adis = adis;
     }
 
 
@@ -139,7 +154,7 @@ public class DmsStageInTaskFlowFactory
 
         @Override
         public void call() throws Exception {
-            adis.setDMS( gorfxEP );
+            adis.setDMS(gorfxEP);
         }
     }
 
