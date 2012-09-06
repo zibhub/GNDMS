@@ -144,7 +144,7 @@ public class SliceClientTest {
     )
     public void testCreateSliceKind() {
         try {
-            final ResponseEntity<List< Specifier< Void > >> sliceKind =
+            final ResponseEntity< Specifier< Void > > sliceKind =
                     subspaceClient.createSliceKind( subspaceId, sliceKindId, sliceKindConfig, admindn );
             Assert.assertNotNull( sliceKind );
             Assert.assertEquals( sliceKind.getStatusCode(), HttpStatus.CREATED );
