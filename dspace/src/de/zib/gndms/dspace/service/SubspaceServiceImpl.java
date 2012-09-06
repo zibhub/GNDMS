@@ -354,6 +354,8 @@ public class SubspaceServiceImpl implements SubspaceService {
             // use provider to create slice
             String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn,
                     terminationTime, sliceSize );
+            
+            subspaceProvider.invalidate( subspaceId );
 
             // generate specifier and return it
             Specifier<Void> spec = new Specifier<Void>();
