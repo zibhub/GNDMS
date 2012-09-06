@@ -211,30 +211,41 @@ public class SubspaceServiceImpl implements SubspaceService {
 
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{slicekind}", method = RequestMethod.PUT )
+    @RequestMapping( value = "/_{subspaceId}/_{slicekindId}", method = RequestMethod.PUT )
     @Secured( "ROLE_ADMIN" )
-    public ResponseEntity<List<Specifier<Void>>> createSliceKind(
-            @PathVariable final String subspace,
-            @PathVariable final String slicekind,
+    public ResponseEntity< Specifier< Void > > createSliceKind(
+            @PathVariable final String subspaceId,
+            @PathVariable final String slicekindId,
             @RequestBody final String config,
             @RequestHeader("DN") final String dn) {
-        GNDMSResponseHeader headers = getSubspaceHeaders( subspace, dn );
+        GNDMSResponseHeader headers = getSubspaceHeaders( subspaceId, dn );
 
-        if ( !subspaceProvider.exists( subspace ) ) {
-            logger.info("Illegal Access: subspace " + subspace + " not found");
-            return new ResponseEntity<List<Specifier<Void>>>(null, headers,
-                    HttpStatus.NOT_FOUND);
+        if ( !subspaceProvider.exists( subspaceId ) ) {
+            logger.info("Illegal Access: subspace " + subspaceId + " not found");
+            return new ResponseEntity< Specifier< Void >>( null, headers,
+                    HttpStatus.NOT_FOUND );
         }
-        if( slicekindProvider.exists( subspace, slicekind ) ) {
-            logger.info("Illegal Access: slicekind " + slicekind + " could not be created because it already exists.");
-            return new ResponseEntity<List<Specifier<Void>>>(null, headers,
+        if( slicekindProvider.exists( subspaceId, slicekindId ) ) {
+            logger.info("Illegal Access: slicekind " + slicekindId + " could not be created because it already exists.");
+            return new ResponseEntity< Specifier< Void > >( null, headers,
                     HttpStatus.PRECONDITION_FAILED );
         }
 
         // TODO: catch creation errors and return appropriate HttpStatus
-        slicekindProvider.create( slicekind, "subspace:" + subspace + "; " + config );
+        slicekindProvider.create( slicekindId, "subspace:" + subspaceId + "; " + config );
 
-        return new ResponseEntity<List<Specifier<Void>>>(null, headers, HttpStatus.CREATED);
+        // generate specifier and return it
+        Specifier< Void > spec = new Specifier< Void >();
+
+        HashMap< String, String > urimap = new HashMap< String, String >( 2 );
+        urimap.put( UriFactory.SERVICE, "dspace" );
+        urimap.put( UriFactory.SUBSPACE, subspaceId );
+        urimap.put( UriFactory.SLICE_KIND, slicekindId );
+        urimap.put( UriFactory.BASE_URL, baseUrl );
+        spec.setUriMap( new HashMap< String, String >( urimap ) );
+        spec.setUrl( uriFactory.sliceKindUri( urimap, null ) );
+
+        return new ResponseEntity< Specifier< Void > >( spec, headers, HttpStatus.CREATED );
     }
 
 

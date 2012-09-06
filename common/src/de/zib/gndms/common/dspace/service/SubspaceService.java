@@ -100,7 +100,7 @@ public interface SubspaceService {
      *            The dn of the user invoking the method.
      * @return The list of slice kinds.
      */
-    ResponseEntity<List<Specifier<Void>>> createSliceKind(String subspace,
+    ResponseEntity< Specifier< Void > > createSliceKind(String subspace,
             String sliceKind, String config, String dn);
 
 	/**

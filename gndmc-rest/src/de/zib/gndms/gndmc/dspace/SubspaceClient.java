@@ -80,9 +80,9 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
 	}
 
     @Override
-    public ResponseEntity<List<Specifier<Void>>> createSliceKind( String subspace, String sliceKind, String config, String dn ) {
-        return ( ResponseEntity< List< Specifier< Void > > > ) ( Object ) unifiedPut(
-                List.class, config, getServiceURL() + "/dspace/_" + subspace + "/_" + sliceKind, dn );
+    public ResponseEntity< Specifier< Void > > createSliceKind( String subspace, String sliceKind, String config, String dn ) {
+        return ( ResponseEntity<  Specifier< Void > > ) ( Object ) unifiedPut(
+                Specifier.class, config, getServiceURL() + "/dspace/_" + subspace + "/_" + sliceKind, dn );
     }
 
     @Override
