@@ -15,7 +15,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 
 PUBLISHING_OIDPREFIX="c3published.zib.de"
 # VolD update interval in milliseconds
-PUBLISHING_UPDATE_INTERVAL="5000"
+PUBLISHING_UPDATE_INTERVAL="60000"
 
 # default time to live for slices of the Staging slice kind (in milliseconds)
 # default: one day
