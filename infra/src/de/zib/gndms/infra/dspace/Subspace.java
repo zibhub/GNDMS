@@ -55,7 +55,7 @@ public class Subspace extends de.zib.gndms.model.dspace.Subspace {
 
         final long diskUsage = getDirectoryAux().diskUsage( "root", getPath() );
         information.setDiskUsage( diskUsage );
-        information.setPotentialUsage( getAvailableSize() );
+        information.setPotentialUsage( getTotalSize() - getAvailableSize() );
 
         return information;
     }
