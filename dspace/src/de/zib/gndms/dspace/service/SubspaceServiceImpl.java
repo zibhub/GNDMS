@@ -352,6 +352,7 @@ public class SubspaceServiceImpl implements SubspaceService {
             urimap.put( UriFactory.SUBSPACE, subspaceId );
             urimap.put( UriFactory.SLICE_KIND, sliceKindId );
             urimap.put( UriFactory.SLICE, slice );
+            urimap.put( UriFactory.BASE_URL, baseUrl );
             spec.setUriMap( new HashMap<String, String>( urimap ) );
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
 
