@@ -22,6 +22,7 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ESGFStagingTaskFlow'; \
 	sliceKind: 'EsgfKind'; \
 	trustStoreLocation: '$ESGF_TRUSTSTORE'; \
 	trustStorePassword: '$ESGF_TRUSTSTORE_PASSWORD'; \
+	updateInterval: $UPDATE_INTERVAL; \
 	estimationClass: 'de.zib.gndms.taskflows.esgfStaging.server.ESGFStagingQuoteCalculator'; \
 	stagingClass: 'de.zib.gndms.taskflows.esgfStaging.server.ESGFStagingTFAction'"
 }

@@ -6,7 +6,7 @@ source "$SCRIPTDIR"internal/script-setup.sh
 # %{} is shell variable substitution at container runtime
 # $STAGING_COMMAND runs in the slice working dir.
 
-ESGF_STAGING_AREA_PATH="/tmp/gndms/sub/"
+ESGF_STAGING_AREA_PATH="/var/lib/gndms/sub"
 ESGF_STAGING_AREA_SIZE="1000000" # Currently unused
 
 # In- and Output format for script properties
@@ -26,6 +26,8 @@ ESGF_TRUSTSTORE_PASSWORD="esgf.trust"
 # default time to live for slices of the Staging slice kind (in milliseconds)
 # default: one day
 TTL=86400000
+
+UPDATE_INTERVAL=60000
 
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------

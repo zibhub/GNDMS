@@ -19,6 +19,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 TTL=86400000
 
 POLLING_INTERVAL=2000
+UPDATE_INTERVAL=60000
 
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
