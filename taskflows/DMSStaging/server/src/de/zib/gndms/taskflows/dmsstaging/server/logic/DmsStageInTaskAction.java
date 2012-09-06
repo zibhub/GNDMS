@@ -33,7 +33,6 @@ import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInMeta;
 import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
 import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInResult;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInResult;
-import de.zib.gndms.voldmodel.Adis;
 import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
@@ -47,8 +46,6 @@ import java.util.Map;
  * @email: bachmann@zib.de
  */
 public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
-    private Dao dao;
-    private Adis adis;
     private TaskFlowClient taskFlowClient;
     private TaskClient taskClient;
     private GORFXClient gorfxClient;
@@ -155,13 +152,6 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
 
     @SuppressWarnings( "SpringJavaAutowiringInspection" )
     @Inject
-    public void setAdis( final Adis adis ) {
-        this.adis = adis;
-    }
-
-
-    @SuppressWarnings( "SpringJavaAutowiringInspection" )
-    @Inject
     public void setTaskFlowClient( TaskFlowClient taskFlowClient ) {
         this.taskFlowClient = taskFlowClient;
     }
@@ -177,17 +167,6 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     @Inject
     public void setGorfxClient( GORFXClient gorfxClient ) {
         this.gorfxClient = gorfxClient;
-    }
-
-
-    public Dao getDao( ) {
-        return dao;
-    }
-
-    @SuppressWarnings( "SpringJavaAutowiringInspection" )
-    @Inject
-    public void setDao( Dao dao ) {
-        this.dao = dao;
     }
 
 
