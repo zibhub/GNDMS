@@ -21,13 +21,13 @@ import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ActionConfigurer;
-import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.GridResourceCache;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.joda.time.DateTime;
@@ -159,9 +159,7 @@ public class SliceProviderImpl implements SliceProvider {
         createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
 
         final Slice slice = createSliceAction.call();
-
-        // TODO: could cache the slice here
-
+        
         return slice.getId();
     }
 

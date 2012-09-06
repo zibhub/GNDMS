@@ -50,7 +50,7 @@ public class SliceKind extends GridResource {
     // if not given on creation, 10MB is taken as default
     private int defaultSliceSize = 1024*1024*10;
 
-    @Column(name="permission", nullable=false, updatable=false )
+    @Column(name="permission", nullable=false, updatable=true )
     public AccessMask getPermission() {
         return permission;
     }

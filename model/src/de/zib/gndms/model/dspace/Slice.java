@@ -113,7 +113,7 @@ public class Slice extends TimedGridResource {
     }
 
 
-    @Column(name="owner", nullable=false, updatable=false)
+    @Column(name="owner", nullable=false, updatable=true)
     public String getOwner() {
         return owner;
     }
@@ -124,7 +124,7 @@ public class Slice extends TimedGridResource {
     }
 
 
-    @Column(name="total_size", nullable=false, updatable=false)
+    @Column(name="total_size", nullable=false, updatable=true)
     public long getTotalStorageSize() {
         return totalStorageSize;
     }

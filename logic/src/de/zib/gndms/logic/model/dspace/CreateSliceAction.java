@@ -142,7 +142,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             directoryAux = getInjector().getInstance( DirectoryAux.class );
 
         // get nondetached objects
-        final Subspace sp = em.find( Subspace.class, getModel().getId() );
+        Subspace sp = em.find( Subspace.class, getModel().getId() );
         sliceKind = em.find( SliceKind.class, sliceKind.getId() );
 
         if( ! sp.getCreatableSliceKinds( ).contains( sliceKind ) )
@@ -180,19 +180,13 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
-        
-        sp.setAvailableSize( sp.getAvailableSize() - sl.getTotalStorageSize() );
 
-
-        addChangedModel(sl);
-
-        // maybe this isn't of interest
-        addChangedModel( sp );
+        sp.requestSpace( sl.getTotalStorageSize() );
 
         em.persist( sl );
-        em.persist( sp );
-        
-        subspaceProvider.invalidate( sp.getId() );
+
+        addChangedModel(sl);
+        addChangedModel(sp);
 
         return  sl;
     }

@@ -111,7 +111,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
         deleteModelEntity( Slice.class );
         sliceProvider.invalidate( slice.getId() );
         
-        slice.getSubspace().setAvailableSize( slice.getSubspace().getAvailableSize() + slice.getTotalStorageSize() );
+        slice.getSubspace().releaseSpace( slice.getTotalStorageSize() );
         
         subspaceProvider.invalidate( slice.getSubspace().getId() );
 

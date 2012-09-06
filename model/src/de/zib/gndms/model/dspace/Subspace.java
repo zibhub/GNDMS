@@ -28,6 +28,7 @@ package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.common.dspace.SubspaceConfiguration;
 import de.zib.gndms.model.common.GridResource;
+import de.zib.gndms.model.common.QuotaExceededException;
 
 import javax.persistence.*;
 import java.io.File;
@@ -122,7 +123,7 @@ public class Subspace extends GridResource {
      * Returns the available size of this subspace.
      * @return The available size.
      */
-    @Column(name = "avail_size", nullable = false, updatable = false)
+    @Column(name = "avail_size", nullable = false, updatable = true)
     public long getAvailableSize() {
         return availableSize;
     }
@@ -131,7 +132,7 @@ public class Subspace extends GridResource {
      * Returns the total size of this subspace.
      * @return The total size
      */
-    @Column(name = "total_size", nullable = false, updatable = false)
+    @Column(name = "total_size", nullable = false, updatable = true)
     public long getTotalSize() {
         return totalSize;
     }
@@ -158,10 +159,20 @@ public class Subspace extends GridResource {
      * @param availableSize The size to set.
      */
     public void setAvailableSize(final long availableSize) {
-//        if( availableSize < 0 )
-//            throw new QuotaExceededException();
-
         this.availableSize = availableSize;
+    }
+
+
+    public void requestSpace( final long size ) {
+        if( size > getAvailableSize() )
+            throw new QuotaExceededException( "It would need " + ( size - getAvailableSize() ) + " Bytes more space to create the ressource." );
+
+        setAvailableSize( getAvailableSize() - size );
+    }
+    
+    
+    public void releaseSpace( final long size ) {
+        setAvailableSize( getAvailableSize() + size );
     }
 
     /**
@@ -184,7 +195,7 @@ public class Subspace extends GridResource {
 	 * Returns the visibility of this subspace.
 	 * @return The visibility.
 	 */
-    @Column(name = "visible", nullable = false, updatable = false)
+    @Column(name = "visible", nullable = false, updatable = true)
     public boolean isVisibleToPublic() {
         return visibleToPublic;
     }

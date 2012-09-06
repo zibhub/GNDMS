@@ -36,6 +36,7 @@ public class Subspace extends de.zib.gndms.model.dspace.Subspace {
         setGsiFtpPath( subspaceModel.getGsiFtpPath() );
         setVisibleToPublic( subspaceModel.isVisibleToPublic() );
         setTotalSize( subspaceModel.getTotalSize() );
+        setAvailableSize( subspaceModel.getAvailableSize() );
         setId( subspaceModel.getId() );
         setCreatableSliceKinds( subspaceModel.getCreatableSliceKinds() );
 
@@ -55,7 +56,7 @@ public class Subspace extends de.zib.gndms.model.dspace.Subspace {
 
         final long diskUsage = getDirectoryAux().diskUsage( "root", getPath() );
         information.setDiskUsage( diskUsage );
-        information.setPotentialUsage( getAvailableSize() );
+        information.setPotentialUsage( getTotalSize() - getAvailableSize() );
 
         return information;
     }
