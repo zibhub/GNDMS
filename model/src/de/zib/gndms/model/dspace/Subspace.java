@@ -165,7 +165,7 @@ public class Subspace extends GridResource {
 
     public void requestSpace( final long size ) {
         if( size > getAvailableSize() )
-            throw new QuotaExceededException( "It would need " + ( size - getAvailableSize() ) + " Bytes more space to create the ressource." );
+            throw new QuotaExceededException( "It would need " + ( size - getAvailableSize() ) + " Bytes more space to create a ressource of " + size + " Bytes." );
 
         setAvailableSize( getAvailableSize() - size );
     }
