@@ -72,14 +72,14 @@ public class NonblockingClientFactory extends AbstractNonblockingClientFactory{
         } catch ( InterruptedException e ) {
             Thread.interrupted();
             creator.getLog().debug( "", e );
-            throw new RuntimeException( "GridFTPClient create interrupted", e );
+            throw new RuntimeException( "GridFTPClient create interrupted " + host + ":" + port + ".", e );
         } catch ( ExecutionException e ) {
             creator.getLog().debug( "", e );
             if( e.getCause() instanceof ServerException )
                 throw ServerException.class.cast( e.getCause() );
             throw new RuntimeException( e );
         } catch ( Exception e ) {
-            throw new RuntimeException( "Unexpected exception in GridFTPClient creation.", e );
+            throw new RuntimeException( "Unexpected exception in GridFTPClient creation for " + host + ":" + port + ".", e );
         }
     }
 
