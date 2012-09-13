@@ -96,6 +96,7 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
         //  - create a source-slice
         System.out.println( "Creating importSlice" );
         final Specifier<Void> sliceSpecifier = createSourceSlice();
+        System.out.println( );
 
 
         //  - use inter slice transfer to copy files (external) into this slice
@@ -103,12 +104,14 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
         final Specifier<Void> importSlice = checkIn( sliceSpecifier );
         System.out.println( "done: " + importSlice.getUrl() );
         showFiles( importSlice );
+        System.out.println( );
 
         //  - use a inter-slice transfer to copy the source-slice to the destination slice
         //    using the a sliceKind-specifier
         System.out.println( "Performing IST" );
         final Specifier<Void> interSlice = interSliceTransfer( importSlice );
         System.out.println( "done: " + importSlice.getUrl() );
+        System.out.println( );
 
         //  - use inter-slice transfer to copy the date from the destination to a local space
         System.out.println( "Performing check-out" );
@@ -116,6 +119,7 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
         System.out.println( "Received: " );
         for( String f : files ) 
             System.out.println( "    " + f );
+        System.out.println( );
     }
 
 
