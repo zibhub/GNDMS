@@ -35,7 +35,7 @@ import java.util.*;
  * @date 27.06.11  18:38
  * @brief
  */
-public class PlugableTaskFlowProvider extends TaskFlowProviderImpl {
+public class PluggableTaskFlowProvider extends TaskFlowProviderImpl {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     private String pluginDir;

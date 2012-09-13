@@ -83,7 +83,7 @@ public class PluginLoader {
 
         PluginLoader pl = new PluginLoader( args[0] );
         ClassLoader cl = pl.loadPlugins();
-        PlugableTaskFlowProvider provider = ( PlugableTaskFlowProvider ) context.getAutowireCapableBeanFactory()
+        PluggableTaskFlowProvider provider = (PluggableTaskFlowProvider) context.getAutowireCapableBeanFactory()
                 .getBean( "taskFlowProvider" );
 
         provider.setCl( cl );

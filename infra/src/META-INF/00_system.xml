@@ -70,7 +70,7 @@
           factory-bean="setupSSLFactory"
           factory-method="getInstance" />
 
-    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PlugableTaskFlowProvider">
+    <bean id="taskFlowProvider" class="de.zib.gndms.infra.system.PluggableTaskFlowProvider">
         <property name="system" ref="system"/>
         <property name="pluginDir" value="${pluginPath}"/>
     </bean>

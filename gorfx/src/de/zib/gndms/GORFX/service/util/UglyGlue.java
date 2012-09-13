@@ -15,7 +15,7 @@ package de.zib.gndms.GORFX.service.util;
  *  limitations under the License.
  */
 
-import de.zib.gndms.infra.system.PlugableTaskFlowProvider;
+import de.zib.gndms.infra.system.PluggableTaskFlowProvider;
 import de.zib.gndms.neomodel.common.Dao;
 import org.springframework.oxm.xstream.XStreamMarshaller;
 
@@ -31,7 +31,7 @@ import javax.inject.Inject;
 public class UglyGlue {
 
     private XStreamMarshaller marshaller;
-    private PlugableTaskFlowProvider tfProvider;
+    private PluggableTaskFlowProvider tfProvider;
     private Dao dao;
 
     @PostConstruct
@@ -53,14 +53,14 @@ public class UglyGlue {
     }
 
 
-    public PlugableTaskFlowProvider getTfProvider() {
+    public PluggableTaskFlowProvider getTfProvider() {
 
         return tfProvider;
     }
 
 
     @Inject
-    public void setTfProvider( final PlugableTaskFlowProvider tfProvider ) {
+    public void setTfProvider( final PluggableTaskFlowProvider tfProvider ) {
 
         this.tfProvider = tfProvider;
     }
