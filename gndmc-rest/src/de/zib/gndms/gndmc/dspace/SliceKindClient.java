@@ -16,9 +16,11 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindServiceClient;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.AbstractClient;
 import org.springframework.http.ResponseEntity;
 
@@ -60,20 +62,26 @@ public class SliceKindClient extends AbstractClient implements SliceKindServiceC
 
 
     @Override
-    public ResponseEntity<Configuration> getSliceKindConfig( final String subspace,
+    public ResponseEntity< SliceKindConfiguration > getSliceKindConfig( final String subspace,
                                                              final String sliceKind,
                                                              final String dn )
     {
-        // todo implement it, stupid.
-        throw new UnsupportedOperationException( "implement me" );
+        return (ResponseEntity<SliceKindConfiguration>) (Object) unifiedGet( SliceKindConfiguration.class,
+                getServiceURL()
+                        + "/dspace/"
+                        + "_" + subspace + "/"
+                        + "_" + sliceKind + "/config", dn );
     }
 
     @Override
-    public ResponseEntity<Configuration> getSliceKindConfig( final Specifier< Void > sliceKind,
+    public ResponseEntity< SliceKindConfiguration > getSliceKindConfig( final Specifier< Void > sliceKind,
                                                              final String dn )
     {
-        // todo implement it, stupid.
-        throw new UnsupportedOperationException( "implement me" );
+        return (ResponseEntity<SliceKindConfiguration>) (Object) unifiedGet( SliceKindConfiguration.class,
+                getServiceURL()
+                        + "/dspace/"
+                        + "_" + sliceKind.getUriMap().get( UriFactory.SUBSPACE ) + "/"
+                        + "_" + sliceKind.getUriMap().get( UriFactory.SLICE_KIND ) + "/config", dn );
     }
 
     @Override

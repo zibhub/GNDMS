@@ -214,6 +214,7 @@ public class SliceClientTest {
 
                         @Override
                         public String getOriginalFilename() {
+                            // This is where he gets the content from.
                             return sliceFile;
                         }
 
@@ -234,16 +235,19 @@ public class SliceClientTest {
 
                         @Override
                         public byte[] getBytes() throws IOException {
+                            // don't need this
                             return null;
                         }
 
                         @Override
                         public InputStream getInputStream() throws IOException {
+                            // don't need this
                             return null;
                         }
 
                         @Override
                         public void transferTo(File dest) throws IOException, IllegalStateException {
+                            // don't need this
                         }
                     },
                     admindn );

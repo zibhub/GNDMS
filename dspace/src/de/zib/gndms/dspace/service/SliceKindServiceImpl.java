@@ -16,6 +16,7 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
@@ -24,7 +25,6 @@ import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
-import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -118,7 +118,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
         try {
             SliceKind sliceK = getSliceKindProvider().get( subspace, sliceKind );
-            SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration( sliceK );
+            SliceKindConfiguration config = sliceK.getSliceKindConfiguration( );
             return new ResponseEntity<Configuration>( config, headers,
                                                       HttpStatus.OK );
         }
@@ -131,15 +131,21 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/config", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public final ResponseEntity<Configuration> getSliceKindConfig(  @PathVariable final String subspace,
-                                                                    @PathVariable final String sliceKind,
+    public final ResponseEntity< SliceKindConfiguration > getSliceKindConfig(  @PathVariable final String subspaceId,
+                                                                    @PathVariable final String sliceKindId,
                                                                     @RequestHeader( "DN" ) final String dn )
     {
-        // todo implement me, pretty please!!!
-        return new ResponseEntity<Configuration>( null, new GNDMSResponseHeader(),
-                HttpStatus.NOT_IMPLEMENTED );
+        try {
+            SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
+            SliceKindConfiguration sliceKindConfiguration = sliceKind.getSliceKindConfiguration();
+
+            return new ResponseEntity< SliceKindConfiguration >( sliceKindConfiguration, new GNDMSResponseHeader(),
+                    HttpStatus.NOT_IMPLEMENTED );
+        } catch( NoSuchElementException e ) {
+            throw new IllegalArgumentException( "Could not find SliceKind " + sliceKindId, e );
+        }
     }
 
 
@@ -152,7 +158,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
         try {
             SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
-            SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig( config );
+            SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
             sliceK.setPermission( sliceKindConfig.getPermission() );
 
@@ -194,7 +200,8 @@ public class SliceKindServiceImpl implements SliceKindService {
             SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
             Subspace sub = subspaceProvider.get( subspace );
 
-            // TODO: AssignSliceKindAction zum lschen
+            // TODO: AssignSliceKindAction zum Trenner der Verbindung zum Subspace (Mode: REMOVE)
+            // TODO: delete SliceKind via SliceKindProvider
             return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.OK );
         }
         catch( NoSuchElementException ne ) {

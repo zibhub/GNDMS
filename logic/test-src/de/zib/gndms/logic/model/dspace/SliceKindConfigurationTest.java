@@ -19,12 +19,12 @@ package de.zib.gndms.logic.model.dspace;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import org.testng.annotations.Test;
 import org.testng.AssertJUnit;
 
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.model.common.AccessMask;
-import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 

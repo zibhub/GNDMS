@@ -16,6 +16,7 @@ package de.zib.gndms.common.dspace.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
@@ -62,7 +63,7 @@ public interface SliceKindService {
      * @param dn What the name ... ok it's the distinguished name.
      * @return The current config.
      */
-    ResponseEntity<Configuration> getSliceKindConfig( String subspace, String sliceKind, String dn );
+    ResponseEntity< SliceKindConfiguration > getSliceKindConfig( String subspace, String sliceKind, String dn );
 
 	/**
 	 * Sets a slice kind configuration.
