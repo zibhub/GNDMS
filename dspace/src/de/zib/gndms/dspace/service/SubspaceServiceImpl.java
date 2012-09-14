@@ -402,7 +402,7 @@ public class SubspaceServiceImpl implements SubspaceService {
     // delegated to SliceKindServiceImpl, due to mapping conflicts
     @RequestMapping( value = "/_{subspace}/_{sliceKind}", method = RequestMethod.DELETE )
     @Secured( "ROLE_ADMIN" )
-    public ResponseEntity<Specifier<Void>> deleteSliceKind( @PathVariable final String subspace,
+    public ResponseEntity< Specifier< Facets > > deleteSliceKind( @PathVariable final String subspace,
                                                             @PathVariable final String sliceKind,
                                                             @RequestHeader( "DN" ) final String dn )
     {

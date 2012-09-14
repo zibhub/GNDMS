@@ -19,6 +19,7 @@ package de.zib.gndms.gndmc.dspace;
 import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindServiceClient;
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.AbstractClient;
@@ -80,7 +81,7 @@ public class SliceKindClient extends AbstractClient implements SliceKindServiceC
         return (ResponseEntity<SliceKindConfiguration>) (Object) unifiedGet( SliceKindConfiguration.class,
                 getServiceURL()
                         + "/dspace/"
-                        + "_" + sliceKind.getUriMap().get( UriFactory.SUBSPACE ) + "/"
+                        + "_" + sliceKind.getUriMap().get(UriFactory.SUBSPACE) + "/"
                         + "_" + sliceKind.getUriMap().get( UriFactory.SLICE_KIND ) + "/config", dn );
     }
 
@@ -101,17 +102,17 @@ public class SliceKindClient extends AbstractClient implements SliceKindServiceC
 
     @SuppressWarnings("unchecked")
     @Override
-    public final ResponseEntity<Specifier<Void>> deleteSliceKind(final String subspace,
+    public final ResponseEntity<Specifier<Facets>> deleteSliceKind(final String subspace,
                                                                  final String sliceKind, final String dn) {
-        return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class,
+        return (ResponseEntity<Specifier<Facets>>) (Object) unifiedDelete(Specifier.class,
                 getServiceURL() + "/dspace/_" + subspace + "/_"
                         + sliceKind, dn);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final ResponseEntity<Specifier<Void>> deleteSliceKind(final Specifier< Void > sliceKind, final String dn) {
-        return (ResponseEntity<Specifier<Void>>) (Object) unifiedDelete(Specifier.class,
+    public final ResponseEntity<Specifier<Facets>> deleteSliceKind(final Specifier< Void > sliceKind, final String dn) {
+        return (ResponseEntity<Specifier<Facets>>) (Object) unifiedDelete(Specifier.class,
                 sliceKind.getUrl(), dn);
     }
 }

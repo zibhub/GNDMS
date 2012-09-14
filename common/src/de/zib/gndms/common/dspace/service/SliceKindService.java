@@ -18,6 +18,7 @@ package de.zib.gndms.common.dspace.service;
 
 import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.logic.config.Configuration;
+import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.Specifier;
 import org.springframework.http.ResponseEntity;
 
@@ -91,6 +92,6 @@ public interface SliceKindService {
 	 *            The dn of the user invoking the method.
 	 * @return A confirmation.
 	 */
-	ResponseEntity<Specifier<Void>> deleteSliceKind(String subspace, String sliceKind,
+	ResponseEntity< Specifier< Facets > > deleteSliceKind(String subspace, String sliceKind,
 			String dn);
 }

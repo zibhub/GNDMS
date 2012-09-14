@@ -20,16 +20,18 @@ import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -37,6 +39,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -59,6 +62,11 @@ public class SliceKindServiceImpl implements SliceKindService {
      * The logger.
      */
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+    private String localBaseUrl;
+
+    private RestTemplate restTemplate;
+
     /**
      * The entity manager factory.
      */
@@ -118,7 +126,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
         try {
             SliceKind sliceK = getSliceKindProvider().get( subspace, sliceKind );
-            SliceKindConfiguration config = sliceK.getSliceKindConfiguration( );
+            SliceKindConfiguration config = sliceK.getSliceKindConfiguration();
             return new ResponseEntity<Configuration>( config, headers,
                                                       HttpStatus.OK );
         }
@@ -191,24 +199,22 @@ public class SliceKindServiceImpl implements SliceKindService {
 
     @Override
     // delegated by SubspaceService
-    public final ResponseEntity<Specifier<Void>> deleteSliceKind(
+    public final ResponseEntity< Specifier< Facets > > deleteSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @RequestHeader( "DN" ) final String dn ) {
         GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
-        try {
-            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
-            Subspace sub = subspaceProvider.get( subspace );
 
-            // TODO: AssignSliceKindAction zum Trenner der Verbindung zum Subspace (Mode: REMOVE)
-            // TODO: delete SliceKind via SliceKindProvider
-            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.OK );
-        }
-        catch( NoSuchElementException ne ) {
-            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
-            return new ResponseEntity<Specifier<Void>>( null, headers,
-                                                        HttpStatus.NOT_FOUND );
-        }
+        Taskling ling = sliceKindProvider.delete(sliceKind);
+
+        // get service facets of task
+        final TaskClient client = new TaskClient( localBaseUrl );
+        client.setRestTemplate( restTemplate );
+        final Specifier< Facets > spec =
+                TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
+
+        // return specifier for service facets
+        return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
     }
 
 
@@ -312,5 +318,22 @@ public class SliceKindServiceImpl implements SliceKindService {
         response.setStatus( HttpStatus.UNAUTHORIZED.value() );
         response.sendError(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<Void>( null, getResponseHeaders(ex.getMessage(), null, null), HttpStatus.UNAUTHORIZED );
+    }
+
+
+    /**
+     * Sets the local base url of this sliceId service.
+     *
+     * @param localBaseUrl
+     *            the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+
+    @Inject
+    public void setRestTemplate( RestTemplate restTemplate ) {
+        this.restTemplate = restTemplate;
     }
 }

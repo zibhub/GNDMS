@@ -78,6 +78,7 @@
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
