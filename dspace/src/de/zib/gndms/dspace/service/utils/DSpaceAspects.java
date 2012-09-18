@@ -77,6 +77,7 @@ public class DSpaceAspects {
         final String owner = slice.getOwner();
 
         // TODO: check for user / group rights here
+        // ATTENTION: group can be null
 
         if( ! owner.equals( dn ) ) {
             logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );

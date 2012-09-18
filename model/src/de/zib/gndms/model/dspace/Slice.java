@@ -126,7 +126,7 @@ public class Slice extends TimedGridResource {
     }
 
 
-    @Column(name="group", nullable=false, updatable=true)
+    @Column(name="group", nullable=true, updatable=true)
     public String getGroup() {
         return group;
     }
