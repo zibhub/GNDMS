@@ -65,7 +65,7 @@ public class DSpaceAspects {
     public void inSubspaceServiceImpl() {}
 
     @Before( value = "inSliceServiceImpl() && args( subspaceId, sliceKindId, sliceId, .. )" )
-    public void checkOwner( final String subspaceId, final String sliceKindId, final String sliceId )
+    public void checkRights( final String subspaceId, final String sliceKindId, final String sliceId )
             throws NoSuchElementException
     {
         final Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
@@ -74,8 +74,11 @@ public class DSpaceAspects {
                 .getAuthentication()
                 .getPrincipal();
         final String dn = userDetails.getUsername();
+        final String owner = slice.getOwner();
 
-        if( ! slice.getOwner().equals( dn ) ) {
+        // TODO: check for user / group rights here
+
+        if( ! owner.equals( dn ) ) {
             logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
             throw new UnauthorizedException( "User " + dn + " does not own slice " + sliceId + "." );
         }

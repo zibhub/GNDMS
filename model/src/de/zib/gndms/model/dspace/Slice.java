@@ -43,6 +43,8 @@ public class Slice extends TimedGridResource {
     private Subspace subspace;
 
     private String owner;
+    
+    private String group;
 
     private long totalStorageSize;
 
@@ -121,6 +123,17 @@ public class Slice extends TimedGridResource {
 
     public void setOwner( String owner ) {
         this.owner = owner;
+    }
+
+
+    @Column(name="group", nullable=false, updatable=true)
+    public String getGroup() {
+        return group;
+    }
+
+
+    public void setGroup( String group ) {
+        this.group = group;
     }
 
 
