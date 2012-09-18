@@ -108,7 +108,7 @@ public class DSpaceAspects {
                     final DateTime now = new DateTime( DateTimeUtils.currentTimeMillis() );
                     final DateTime month = now.plusMonths( 1 );
                     
-                    if( month.isAfter( slice.getTerminationTime() ) ) {
+                    if( slice.getTerminationTime().isBefore( month ) ) {
                         slice.setTerminationTime( month );
                     }
                 }
