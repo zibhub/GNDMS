@@ -62,6 +62,7 @@ public class Slice extends de.zib.gndms.model.dspace.Slice {
                 sliceModel.getSubspace(),
                 sliceModel.getOwner(),
                 sliceModel.getTotalStorageSize() );
+        setGroup( sliceModel.getGroup() );
         
         directoryAux = new LinuxDirectoryAux();
     }
