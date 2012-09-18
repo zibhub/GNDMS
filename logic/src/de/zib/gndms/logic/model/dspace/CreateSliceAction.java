@@ -177,6 +177,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             */
 
         Slice sl = new Slice( did, sliceKind, sp, uid );
+        sl.setGroup( uid ); // default: same group as user
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );

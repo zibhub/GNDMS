@@ -169,6 +169,8 @@ public class Slice extends TimedGridResource {
             setTotalStorageSize( sliceConfiguration.getSize() );
         if( sliceConfiguration.getTerminationTime() != null )
             setTerminationTime( sliceConfiguration.getTerminationTime() );
+        if( sliceConfiguration.getGroup() != null )
+            setGroup( sliceConfiguration.getGroup() );
     }
 
 

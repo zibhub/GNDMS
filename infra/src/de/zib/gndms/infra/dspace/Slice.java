@@ -91,6 +91,8 @@ public class Slice extends de.zib.gndms.model.dspace.Slice {
 
         info.setSize( getTotalStorageSize() );
         info.setTerminationTime( getTerminationTime() );
+        info.setOwner( getOwner() );
+        info.setGroup( getGroup() );
         info.setDiskUsage( getDiskUsage() );
 
         return info;

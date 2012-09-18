@@ -30,6 +30,8 @@ import java.io.Serializable;
 public class SliceInformation extends SliceConfiguration implements Serializable {
 
     private static final long serialVersionUID = -5945191053405202623L;
+    
+    private String owner;
 
     private Long diskUsage;
     
@@ -45,6 +47,16 @@ public class SliceInformation extends SliceConfiguration implements Serializable
 
     public SliceInformation( Long size, DateTime termination ) {
         super( size, termination );
+    }
+
+
+    public String getOwner() {
+        return owner;
+    }
+
+
+    public void setOwner( String owner ) {
+        this.owner = owner;
     }
 
 

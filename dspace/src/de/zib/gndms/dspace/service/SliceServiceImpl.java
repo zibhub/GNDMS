@@ -141,11 +141,8 @@ public class SliceServiceImpl implements SliceService {
 
         try {
             Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
-
-            if( null != config.getTerminationTime() )
-                slice.setTerminationTime( config.getTerminationTime() );
-            if( config.getSize() != null )
-                slice.setTotalStorageSize( config.getSize() );
+            
+            slice.setConfiguration( config );
 
             return new ResponseEntity< Integer >( 0, headers, HttpStatus.OK );
         } catch( NoSuchElementException e ) {
