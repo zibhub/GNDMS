@@ -48,6 +48,8 @@ public class Slice extends TimedGridResource {
 
     private long totalStorageSize;
 
+    private boolean published;
+
     protected Slice( ) { }
 
     public Slice ( String idParam, DateTime ttParam, String didParam, SliceKind kndParam,
@@ -55,6 +57,7 @@ public class Slice extends TimedGridResource {
         super( );
         setId( idParam );
         setTerminationTime ( ttParam );
+        published = false;
         directoryId = didParam;
         kind = kndParam;
         subspace = subsParam;
@@ -65,6 +68,7 @@ public class Slice extends TimedGridResource {
     
     public Slice ( String didParam, SliceKind kndParam, Subspace subsParam, String ownParam ) {
         super( );
+        published = false;
         directoryId = didParam;
         kind = kndParam;
         subspace = subsParam;
@@ -140,6 +144,17 @@ public class Slice extends TimedGridResource {
     @Column(name="total_size", nullable=false, updatable=true)
     public long getTotalStorageSize() {
         return totalStorageSize;
+    }
+
+
+    public void setPublished( boolean published ) {
+        this.published = published;
+    }
+
+
+    @Column( name="published", nullable=false, updatable=true )
+    public boolean getPublished() {
+        return published;
     }
 
 

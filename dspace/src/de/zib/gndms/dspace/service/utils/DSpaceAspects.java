@@ -22,15 +22,21 @@ import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.util.TxFrame;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 /**
  * @date: 29.03.12
@@ -45,6 +51,7 @@ public class DSpaceAspects {
     final private SliceProvider sliceProvider;
     final private SliceKindProvider sliceKindProvider;
     final private SubspaceProvider subspaceProvider;
+    private EntityManagerFactory emf;
 
     public DSpaceAspects(
             SliceProvider sliceProvider,
@@ -64,25 +71,53 @@ public class DSpaceAspects {
     @Pointcut( "execution(* de.zib.gndms.dspace.service.SubspaceServiceImpl.*(..))" )
     public void inSubspaceServiceImpl() {}
 
-    @Before( value = "inSliceServiceImpl() && args( subspaceId, sliceKindId, sliceId, .. )" )
-    public void checkRights( final String subspaceId, final String sliceKindId, final String sliceId )
-            throws NoSuchElementException
+    @Around( value = "inSliceServiceImpl() && args( subspaceId, sliceKindId, sliceId, .. )" )
+    public Object handleSlice( final ProceedingJoinPoint pjp,
+                               final String subspaceId, final String sliceKindId, final String sliceId )
+            throws NoSuchElementException, Throwable
     {
-        final Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
-        final UserDetails userDetails = ( UserDetails )SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        final String dn = userDetails.getUsername();
-        final String owner = slice.getOwner();
+        // check Rights
+        {
+            final Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
 
-        // TODO: check for user / group rights here
-        // ATTENTION: group can be null
+            final UserDetails userDetails = ( UserDetails )SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+            final String dn = userDetails.getUsername();
+            final String owner = slice.getOwner();
 
-        if( ! owner.equals( dn ) ) {
-            logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
-            throw new UnauthorizedException( "User " + dn + " does not own slice " + sliceId + "." );
+            // TODO: check for user / group rights here
+            // ATTENTION: group can be null
+
+            if( ! owner.equals( dn ) ) {
+                logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
+                throw new UnauthorizedException( "User " + dn + " does not own slice " + sliceId + "." );
+            }
         }
+
+        Object returnvalue = pjp.proceed();
+        
+        // extend termination time, if it had been published
+        {
+            EntityManager entityManager = emf.createEntityManager();
+            final TxFrame txf = new TxFrame( entityManager );
+            try {
+                final Slice slice = entityManager.find(Slice.class, sliceId);
+                if( slice.getPublished() ) {
+                    final DateTime now = new DateTime( DateTimeUtils.currentTimeMillis() );
+                    final DateTime month = now.plusMonths( 1 );
+                    
+                    if( month.isAfter( slice.getTerminationTime() ) ) {
+                        slice.setTerminationTime( month );
+                    }
+                }
+                txf.commit();
+            }
+            finally { txf.finish();  }
+        }
+        
+        return returnvalue;
     }
 
     @Before( value = "( inSliceKindServiceImpl() || inSliceServiceImpl() ) && args( subspaceId, sliceKindId, .. )" )
@@ -111,5 +146,10 @@ public class DSpaceAspects {
         }
 
         return pjp.proceed();
+    }
+    
+    
+    public void setEntityManagerFactory( final EntityManagerFactory entityManagerFactory ) {
+        this.emf = entityManagerFactory;
     }
 }
