@@ -167,6 +167,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
         SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
 
+        // TODO: put that to sliceKindProvider
         EntityManager entityManager = emf.createEntityManager();
         final TxFrame txf = new TxFrame( entityManager );
         try {

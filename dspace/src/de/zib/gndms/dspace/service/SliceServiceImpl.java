@@ -142,6 +142,7 @@ public class SliceServiceImpl implements SliceService {
             @RequestHeader( "DN" ) final String dn ) {
         GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
+        // TODO: put that to sliceProvider
         EntityManager entityManager = emf.createEntityManager();
         final TxFrame txf = new TxFrame( entityManager );
         try {
