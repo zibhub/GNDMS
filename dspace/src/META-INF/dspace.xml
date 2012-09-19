@@ -92,6 +92,7 @@
         <constructor-arg ref="sliceProvider" />
         <constructor-arg ref="sliceKindProvider" />
         <constructor-arg ref="subspaceProvider" />
+        <property name="entityManagerFactory" ref="emf" />
     </bean>
 
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">
