@@ -55,6 +55,20 @@ public class TimeConstraint implements Serializable {
      */
     private String aggregation;
 
+    /**
+     * The monthly range for the span.
+     * 
+     * Contains something like April,August.
+     */
+    private String monthRange;
+
+    /**
+     * The daily range for the span.
+     * 
+     * Contains something like Tuesday,Thursday.
+     */
+    private String dayRange;
+
     private static final long serialVersionUID = 2682486067028199165L;
 
 
@@ -160,5 +174,35 @@ public class TimeConstraint implements Serializable {
 
     public void setAggregation( String aggregation ) {
         this.aggregation = aggregation;
+    }
+    
+    
+    public boolean hasMonthRange() {
+        return monthRange != null;
+    }
+    
+    
+    public String getMonthRange() {
+        return monthRange;
+    }
+    
+    
+    public void setMonthRange( String monthRange ) {
+        this.monthRange = monthRange;
+    }
+    
+    
+    public boolean hasDayRange( ) {
+        return dayRange != null;
+    }
+    
+    
+    public String getDayRange( ) {
+        return dayRange;
+    }
+    
+    
+    public void setDayRange( String dayRange ) {
+        this.dayRange = dayRange;
     }
 }

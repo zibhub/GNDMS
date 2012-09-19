@@ -36,6 +36,9 @@ public class DataConstraintsStdoutWriter implements DataConstraintsWriter {
         System.out.println( "TimeConstraint" );
         System.out.println( "    MinTime: " + timeConstraint.getMinTimeString() );
         System.out.println( "    MaxTime: " + timeConstraint.getMaxTimeString() );
+        System.out.println( "    Aggregation: " + timeConstraint.getAggregation() );
+        System.out.println( "    MonthRange: " + timeConstraint.getMonthRange() );
+        System.out.println( "    DayRange: " + timeConstraint.getDayRange() );
     }
 
 

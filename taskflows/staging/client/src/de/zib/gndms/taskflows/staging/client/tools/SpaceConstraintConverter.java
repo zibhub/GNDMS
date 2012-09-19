@@ -56,6 +56,9 @@ public class SpaceConstraintConverter extends GORFXConverterBase<SpaceConstraint
 
         if( getModel().hasAltitude() )
             getWriter().writeAltitude( getModel().getAltitude() );
+        
+        if( getModel().hasAltitudeRange() )
+            getWriter().writeAltitudeRange( getModel().getAltitudeRange() );
 
         if( getModel().hasVerticalCRS() )
             getWriter().writeVerticalCRS( getModel().getVerticalCRS() );

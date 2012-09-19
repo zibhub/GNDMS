@@ -59,6 +59,11 @@ public class SpaceConstraintPropertyWriter extends AbstractPropertyIO implements
         getProperties( ).setProperty( SfrProperty.ALT_MIN.key, Double.toString( alt.getMinValue( ) ) );
         getProperties( ).setProperty( SfrProperty.ALT_MAX.key, Double.toString( alt.getMaxValue( ) ) );
     }
+    
+    
+    public void writeAltitudeRange( String altRange ) {
+        getProperties( ).setProperty( SfrProperty.ALT_RANGE.key, altRange );
+    }
 
 
     public void writeAreaCRS( String acrs ) {
