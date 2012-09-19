@@ -51,6 +51,9 @@ public class DataConstraintsPropertyWriter extends AbstractPropertyIO implements
 
         if( timeConstraint.hasMaxTime( ) )
             TimeConstraintPropertyWriter.writeMaxTimeToProperties( getProperties(), timeConstraint.getMaxTime( ) );
+        
+        if( timeConstraint.hasAggregation() )
+            TimeConstraintPropertyWriter.writeAggregationToProperties( getProperties(), timeConstraint.getAggregation() );
     }
 
 
