@@ -19,7 +19,7 @@ ESTIMATION_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-estimation.sh"
 CANCEL_COMMAND="%{GNDMS_SOURCE}/scripts/c3grid/dummy-cancel.sh"
 
 STAGING_AREA_PATH="/var/tmp/gndms/sub"
-STAGING_AREA_SIZE="1000000" # Currently unused
+STAGING_AREA_SIZE="5000000000" # 5 GB
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
