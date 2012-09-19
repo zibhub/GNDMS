@@ -141,7 +141,7 @@ public class SliceProviderImpl implements SliceProvider {
     public void updateSlice( Slice slice, EntityManager entityManager ) {
         final TxFrame txf = new TxFrame( entityManager );
         try {
-            entityManager.persist( slice );
+            entityManager.persist(slice);
             txf.commit();
         }
         finally { txf.finish();  }
