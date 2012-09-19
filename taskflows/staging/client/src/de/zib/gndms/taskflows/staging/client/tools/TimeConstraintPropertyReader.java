@@ -52,7 +52,7 @@ public class TimeConstraintPropertyReader extends AbstractPropertyReader<TimeCon
         
         String aggregation = getProperties().getProperty( SfrProperty.TIME_AGGREGATION.key );
 
-        if( min == null && max == null || aggregation == null ) {
+        if( min == null && max == null && aggregation == null ) {
             deleteProduct( );
         } else {
             getProduct( ).setMinTime( min );
