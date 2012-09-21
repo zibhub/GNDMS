@@ -1,6 +1,5 @@
 package de.zib.gndms.GORFX.service;
 
-import de.zib.gndms.GORFX.service.util.WidAux;
 import de.zib.gndms.common.GORFX.service.TaskFlowService;
 import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.*;
@@ -8,6 +7,7 @@ import de.zib.gndms.common.stuff.devel.NotYetImplementedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.security.SpringSecurityContextHolder;
+import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.model.TaskAction;
 import de.zib.gndms.logic.model.TaskExecutionService;
 import de.zib.gndms.logic.model.gorfx.taskflow.TaskFlowAux;
@@ -186,7 +186,7 @@ public class TaskFlowServiceImpl implements TaskFlowService {
     public ResponseEntity<List<Specifier<Quote>>> getQuotes( @PathVariable String type, @PathVariable String id,
                                                              @RequestHeader( "DN" ) String dn,
                                                              @RequestHeader( "WId" ) String wid ) {
-        WidAux.initWid( wid );
+        WidAux.initWid(wid);
         logger.debug( "quote called" );
         HttpStatus hs = HttpStatus.NOT_FOUND;
         List< Specifier< Quote > > res = null;

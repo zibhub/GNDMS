@@ -16,6 +16,7 @@
 
 package de.zib.gndms.GORFX.service.util;
 
+import de.zib.gndms.kit.util.WidAux;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -82,12 +83,12 @@ public class GORFXAspects {
     @Around( value = "inGORFXServiceImpl()" )
     public Object logGORFXWithNewUUID( ProceedingJoinPoint pjp ) throws Throwable {
         MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
-        MDC.put( "GORFXCall", UUID.randomUUID().toString() );
+        WidAux.initGORFXid(UUID.randomUUID().toString());
 
         final Object ret = pjp.proceed();
 
-        MDC.remove( "ServiceCall" );
-        MDC.remove( "GORFXCall" );
+        WidAux.removeGORFXid();
+        MDC.remove("GORFXCall");
 
         return ret;
     }

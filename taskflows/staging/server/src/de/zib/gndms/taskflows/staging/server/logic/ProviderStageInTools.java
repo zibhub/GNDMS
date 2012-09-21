@@ -18,6 +18,7 @@ package de.zib.gndms.taskflows.staging.server.logic;
 
 
 
+import de.zib.gndms.common.model.gorfx.types.io.SfrProperty;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
@@ -28,7 +29,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Properties;
 
 
@@ -50,7 +50,8 @@ public final class ProviderStageInTools {
         final ProviderStageInOrderWriter writer = new ProviderStageInOrderPropertyWriter(props);
         final ProviderStageInOrderConverter converter = new ProviderStageInOrderConverter(writer, order );
         converter.convert();
-        props.put("c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid());
+        props.put( "c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid() );
+        props.put( SfrProperty.GORFX_ID.key, WidAux.getGORFXid() );
         return props;
     }
 

@@ -17,11 +17,10 @@ package de.zib.gndms.taskflows.filetransfer.server.logic;
  */
 
 
-
-import de.zib.gndms.taskflows.filetransfer.server.network.PersistentMarkerListener;
 import de.zib.gndms.kit.util.WidAux;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
+import de.zib.gndms.taskflows.filetransfer.server.network.PersistentMarkerListener;
 import org.globus.ftp.Marker;
 
 /**
@@ -43,7 +42,7 @@ public class TaskPersistentMarkerListener extends PersistentMarkerListener {
     @Override
     public void markerArrived( final Marker marker ) {
         try{
-            WidAux.initWid( wid );
+            WidAux.initWid(wid);
             WidAux.initGORFXid( gorfxId );
             super.markerArrived( marker );
         } finally{
