@@ -154,7 +154,8 @@ public class ExternalProviderStageInQuoteCalculator extends
 	}
 
 
-	@Inject
+	@SuppressWarnings("SpringJavaAutowiringInspection")
+    @Inject
 	public void setSysInfo( final @NotNull SystemInfo sysInfoParam ) {
 		sysInfo = sysInfoParam;
 	}

@@ -58,7 +58,7 @@ public class DataDescriptorConverter extends GORFXConverterBase<DataDescriptorWr
         if( getModel().hasConstraints() ) {
             DataConstraintsWriter dcw = getWriter( ).getDataConstraintsWriter( );
             getWriter().beginWritingDataConstraints( );
-            DataConstraintsConverter dcc = new DataConstraintsConverter( dcw, getModel().getConstrains() );
+            DataConstraintsConverter dcc = new DataConstraintsConverter( dcw, getModel().getConstraints() );
             dcc.convert();
             getWriter().doneWritingDataConstraints( );
         } else

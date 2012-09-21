@@ -57,7 +57,7 @@ public class DataDescriptorPropertyReader extends AbstractPropertyReader<DataDes
             PropertyReadWriteAux.readListMultiLine( getProperties( ), SfrProperty.OBJECT_ITEMS.key ) );
 
         if(! getProperties().containsKey( SfrProperty.JUST_DOWNLOAD.key ) )
-            getProduct().setConstrains( DataConstraintsPropertyReader.readDataConstraints( getProperties() ) );
+            getProduct().setConstraints(DataConstraintsPropertyReader.readDataConstraints(getProperties()));
 
         getProduct( ).setDataFormat( getProperties().getProperty( SfrProperty.FILE_FORMAT.key ) );
         getProduct( ).setDataArchiveFormat( getProperties().getProperty( SfrProperty.FILE_ARCHIVE_FORMAT.key ) );
