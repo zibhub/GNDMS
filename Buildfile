@@ -25,9 +25,9 @@ repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
 #
 require "open3"
 
-VERSION_NUMBER = '0.6.3'
-VERSION_NAME = 'EDWARD'
-FALLBACK_VERSION_TAG = 'release-Arturas'
+VERSION_NUMBER = '0.6.4'
+VERSION_NAME = 'CESARE'
+FALLBACK_VERSION_TAG = 'release-Cesare'
 GROUP_NAME = 'de.zib.gndms'
 MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'

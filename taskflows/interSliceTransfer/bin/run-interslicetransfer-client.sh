@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.6.3"
+VERSION="0.6.4"
 args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" )
 
 cp="$HOME/.m2/repository/com/google/guava/guava/10.0.1/guava-10.0.1.jar:$cp"

@@ -2,8 +2,8 @@
 
 SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 
-PUBLISHING_AREA_PATH="/var/tmp/gndms/sub"
-PUBLISHING_AREA_SIZE="1000000" # Currently unused
+PUBLISHING_AREA_PATH="/var/lib/gndms/sub"
+PUBLISHING_AREA_SIZE="5000000000" # 5GB
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
@@ -13,7 +13,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 # Set your hostname if it is not detected correctly
 # GRIDHOST=""
 
-PUBLISHING_OIDPREFIX="c3published.zib.de"
+PUBLISHING_OIDPREFIX="c3-po.zib.de"
 # VolD update interval in milliseconds
 PUBLISHING_UPDATE_INTERVAL="60000"
 

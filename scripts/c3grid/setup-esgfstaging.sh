@@ -7,7 +7,7 @@ source "$SCRIPTDIR"internal/script-setup.sh
 # $STAGING_COMMAND runs in the slice working dir.
 
 ESGF_STAGING_AREA_PATH="/var/lib/gndms/sub"
-ESGF_STAGING_AREA_SIZE="1000000" # Currently unused
+ESGF_STAGING_AREA_SIZE="5000000000" # 5GB
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
