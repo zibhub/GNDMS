@@ -57,6 +57,16 @@ public class TimeConstraintPropertyWriter extends AbstractPropertyIO implements 
     public void writeAggregation( String aggregation ) {
         writeAggregationToProperties( getProperties(), aggregation );
     }
+    
+    
+    public void writeMonthRange( String monthRange ) {
+        writeMonthRangeToProperties( getProperties(), monthRange );
+    }
+    
+    
+    public void writeDayRange( String dayRange ) {
+        writeDayRangeToProperties( getProperties(), dayRange );
+    }
 
 
     public static void writeMinTimeToProperties( Properties prop, DateTime dt  ) {
@@ -81,6 +91,16 @@ public class TimeConstraintPropertyWriter extends AbstractPropertyIO implements 
     
     public static void writeAggregationToProperties( Properties prop, String aggregation ) {
         prop.setProperty( SfrProperty.TIME_AGGREGATION.key, aggregation );
+    }
+
+
+    public static void writeMonthRangeToProperties( Properties prop, String monthRange ) {
+        prop.setProperty( SfrProperty.TIME_MONTHRANGE.key, monthRange );
+    }
+
+
+    public static void writeDayRangeToProperties( Properties prop, String dayRange ) {
+        prop.setProperty( SfrProperty.TIME_DAYRANGE.key, dayRange );
     }
 
 

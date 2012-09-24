@@ -38,6 +38,8 @@ public interface SpaceConstraintWriter extends GORFXWriterBase {
     public void writeLongitude( MinMaxPair lon );
 
     public void writeAltitude( MinMaxPair alt );
+    
+    public void writeAltitudeRange( String altRange );
 
     public void writeVerticalCRS( String verticalCRS );
 

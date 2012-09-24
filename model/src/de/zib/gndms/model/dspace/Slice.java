@@ -43,8 +43,12 @@ public class Slice extends TimedGridResource {
     private Subspace subspace;
 
     private String owner;
+    
+    private String group;
 
     private long totalStorageSize;
+
+    private boolean published;
 
     protected Slice( ) { }
 
@@ -53,6 +57,7 @@ public class Slice extends TimedGridResource {
         super( );
         setId( idParam );
         setTerminationTime ( ttParam );
+        published = false;
         directoryId = didParam;
         kind = kndParam;
         subspace = subsParam;
@@ -63,6 +68,7 @@ public class Slice extends TimedGridResource {
     
     public Slice ( String didParam, SliceKind kndParam, Subspace subsParam, String ownParam ) {
         super( );
+        published = false;
         directoryId = didParam;
         kind = kndParam;
         subspace = subsParam;
@@ -124,9 +130,31 @@ public class Slice extends TimedGridResource {
     }
 
 
+    @Column(name="group", nullable=true, updatable=true)
+    public String getGroup() {
+        return group;
+    }
+
+
+    public void setGroup( String group ) {
+        this.group = group;
+    }
+
+
     @Column(name="total_size", nullable=false, updatable=true)
     public long getTotalStorageSize() {
         return totalStorageSize;
+    }
+
+
+    public void setPublished( boolean published ) {
+        this.published = published;
+    }
+
+
+    @Column( name="published", nullable=false, updatable=true )
+    public boolean getPublished() {
+        return published;
     }
 
 
@@ -141,6 +169,8 @@ public class Slice extends TimedGridResource {
             setTotalStorageSize( sliceConfiguration.getSize() );
         if( sliceConfiguration.getTerminationTime() != null )
             setTerminationTime( sliceConfiguration.getTerminationTime() );
+        if( sliceConfiguration.getGroup() != null )
+            setGroup( sliceConfiguration.getGroup() );
     }
 
 

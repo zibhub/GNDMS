@@ -69,6 +69,13 @@ public class SpaceConstraint implements Serializable {
      */
     private String verticalCRS; // optional
 
+    /**
+     * Range specification for altitude.
+     * 
+     * This is optional.
+     */
+    private String altitudeRange; // optional
+
     private static final long serialVersionUID = -6224923031075051128L;
 
 
@@ -78,6 +85,11 @@ public class SpaceConstraint implements Serializable {
      */
     public boolean hasAltitude( ) {
         return altitude != null;
+    }
+
+
+    public boolean hasAltitudeRange( ) {
+        return altitudeRange != null;
     }
 
 
@@ -126,6 +138,16 @@ public class SpaceConstraint implements Serializable {
 
     public void setAltitude( MinMaxPair altitude ) {
         this.altitude = altitude;
+    }
+    
+    
+    public String getAltitudeRange() {
+        return altitudeRange;
+    }
+    
+    
+    public void setAltitudeRange( final String altitudeRange ) {
+        this.altitudeRange = altitudeRange;
     }
 
 

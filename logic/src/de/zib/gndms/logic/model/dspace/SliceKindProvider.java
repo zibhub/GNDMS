@@ -17,6 +17,7 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 import de.zib.gndms.model.dspace.SliceKind;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 
 import java.util.List;
 
@@ -56,6 +57,9 @@ public interface SliceKindProvider {
 
 
     void create( String slicekindId, String config );
+    
+
+    Taskling delete( String sliceKindId );
     
     
     void invalidate( String sliceKindId );

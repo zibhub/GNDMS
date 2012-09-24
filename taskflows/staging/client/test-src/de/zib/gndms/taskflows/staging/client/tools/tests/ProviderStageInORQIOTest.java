@@ -69,7 +69,7 @@ public class ProviderStageInORQIOTest {
         dc.setConstraintList( cl );
 
         ddt.setObjectList( ol );
-        ddt.setConstrains( dc );
+        ddt.setConstraints(dc);
         ddt.setDataFormat( dff );
         ddt.setDataArchiveFormat( dfaf );
         ddt.setMetaDataFormat( mff );

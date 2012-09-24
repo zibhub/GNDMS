@@ -78,6 +78,7 @@
 
     <bean id="sliceKindService" class="de.zib.gndms.dspace.service.SliceKindServiceImpl">
         <property name="baseUrl" value="${baseUrl}"/>
+        <property name="localBaseUrl" value="${localBaseUrl}"/>
         <property name="subspaceProvider" ref="subspaceProvider"/>
     </bean>
  
@@ -91,6 +92,7 @@
         <constructor-arg ref="sliceProvider" />
         <constructor-arg ref="sliceKindProvider" />
         <constructor-arg ref="subspaceProvider" />
+        <property name="entityManagerFactory" ref="emf" />
     </bean>
 
     <bean id="sliceService" class="de.zib.gndms.dspace.service.SliceServiceImpl">

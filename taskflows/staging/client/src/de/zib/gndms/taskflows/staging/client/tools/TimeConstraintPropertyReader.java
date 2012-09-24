@@ -51,13 +51,18 @@ public class TimeConstraintPropertyReader extends AbstractPropertyReader<TimeCon
         String max = getProperties().getProperty( SfrProperty.TIME_MAX.key );
         
         String aggregation = getProperties().getProperty( SfrProperty.TIME_AGGREGATION.key );
+        
+        String monthRange = getProperties().getProperty( SfrProperty.TIME_MONTHRANGE.key );
+        String dayRange = getProperties().getProperty( SfrProperty.TIME_DAYRANGE.key );
 
-        if( min == null && max == null || aggregation == null ) {
+        if( min == null && max == null && aggregation == null && monthRange == null && dayRange == null ) {
             deleteProduct( );
         } else {
             getProduct( ).setMinTime( min );
             getProduct( ).setMaxTime( max );
             getProduct( ).setAggregation( aggregation );
+            getProduct( ).setMonthRange( monthRange );
+            getProduct( ).setDayRange( dayRange );
         }
     }
 

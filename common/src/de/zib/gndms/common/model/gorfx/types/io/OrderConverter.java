@@ -45,6 +45,7 @@ public abstract class OrderConverter<W extends OrderWriter, M extends AbstractOr
         super( writer, model );
     }
 
+
     public void convert( ) {
 
         if( getWriter( ) == null || getModel() == null )
@@ -52,12 +53,11 @@ public abstract class OrderConverter<W extends OrderWriter, M extends AbstractOr
 
         getWriter().begin();
         getWriter().writeJustEstimate( getModel().isJustEstimate() );
-        /*
-        if( getModel( ).hasContext( ) ) 
+
+        if( getModel( ).hasContext( ) )
             getWriter().writeContext( getModel().getActContext( ) );
 
         if( getModel( ).hasId( ) )
             getWriter().writeId( getModel().getActId( ) );
-            */
     }
 }

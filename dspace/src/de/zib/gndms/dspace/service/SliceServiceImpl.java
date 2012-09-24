@@ -25,7 +25,6 @@ import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
-import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
@@ -48,9 +47,13 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 // import de.zib.gndms.neomodel.gorfx.Taskling;
@@ -139,19 +142,25 @@ public class SliceServiceImpl implements SliceService {
             @RequestHeader( "DN" ) final String dn ) {
         GNDMSResponseHeader headers = setHeaders( subspaceId, sliceKindId, sliceId, dn );
 
+        // TODO: put that to sliceProvider
+        EntityManager entityManager = emf.createEntityManager();
+        final TxFrame txf = new TxFrame( entityManager );
         try {
-            Slice slice = findSliceOfKind( subspaceId, sliceKindId, sliceId );
-
-            if( null != config.getTerminationTime() )
-                slice.setTerminationTime( config.getTerminationTime() );
-            if( config.getSize() != null )
-                slice.setTotalStorageSize( config.getSize() );
-
-            return new ResponseEntity< Integer >( 0, headers, HttpStatus.OK );
-        } catch( NoSuchElementException e ) {
-            logger.warn( e.getMessage() );
-            return new ResponseEntity< Integer >( 0, headers, HttpStatus.NOT_FOUND );
+            final Slice slice = entityManager.find( Slice.class, sliceId );
+            if( config.getSize() != null ) {
+                final Subspace subspace = entityManager.find( Subspace.class, subspaceId );
+                
+                subspace.releaseSpace( slice.getTotalStorageSize() );
+                subspace.requestSpace( config.getSize() );
+            }
+            slice.setConfiguration( config );
+            txf.commit();
         }
+        finally { txf.finish();  }
+        sliceProvider.invalidate( sliceId );
+        subspaceProvider.invalidate( subspaceId );
+
+        return new ResponseEntity< Integer >( 0, headers, HttpStatus.OK );
     }
 
     @Override
@@ -731,5 +740,15 @@ public class SliceServiceImpl implements SliceService {
         response.setStatus( HttpStatus.UNAUTHORIZED.value() );
         response.sendError(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<Void>( null, setHeaders(ex.getMessage(), null, null, null), HttpStatus.UNAUTHORIZED );
+    }
+
+
+    /**
+     * Sets the entity manager factory.
+     * @param emf the factory to set.
+     */
+    @PersistenceUnit
+    public void setEmf(final EntityManagerFactory emf) {
+        this.emf = emf;
     }
 }

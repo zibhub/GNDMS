@@ -57,6 +57,8 @@ public class SliceConfiguration implements Configuration, Serializable {
 	 */
 	private DateTime terminationTime;
 
+    protected String group;
+
 
     /**
      * The standard constuructor.
@@ -231,4 +233,14 @@ public class SliceConfiguration implements Configuration, Serializable {
 		return hashCode;
 
 	}
+
+
+    public String getGroup() {
+        return group;
+    }
+
+
+    public void setGroup( String group ) {
+        this.group = group;
+    }
 }

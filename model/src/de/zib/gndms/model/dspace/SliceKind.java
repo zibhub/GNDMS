@@ -17,7 +17,7 @@ package de.zib.gndms.model.dspace;
  */
 
 
-
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.model.common.AccessMask;
 import de.zib.gndms.model.common.GridResource;
 
@@ -49,6 +49,22 @@ public class SliceKind extends GridResource {
     // default size of slice in bytes
     // if not given on creation, 10MB is taken as default
     private int defaultSliceSize = 1024*1024*10;
+
+
+    /**
+     * Constructs the slice kind configuration of a subspace.
+     *
+     * @param slicekind The subspace.
+     * @return The configuration.
+     */
+    @Transient
+    public SliceKindConfiguration getSliceKindConfiguration( ) {
+        return new SliceKindConfiguration(
+                getId(),
+                getPermission(),
+                getSubspace().toString() );
+    }
+
 
     @Column(name="permission", nullable=false, updatable=true )
     public AccessMask getPermission() {

@@ -18,13 +18,10 @@ package de.zib.gndms.common.model.gorfx.types;
 
 
 
-import de.zib.gndms.common.model.gorfx.types.Order;
-import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import de.zib.gndms.stuff.copy.Copyable;
+import de.zib.gndms.stuff.copy.Copyable.CopyMode;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Map;
 
 
@@ -41,6 +38,9 @@ public abstract class AbstractOrder implements Order {
     private static final long serialVersionUID = 5782532835559987893L;
     private String taskFlowType;  ///< Type of the requested task.
     private transient boolean justEstimate; ///< Flag for the contract calculation
+    
+    private String actId;
+    private Map< String, String > actContext;
 
 
     public String getTaskFlowType() {
@@ -60,6 +60,36 @@ public abstract class AbstractOrder implements Order {
 
     public boolean isJustEstimate() {
         return justEstimate;
+    }
+
+
+    public boolean hasContext() {
+        return actContext != null;
+    }
+
+
+    public Map< String, String > getActContext() {
+        return actContext;
+    }
+
+
+    public void setActContext( Map< String, String > actContext ) {
+        this.actContext = actContext;
+    }
+
+
+    public boolean hasId() {
+        return actId != null;
+    }
+
+
+    public String getActId() {
+        return actId;
+    }
+
+
+    public void setActId( String actId ) {
+        this.actId = actId;
     }
 
 

@@ -16,20 +16,22 @@ package de.zib.gndms.dspace.service;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceKindConfiguration;
 import de.zib.gndms.common.dspace.service.SliceKindService;
 import de.zib.gndms.common.logic.config.Configuration;
-import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
+import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
-import de.zib.gndms.logic.model.dspace.SliceKindConfiguration;
 import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.SliceKind;
-import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.util.TxFrame;
+import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -37,9 +39,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.servlet.http.HttpServletResponse;
@@ -59,6 +63,11 @@ public class SliceKindServiceImpl implements SliceKindService {
      * The logger.
      */
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+    private String localBaseUrl;
+
+    private RestTemplate restTemplate;
+
     /**
      * The entity manager factory.
      */
@@ -118,7 +127,7 @@ public class SliceKindServiceImpl implements SliceKindService {
 
         try {
             SliceKind sliceK = getSliceKindProvider().get( subspace, sliceKind );
-            SliceKindConfiguration config = SliceKindConfiguration.getSliceKindConfiguration( sliceK );
+            SliceKindConfiguration config = sliceK.getSliceKindConfiguration();
             return new ResponseEntity<Configuration>( config, headers,
                                                       HttpStatus.OK );
         }
@@ -131,77 +140,75 @@ public class SliceKindServiceImpl implements SliceKindService {
 
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.GET )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/config", method = RequestMethod.GET )
     @Secured( "ROLE_USER" )
-    public final ResponseEntity<Configuration> getSliceKindConfig(  @PathVariable final String subspace,
-                                                                    @PathVariable final String sliceKind,
+    public final ResponseEntity< SliceKindConfiguration > getSliceKindConfig(  @PathVariable final String subspaceId,
+                                                                    @PathVariable final String sliceKindId,
                                                                     @RequestHeader( "DN" ) final String dn )
     {
-        // todo implement me, pretty please!!!
-        return new ResponseEntity<Configuration>( null, new GNDMSResponseHeader(),
-                HttpStatus.NOT_IMPLEMENTED );
+        try {
+            SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
+            SliceKindConfiguration sliceKindConfiguration = sliceKind.getSliceKindConfiguration();
+
+            return new ResponseEntity< SliceKindConfiguration >( sliceKindConfiguration, new GNDMSResponseHeader(),
+                    HttpStatus.NOT_IMPLEMENTED );
+        } catch( NoSuchElementException e ) {
+            throw new IllegalArgumentException( "Could not find SliceKind " + sliceKindId, e );
+        }
     }
 
 
     @Override
-    @RequestMapping( value = "/_{subspace}/_{sliceKind}/config", method = RequestMethod.POST )
+    @RequestMapping( value = "/_{subspaceId}/_{sliceKindId}/config", method = RequestMethod.POST )
     @Secured( "ROLE_ADMIN" )
-    public final ResponseEntity<Integer> setSliceKindConfig( @PathVariable final String subspace,
-                                                          @PathVariable final String sliceKind, final Configuration config, final String dn ) {
-        GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
+    public final ResponseEntity<Integer> setSliceKindConfig( @PathVariable final String subspaceId,
+                                                          @PathVariable final String sliceKindId, final Configuration config, final String dn ) {
+        GNDMSResponseHeader headers = getResponseHeaders( subspaceId, sliceKindId, dn );
 
+        SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig(config);
+
+        // TODO: put that to sliceKindProvider
+        EntityManager entityManager = emf.createEntityManager();
+        final TxFrame txf = new TxFrame( entityManager );
         try {
-            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
-            SliceKindConfiguration sliceKindConfig = SliceKindConfiguration.checkSliceKindConfig( config );
-
-            sliceK.setPermission( sliceKindConfig.getPermission() );
-
-            // TODO: sliceK.setSliceKindConfiguration(sliceKindConfig)
-
-            Specifier<Void> spec = new Specifier<Void>();
-
-            HashMap<String, String> urimap = new HashMap<String, String>( 2 );
-            urimap.put( "service", "dspace" );
-            urimap.put( UriFactory.SUBSPACE, subspace );
-            urimap.put( UriFactory.SLICE_KIND, sliceKind );
-            spec.setUriMap( new HashMap<String, String>( urimap ) );
-            spec.setUrl( uriFactory.quoteUri( urimap ) );
-
-            return new ResponseEntity<Integer>( 0, headers,
-                                             HttpStatus.OK );
+            final SliceKind sliceKind = entityManager.find( SliceKind.class, sliceKindId );
+            sliceKind.setPermission( sliceKindConfig.getPermission() );
+            txf.commit();
         }
-        catch( NoSuchElementException ne ) {
-            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
-            return new ResponseEntity<Integer>( 0, headers,
-                                             HttpStatus.NOT_FOUND );
-        }
-        catch( WrongConfigurationException e ) {
-            logger.warn( "Wrong slice kind configuration" );
-            return new ResponseEntity<Integer>( 0, headers,
-                                             HttpStatus.BAD_REQUEST );
-        }
+        finally { txf.finish();  }
+        sliceKindProvider.invalidate( sliceKindId );
 
+        Specifier<Void> spec = new Specifier<Void>();
+
+        HashMap<String, String> urimap = new HashMap<String, String>( 2 );
+        urimap.put( "service", "dspace" );
+        urimap.put( UriFactory.SUBSPACE, subspaceId );
+        urimap.put( UriFactory.SLICE_KIND, sliceKindId );
+        spec.setUriMap( new HashMap<String, String>( urimap ) );
+        spec.setUrl( uriFactory.quoteUri( urimap ) );
+
+        return new ResponseEntity<Integer>( 0, headers,
+                                         HttpStatus.OK );
     }
 
     @Override
     // delegated by SubspaceService
-    public final ResponseEntity<Specifier<Void>> deleteSliceKind(
+    public final ResponseEntity< Specifier< Facets > > deleteSliceKind(
             @PathVariable final String subspace,
             @PathVariable final String sliceKind,
             @RequestHeader( "DN" ) final String dn ) {
         GNDMSResponseHeader headers = getResponseHeaders( subspace, sliceKind, dn );
-        try {
-            SliceKind sliceK = sliceKindProvider.get( subspace, sliceKind );
-            Subspace sub = subspaceProvider.get( subspace );
 
-            // TODO: AssignSliceKindAction zum lschen
-            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.OK );
-        }
-        catch( NoSuchElementException ne ) {
-            logger.warn( "The slice kind " + sliceKind + "does not exist within the subspace" + subspace );
-            return new ResponseEntity<Specifier<Void>>( null, headers,
-                                                        HttpStatus.NOT_FOUND );
-        }
+        Taskling ling = sliceKindProvider.delete(sliceKind);
+
+        // get service facets of task
+        final TaskClient client = new TaskClient( localBaseUrl );
+        client.setRestTemplate( restTemplate );
+        final Specifier< Facets > spec =
+                TaskClient.TaskServiceAux.getTaskSpecifier( client, ling.getId(), uriFactory, null, dn );
+
+        // return specifier for service facets
+        return new ResponseEntity< Specifier< Facets > >( spec, headers, HttpStatus.OK );
     }
 
 
@@ -305,5 +312,22 @@ public class SliceKindServiceImpl implements SliceKindService {
         response.setStatus( HttpStatus.UNAUTHORIZED.value() );
         response.sendError(HttpStatus.UNAUTHORIZED.value());
         return new ResponseEntity<Void>( null, getResponseHeaders(ex.getMessage(), null, null), HttpStatus.UNAUTHORIZED );
+    }
+
+
+    /**
+     * Sets the local base url of this sliceId service.
+     *
+     * @param localBaseUrl
+     *            the localBaseUrl to set
+     */
+    public void setLocalBaseUrl( String localBaseUrl ) {
+        this.localBaseUrl = localBaseUrl;
+    }
+
+
+    @Inject
+    public void setRestTemplate( RestTemplate restTemplate ) {
+        this.restTemplate = restTemplate;
     }
 }

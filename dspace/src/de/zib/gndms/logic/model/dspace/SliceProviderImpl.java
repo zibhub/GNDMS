@@ -29,12 +29,14 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.GridResourceCache;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 import java.util.UUID;
@@ -134,7 +136,17 @@ public class SliceProviderImpl implements SliceProvider {
         
         return directoryAux.diskUsage( slice.getOwner(), directory );
     }
-    
+
+
+    public void updateSlice( Slice slice, EntityManager entityManager ) {
+        final TxFrame txf = new TxFrame( entityManager );
+        try {
+            entityManager.persist(slice);
+            txf.commit();
+        }
+        finally { txf.finish();  }
+    }
+
 
     @Override
     public String createSlice(

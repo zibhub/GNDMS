@@ -29,6 +29,7 @@ import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
+import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -62,6 +63,8 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     private GridConfig gridConfig;
 
 
+    protected SliceProvider sliceProvider;
+
     private AbstractQuoteCalculator<? extends Order> quoteCalculator;
     private SubspaceService subspaceService;
 
@@ -93,6 +96,17 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
             final Slice slice = em.find(Slice.class, sliceId);
             txf.commit();
             return slice;
+        }
+        finally { txf.finish();  }
+    }
+    
+    
+    protected void updateSlice( Slice slice ) {
+        final EntityManager em = getEntityManager();
+        final TxFrame txf = new TxFrame(em);
+        try {
+            em.persist( slice );
+            txf.commit();
         }
         finally { txf.finish();  }
     }
@@ -301,5 +315,16 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     @Inject
     public void setGridConfig( GridConfig gridConfig ) {
         this.gridConfig = gridConfig;
+    }
+
+
+    @Inject
+    public void setSliceProvider( SliceProvider sliceProvider ) {
+        this.sliceProvider = sliceProvider;
+    }
+
+
+    protected SliceProvider getSliceProvider() {
+        return sliceProvider;
     }
 }

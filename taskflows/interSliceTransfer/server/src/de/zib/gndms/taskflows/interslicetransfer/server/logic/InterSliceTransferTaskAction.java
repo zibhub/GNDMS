@@ -26,8 +26,10 @@ import de.zib.gndms.gndmc.dspace.SubspaceClient;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
+import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.TaskState;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
@@ -38,6 +40,8 @@ import de.zib.gndms.taskflows.interslicetransfer.client.InterSliceTransferMeta;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferOrder;
 import de.zib.gndms.taskflows.interslicetransfer.client.model.InterSliceTransferResult;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -166,6 +170,26 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
         fta.call( );
 
+        // extend termination time, if it had been published
+        if( getOrderBean().getSourceSlice() != null ) {
+            final String sliceId = getOrderBean().getSourceSlice().getUriMap().get( UriFactory.SLICE );
+
+            final TxFrame txf = new TxFrame( getEntityManager() );
+            try {
+                final Slice slice = getEntityManager().find(Slice.class, sliceId);
+                if( slice.getPublished() ) {
+                    final DateTime now = new DateTime( DateTimeUtils.currentTimeMillis() );
+                    final DateTime month = now.plusMonths( 1 );
+
+                    if( slice.getTerminationTime().isBefore( month ) ) {
+                        slice.setTerminationTime( month );
+                    }
+                }
+                txf.commit();
+            }
+            finally { txf.finish();  }
+        }
+        
         session = getDao().beginSession();
         try {
             final Task task = getTask(session);

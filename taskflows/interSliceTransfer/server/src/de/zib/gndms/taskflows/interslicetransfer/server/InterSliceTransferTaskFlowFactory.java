@@ -30,6 +30,7 @@ import de.zib.gndms.taskflows.interslicetransfer.server.logic.InterSliceTransfer
 import org.springframework.http.converter.HttpMessageConverter;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +46,12 @@ public class InterSliceTransferTaskFlowFactory
     extends DefaultTaskFlowFactory<InterSliceTransferOrder, InterSliceTransferQuoteCalculator> {
 
     GNDMSystem system;
+    
+    
+    @Override
+    public Iterable<String> depends() {
+        return new ArrayList< String >( 1 ) {{ add( "GridFTPFileTransfer" ); }};
+    }
 
 
     public InterSliceTransferTaskFlowFactory() {

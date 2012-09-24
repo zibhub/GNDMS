@@ -72,6 +72,11 @@ public class SpaceConstraintPropertyReader extends AbstractPropertyReader<SpaceC
                 )
             );
         }
+        
+        
+        getProduct().setAltitudeRange(
+                getProperties().getProperty( SfrProperty.ALT_RANGE.key )
+        );
 
 
         getProduct().setAreaCRS(

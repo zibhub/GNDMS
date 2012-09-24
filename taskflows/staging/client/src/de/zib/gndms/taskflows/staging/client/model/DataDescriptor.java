@@ -33,7 +33,7 @@ import java.util.List;
  *
  * NOTE: for every not mandatory attribute of this class a has<AttributeName> method
  *       is provided to check if the attribute is set or not.
- * NOTE: If the constrains attribute is missing this should be interpreted as just download.
+ * NOTE: If the constraints attribute is missing this should be interpreted as just download.
  *       If *ArchivFormat is provided it means, do create an archive with the requested data in the
  *          given format.
  */
@@ -51,7 +51,7 @@ public class DataDescriptor implements Serializable {
      *
      * This attribute is optional.
      */
-    private DataConstraints constrains; // not required
+    private DataConstraints constraints; // not required
 
     /**
      * The format of the staged data file.
@@ -104,18 +104,18 @@ public class DataDescriptor implements Serializable {
     }
 
 
-    public DataConstraints getConstrains() {
-        return constrains;
+    public DataConstraints getConstraints() {
+        return constraints;
     }
 
 
-    public void setConstrains( DataConstraints constrains ) {
-        this.constrains = constrains;
+    public void setConstraints(DataConstraints constraints) {
+        this.constraints = constraints;
     }
 
 
     public boolean hasConstraints( ) {
-        return constrains != null;
+        return constraints != null;
     }
 
 

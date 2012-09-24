@@ -156,6 +156,10 @@ public class PublishingTFAction extends SlicedTaskFlowAction< PublishingOrder > 
         catch( RuntimeException e ) {
             transit( TaskState.FAILED );
         }
+        
+        slice.setPublished( true );
+        updateSlice( slice );
+        getSliceProvider().invalidate( slice.getId() );
 
         setProgress( 1 );
         transitWithPayload( new PublishingTaskFlowResult(), TaskState.FINISHED );

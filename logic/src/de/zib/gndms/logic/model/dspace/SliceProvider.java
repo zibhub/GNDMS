@@ -20,6 +20,7 @@ import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.joda.time.DateTime;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 /**
@@ -56,6 +57,8 @@ public interface SliceProvider {
     Slice getSlice(String subspace, String slice) throws NoSuchElementException;
 
     String createSlice( String subspace, String sliceKind, String dn, DateTime ttm, long sliceSize ) throws NoSuchElementException;
+
+    void updateSlice( Slice slice, EntityManager entityManager );
 
     Taskling deleteSlice( String subspaceId, String sliceId ) throws NoSuchElementException;
     

@@ -120,6 +120,7 @@ public class Quote implements Cloneable {
 		clone.setResultValidity(getResultValidity().clone());
 		clone.setDeadline(getDeadline().clone());
 		clone.setAdditionalNotes(getAdditionalNotes());
+        clone.setSite( getSite() );
 		if (hasExpectedSize())
 			clone.setExpectedSize(getExpectedSize());
 		return clone;

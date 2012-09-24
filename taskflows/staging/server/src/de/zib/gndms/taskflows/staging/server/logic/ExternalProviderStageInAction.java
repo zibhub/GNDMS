@@ -99,7 +99,10 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
                     getLogger().debug( "Waiting for potential death of container..." );
                     Sleeper.sleepUninterruptible(GLOBUS_DEATH_DURATION);
                 }
-                String log = "Staging failed! Staging script returned unexpected exit code: " + result +
+                String log = "Staging failed!" +
+                        "\nStaging script returned unexpected exit code: " + result +
+                        "\nWorked on slice: " + sliceParam.getId() +
+                        "\nSlice directory: " + sliceDir +
                         "\nScript output was:\n" + errRecv.toString();
 
                 // trace( log, null ) ;

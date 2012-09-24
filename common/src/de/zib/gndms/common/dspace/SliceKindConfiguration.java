@@ -1,4 +1,4 @@
-package de.zib.gndms.logic.model.dspace;
+package de.zib.gndms.common.dspace;
 
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
@@ -19,7 +19,6 @@ package de.zib.gndms.logic.model.dspace;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
 import de.zib.gndms.common.model.common.AccessMask;
-import de.zib.gndms.model.dspace.SliceKind;
 
 /**
  * The slice kind configuration checks and accesses a ConfigHolder for a slice kind,
@@ -194,19 +193,6 @@ public class SliceKindConfiguration implements Configuration {
 	 */
 	public final void setSubspace(final String subspace) {
 		this.subspace = subspace;
-	}
-
-	/**
-	 * Constructs the slice kind configuration of a subspace.
-	 * 
-	 * @param slicekind The subspace.
-	 * @return The configuration.
-	 */
-    public static SliceKindConfiguration getSliceKindConfiguration(SliceKind slicekind) {
-		return new SliceKindConfiguration(
-                slicekind.getId(),
-                slicekind.getPermission(),
-                slicekind.getSubspace().toString());
 	}
 
 	/* (non-Javadoc)

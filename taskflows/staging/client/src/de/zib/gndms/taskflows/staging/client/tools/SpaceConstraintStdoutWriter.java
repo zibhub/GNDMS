@@ -45,6 +45,11 @@ public class SpaceConstraintStdoutWriter implements SpaceConstraintWriter {
         System.out.println( "  Altitude:" );
         showMinMax( alt, "    " );
     }
+    
+    
+    public void writeAltitudeRange( String altRange) {
+        System.out.println( "  AltitudeRange:" + altRange );
+    }
 
 
     public void writeAreaCRS( String crs ) {

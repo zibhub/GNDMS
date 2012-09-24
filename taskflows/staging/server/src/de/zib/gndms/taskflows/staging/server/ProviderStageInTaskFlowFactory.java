@@ -135,7 +135,7 @@ public class ProviderStageInTaskFlowFactory
         config.put( "stagingClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
                                     ".ExternalProviderStageInAction" );
         config.put( "estimationClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
-                                       ".ExternalProviderStageInORQCalculator" );
+                                       ".ExternalProviderStageInQuoteCalculator" );
         config.put( "updateInterval", "60000" ); // default: every minute
         //config.put( "oidPrefixe", "" );
 

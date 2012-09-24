@@ -16,6 +16,8 @@ package de.zib.gndms.gndmc.dspace.Test;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
+import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.common.model.FileStats;
 import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
@@ -26,6 +28,8 @@ import de.zib.gndms.gndmc.dspace.SliceKindClient;
 import de.zib.gndms.gndmc.dspace.SubspaceClient;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -65,13 +69,14 @@ public class SliceClientTest {
     final private String serviceUrl;
     private RestTemplate restTemplate;
 
-    final static String subspaceConfig = "size: 6000; path: /tmp/gndms/sub; gsiFtpPath: undefined";
+    final static String subspaceConfig = "size: 4096; path: /tmp/gndms/sub; gsiFtpPath: undefined";
     final static String subspaceId = "testsub";
 
     final static String sliceKindId = "testkind";
     final static String sliceKindConfig = "sliceKindMode:700; uniqueDirName:kind";
     
     final static String sliceConfig = "terminationTime:2011-12-16; sliceSize:1024";
+    final static String sliceConfigTooBig = "terminationTime:2011-12-16; sliceSize:5000";
     final static String sliceFileName = "testfile";
     final static String sliceFile = "/tmp/test.file";
     final static String sliceFileContent = "Hallo Welt";
@@ -179,7 +184,7 @@ public class SliceClientTest {
                 subspaceClient.createSlice(subspaceId, sliceKindId, sliceConfig, admindn);
         Assert.assertNotNull( slice );
         Assert.assertEquals( slice.getStatusCode(), HttpStatus.CREATED );
-        
+
         sliceId = slice.getBody().getUriMap().get( UriFactory.SLICE );
     }
 
@@ -187,6 +192,60 @@ public class SliceClientTest {
     @Test(
             groups = { "sliceServiceTest" },
             dependsOnMethods = { "testCreateSlice" }
+    )
+    public void testSliceQuota() {
+        boolean works = false;
+        try {
+            final ResponseEntity<Specifier<Void>> slice =
+                    subspaceClient.createSlice( subspaceId, sliceKindId, sliceConfigTooBig, admindn );
+            Assert.assertNotNull( slice );
+            Assert.assertEquals( slice.getStatusCode(), HttpStatus.BAD_REQUEST );
+        }
+        catch( Exception e ) {
+            works = true;
+        }
+        Assert.assertEquals( works, true );
+
+        final SliceConfiguration sliceConfiguration = new SliceConfiguration();
+        sliceConfiguration.setSize( 5000L );
+        
+        try {
+            works = false;
+            sliceClient.setSliceConfiguration( subspaceId, sliceKindId, sliceId, sliceConfiguration, admindn );
+        }
+        catch( Exception e ) {
+            works = true;
+        }
+        
+        Assert.assertEquals( works, true );
+    }
+
+
+    @Test(
+            groups = { "sliceServiceTest" },
+            dependsOnMethods = { "testSliceQuota" }
+    )
+    public void testConfigSlice() {
+        DateTime month = new DateTime( DateTimeUtils.currentTimeMillis() ).plusMonths(1);
+
+        final SliceConfiguration sliceConfiguration = new SliceConfiguration(
+                1234L,
+                month
+        );
+        sliceClient.setSliceConfiguration( subspaceId, sliceKindId, sliceId, sliceConfiguration, admindn );
+        final ResponseEntity< SliceInformation > responseEntity
+                = sliceClient.getSliceInformation( subspaceId, sliceKindId, sliceId, admindn );
+
+        SliceInformation sliceInformation = responseEntity.getBody();
+        
+        Assert.assertEquals( new Long( 1234L ), sliceInformation.getSize() );
+        Assert.assertEquals( month.getMillis(), sliceInformation.getTerminationTime().getMillis() );
+    }
+
+
+    @Test(
+            groups = { "sliceServiceTest" },
+            dependsOnMethods = { "testConfigSlice" }
     )
     public void testFileTransfer() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         // TODO: test for nonexistance of sliceFile as initial constraint
@@ -214,6 +273,7 @@ public class SliceClientTest {
 
                         @Override
                         public String getOriginalFilename() {
+                            // This is where he gets the content from.
                             return sliceFile;
                         }
 
@@ -234,16 +294,19 @@ public class SliceClientTest {
 
                         @Override
                         public byte[] getBytes() throws IOException {
+                            // don't need this
                             return null;
                         }
 
                         @Override
                         public InputStream getInputStream() throws IOException {
+                            // don't need this
                             return null;
                         }
 
                         @Override
                         public void transferTo(File dest) throws IOException, IllegalStateException {
+                            // don't need this
                         }
                     },
                     admindn );

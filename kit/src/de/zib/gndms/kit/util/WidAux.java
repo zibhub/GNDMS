@@ -46,6 +46,11 @@ public class WidAux {
     }
 
 
+    public static String getGORFXid() {
+        return MDC.get( "gorfxid" );
+    }
+
+
     public static void removeGORFXid( )  {
         removeId( "gorfxid" );
     }
