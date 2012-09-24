@@ -46,6 +46,21 @@ public class GORFXAspects {
     @Pointcut( "execution(* de.zib.gndms.GORFX.service.GORFXServiceImpl.*(..))" )
     public void inGORFXServiceImpl() {}
 
+    @Pointcut( "inTaskServiceImpl()  || inTaskFlowServiceImpl() || inGORFXServiceImpl()" )
+    public void inGorfxCall() {}
+
+    @Around( value = "inGorfxCall()" )
+    public Object putGorfxId( ProceedingJoinPoint pjp ) throws Throwable {
+        
+        WidAux.initGORFXid( UUID.randomUUID().toString() );
+        
+        final Object ret = pjp.proceed();
+
+        WidAux.removeGORFXid();
+        
+        return ret;
+    }
+
     @Around( value = "inTaskServiceImpl() && args( taskId, .., String )" )
     public Object logTaskId( ProceedingJoinPoint pjp, final String taskId ) throws Throwable {
         MDC.put("TaskID", taskId);
@@ -83,11 +98,9 @@ public class GORFXAspects {
     @Around( value = "inGORFXServiceImpl()" )
     public Object logGORFXWithNewUUID( ProceedingJoinPoint pjp ) throws Throwable {
         MDC.put( "ServiceCall", pjp.getSignature().toLongString() );
-        WidAux.initGORFXid(UUID.randomUUID().toString());
 
         final Object ret = pjp.proceed();
 
-        WidAux.removeGORFXid();
         MDC.remove("GORFXCall");
 
         return ret;
