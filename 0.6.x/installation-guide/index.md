@@ -81,7 +81,17 @@ Please ensure, that the path `$GNDMS_SHARED` exists and that the user `gndms` ha
 permissions to read and write that directory.
 
 * If you like the application container to run under another port than `8080` you can
-  change that by setting `$GNDMS_PORT`.
+  change that by setting `$GNDMS_UNSECURE_PORT`.
+
+Also, you can set the variables
+* `$GNDMS_HOST` to override the hostname,
+* `$GNDMS_SECURE_PORT` to set the https port of the container,
+* `$GNDMS_HOSTCERT` to set the path to the host certificate,
+* `$GNDMS_HOSTKEY` to set the path to the hostkey and
+* `$GNDMS_HOSTCA` to set the path to the CA.
+
+The last three variables override settings in the `monitor.properties` file which is used to setup a running GNDMS from the console.
+Nevertheless, if you missed setting one of theese options, you can change the results in the `monitor.properties` and `grid.properties` files.
 
 Please consult `$GNDMS_SOURCE/etc/example.profile` for an
 example of a properly configured environment.
@@ -102,7 +112,7 @@ buildr locally, please
 
 This guide assumes the usage of the pre-packaged version of buildr.
 
-*Currently buildr 1.9 is not supported*
+*Currently buildr in ruby 1.9 is not supported*
 
 Installation and Deployment from Distribution Package 
 -----------------------------------------------------
@@ -113,13 +123,6 @@ Installation and Deployment from Distribution Package
  steps should be executed by the `gndms` user.
 
 
-
-### Migrating from a Previous Installation
-
-The REST version of GNDMS (>= 0.6.0) has nearly nothing in common with
-the last WS-based version (0.3.4).
-Hence, it would be best to get rid of the old system completely.
-The INSTALL file of the old system should describe how to do that.
 
 ### Installation and Initial Deployment
  
@@ -165,8 +168,8 @@ The INSTALL file of the old system should describe how to do that.
 
 
       =========================================================================================                                          
-      GNDMS RELEASE: Generation N Data Management System VERSION: 0.6.0 "ARTURAS" release-0.6.0                                          
-      GNDMS BUILD: built-at: Mon Feb 06 20:25:46 +0100 2012 built-by: mjorra@csr-pc35                                                    
+      GNDMS RELEASE: Generation N Data Management System VERSION: 0.6.4 "CESARE" release-0.6.4                                          
+      GNDMS BUILD: built-at: Mon Sep 25 18:15:45 +0100 2012 built-by: bzcbachm@csr-pc45                                                    
       =========================================================================================                                          
       Initializing for grid: 'C3Grid' (shared dir: '/var/lib/gndms')     
 
@@ -229,7 +232,7 @@ the `Buildfile`.
 
         -props < staging-property-file-name >
 
-    An template for the order file can be found under
+    A template for the order file can be found under
 
         $GNDMS_SOURCE/etc/sfr/dummy-sfr.properties
 
@@ -318,7 +321,7 @@ The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
 
   The script requires the transfer request as properties-file:
 
-      -props < staging-property-file-name >
+      -props < property-file-name >
 
   An example for transfer properties can be found in:
 
@@ -327,6 +330,124 @@ The ESGF-Staging PlugIn provides a method to stage data from ESGF to GNDMS.
   Additionally arguments for security and the endpoints are
   required, see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for details.
 
+
+* Enable InterSliceTransfer
+
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/interSliceTransfer
+  
+  and run
+  
+      gndms-buildr interSliceTransfer:server:package
+  
+  This will compile the client- and serverside of the plug-in. It can be installed via
+  
+      gndms-buildr interSliceTransfer:server:deploy
+  
+  Now (re-)start or reload your Jetty container. This is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+* A test for the interSliceTransfer:
+
+  We provide a script which executes different kinds of interslice transfers. It can be found
+  under:
+
+      $GNDMS_SOURCE/taskflows/interSliceTransfer/bin/run-interslicetransfer-client.sh
+
+  The script requires the transfer request as properties-file:
+
+      -props < property-file-name >
+
+  An example for transfer properties can be found in:
+
+      $GNDMS_SOURCE/taskflows/interSliceTransfer/etc/order.properties
+
+  Additionally arguments for security and the endpoints are
+  required, see the section [Running a GORFX-test-client](#running_a_gorfxtestclient) for details.
+
+
+
+**C3-Grid Setup & Configuration for Publisher** 
+
+* Enable Publishing
+
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/publishing
+  
+  and run
+  
+      gndms-buildr publishing:server:package
+  
+  This will compile the client- and serverside of the plug-in. It can be installed via
+  
+      gndms-buildr publishing:server:deploy
+  
+  Now (re-)start or reload your Jetty container. This is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+  Finally, configure the publishing plug-in:
+
+    : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-publisher.sh` and
+    execute `gndms-buildr c3grid-publisher-setupdb` in $GNDMS_SOURCE !
+
+* A quick test for the publishing:
+
+  We provide a script which tests publishing of an existing slice. It can be found
+  under:
+
+      $GNDMS_SOURCE/taskflows/publishing/bin/run-publishing-client.sh
+
+  The script requires the order request as properties-file:
+
+      -props < property-file-name >
+
+  An example for the properties file can be found in:
+
+      $GNDMS_SOURCE/taskflows/publishing/etc/order.properties
+
+
+**C3-Grid Setup & Configuration for Central DMS** 
+
+* Enable DMSStaging (DataProvider Proxy)
+
+  Enter the directory
+  
+      $GNDMS_SOURCE/taskflows/DMSStaging
+  
+  and run
+  
+      gndms-buildr dmsstaging:server:package
+  
+  This will compile the client- and serverside of the plug-in. It can be installed via
+  
+      gndms-buildr dmsstaging:server:deploy
+  
+  Now (re-)start or reload your Jetty container. This is required for
+  the gndms plug-in loader to properly register the plug-ins.
+  
+  Finally, configure the DMSStaging plug-in:
+
+    : Edit `$GNDMS_SOURCE/scripts/c3grid/setup-central-dms-site.sh` and
+    execute `gndms-buildr c3grid-centraldms-setupdb` in $GNDMS_SOURCE !
+
+* A quick test for the DMSStaging:
+
+  We provide a script which tests the staging proxy. It can be found
+  under:
+
+      $GNDMS_SOURCE/taskflows/DMSStaging/bin/run-dmsstaging-client.sh
+
+  The script requires the order request as properties-file:
+
+      -props < property-file-name >
+
+  An example for the properties file can be found in:
+
+      $GNDMS_SOURCE/etc/sfr/dummy-sfr.properties
+
+  Indeed, this is the same file as for data provider staging.
 
 
 Additionally, please consult the documentation for the respective 
