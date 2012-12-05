@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2012 Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -25,17 +25,23 @@ import org.springframework.beans.factory.BeanFactory;
 import java.util.*;
 
 /**
- * This is the C3-Grid VolD Client.
+ * The C3-Grid VolD Client.
  *
  * VolD will be used as the MDS replacement in the new C3-Grid. This class is
- * the client used to store and get data from the VolD storage.
+ * the client used to store and get data from the VolD storage specific to the
+ * needs of C3-Grid.
  */
 public class Adis extends ABIi {
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     private VolDClient voldi;
     private String grid;
-    
+
+    /**
+     * The constructor, setting up a VolD client with the given context,
+     * utf-8 encoding and the grid name "c3grid".
+     * @param context
+     */
     public Adis( final BeanFactory context ) {
         this.voldi = new VolDClient( context );
         this.voldi.setEnc( "utf-8" );
@@ -223,7 +229,7 @@ public class Adis extends ABIi {
      * List all available export sites.
      * @return All export site URLs.
      */
-    public Map<String, String> listExportSites() {
+    public List<String> listExportSites() {
         // guard
         {
             checkState();
@@ -243,7 +249,7 @@ public class Adis extends ABIi {
      * List all available publishing sites.
      * @return All publishing site URLs.
      */
-    public Map<String, String> listPublishingSites() {
+    public List<String> listPublishingSites() {
         // guard
         {
             checkState();
@@ -263,7 +269,7 @@ public class Adis extends ABIi {
      * List all available ESGF data stagers.
      * @return All ESGF stager site URLs.
      */
-    public Map<String, String> listESGFStagingSites() {
+    public List<String> listESGFStagingSites() {
         // guard
         {
             checkState();
@@ -313,7 +319,7 @@ public class Adis extends ABIi {
      * List all publisher sites.
      * @return All publisher sites.
      */
-    public Map<String, String> listPublisher() {
+    public List<String> listPublisher() {
         // guard
         {
             checkState();
@@ -334,7 +340,7 @@ public class Adis extends ABIi {
      * @param workflow
      * @return According GRAM endpoints.
      */
-    public Map<String, String> getEPbyWorkflow( String workflow ) {
+    public List<String> getEPbyWorkflow( String workflow ) {
         // guard
         {
             checkState();
@@ -346,7 +352,7 @@ public class Adis extends ABIi {
             return null;
         }
 
-        Map<String, String> result = new HashMap<String, String>();
+        List<String> result = new ArrayList<java.lang.String>();
 
         // should be exactly one entry
         for( Map.Entry<Key, Set<String>> entry : _result.entrySet() ) {
@@ -358,7 +364,7 @@ public class Adis extends ABIi {
                     continue;
                 }
 
-                result.putAll( flatmap( _gramres ) );
+                result.addAll( flatmap( _gramres ) );
             }
         }
 
@@ -582,16 +588,16 @@ public class Adis extends ABIi {
 
 
     // could be static, but the logger...
-    private Map<String, String> flatmap( Map<Key, Set<String>> map ) {
-        Map<String, String> result = new HashMap<String, String>();
+    private List<String> flatmap( Map<Key, Set<String>> map ) {
+        List<String> result = new ArrayList<String>();
 
-        for( Map.Entry<Key, Set<String>> entry : map.entrySet() ) {
-            if( 1 != entry.getValue().size() ) {
-                logger.warn("Unexpected state in database: got " + entry.getValue().size() + " values for " + entry.getKey().toString() + ".");
-                continue;
+        if( 1 != map.keySet().size()) {
+            logger.warn("Unexpected state in database: got multiple keys for flattening.");
+        } else {
+            Set<String> values = map.get(map.keySet().iterator().next());
+            for( String s : values ) {
+               result.add(s);
             }
-
-            result.put( entry.getKey().get_keyname(), entry.getValue().iterator().next() );
         }
 
         return result;
