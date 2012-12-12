@@ -20,6 +20,7 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ESGFStagingTaskFlow'; \
 	cfgOutFormat: 'PRINT_OK'; \
 	subspace: 'EsgfStaging'; \
 	sliceKind: 'EsgfKind'; \
+	esgfSiteName: '$ESGF_STAGING_NAME'; \
 	trustStoreLocation: '$ESGF_TRUSTSTORE'; \
 	trustStorePassword: '$ESGF_TRUSTSTORE_PASSWORD'; \
 	updateInterval: $UPDATE_INTERVAL; \

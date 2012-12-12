@@ -205,15 +205,17 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
-        public VoldRegistrar( final Adis adis, final String gorfxEP ) {
+        final private String name;
+        public VoldRegistrar( final Adis adis, final String gorfxEP ) throws MandatoryOptionMissingException {
             this.adis = adis;
             this.gorfxEP = gorfxEP;
+            this.name = getOfferTypeConfig().getOption( "esgfSiteName" );
         }
 
 
         @Override
         public String getName() {
-            return "ESGFStagingVoldRegistrar";
+            return name;
         }
 
 

@@ -29,6 +29,8 @@ TTL=86400000
 
 UPDATE_INTERVAL=60000
 
+# Set a short, human-readable name for the ESGF staging site to be registered at VolD
+ESGF_STAGING_NAME=
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
