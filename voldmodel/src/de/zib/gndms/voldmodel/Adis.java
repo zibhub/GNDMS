@@ -185,12 +185,12 @@ public class Adis extends ABIi {
     }
 
     /**
-     * Returns all names and values corresponding to the given type in the
-     * VolD registry.
+     * Returns all names and their (first) values corresponding to the
+     * given type in the VolD registry.
      * @param type The type
      * @return The corresponding names and values
      */
-    private Map<String, Set<String>>
+    private Map<String, String>
         listValuesByNameAndType(final String type) {
         // guard
         checkState();
@@ -203,7 +203,7 @@ public class Adis extends ABIi {
         if (result == null) {
             return null;
         } else {
-            return flatmap(result);
+            return flatmapFirst(result);
         }
     }
 
@@ -271,7 +271,7 @@ public class Adis extends ABIi {
      * Lists all available compute providers.
      * @return All registered compute provider ids
      */
-    public final Map<String, Set<String>> listCPs() {
+    public final Map<String, String> listCPs() {
         return listValuesByNameAndType(Type.CPID_GRAM.toString());
     }
 
@@ -288,7 +288,7 @@ public class Adis extends ABIi {
      * Lists all available import sites.
      * @return All import site URLs
      */
-    public final Map<String, Set<String>> listImportSites() {
+    public final Map<String, String> listImportSites() {
         return listValuesByNameAndType(Type.IMPORT.toString());
     }
 
@@ -296,7 +296,7 @@ public class Adis extends ABIi {
      * List all available export sites.
      * @return All export site URLs
      */
-    public final Map<String, Set<String>> listExportSites() {
+    public final Map<String, String> listExportSites() {
         return listValuesByNameAndType(Type.EXPORT.toString());
     }
 
@@ -304,7 +304,7 @@ public class Adis extends ABIi {
      * List all available publishing sites.
      * @return All publishing site URLs
      */
-    public final Map<String, Set<String>> listPublishingSites() {
+    public final Map<String, String> listPublishingSites() {
         return listValuesByNameAndType(Type.PUBLISHER.toString());
     }
 
@@ -312,7 +312,7 @@ public class Adis extends ABIi {
      * List all available ESGF data stagers.
      * @return All ESGF stager site URLs
      */
-    public final Map<String, Set<String>> listESGFStagingSites() {
+    public final Map<String, String> listESGFStagingSites() {
         return listValuesByNameAndType(Type.ESGF.toString());
     }
 
@@ -415,6 +415,14 @@ public class Adis extends ABIi {
             insertname = "";
         }
 
+        Map<Key, Set<String>> result =
+        		voldi.lookup(new Key(grid, type, insertname));
+        if (result.size() != 0) {
+            logger.warn("EndPoint " + insertname + " of type "
+                    + type + " with URL "
+            		+ result.get(new Key(grid, type, insertname))
+                    + "was overwritten.");
+        }
         voldi.insert(null, simplemap(new Key(grid, type, insertname), value));
         return true;
     }
@@ -620,6 +628,29 @@ public class Adis extends ABIi {
 
     	for (Key key: map.keySet()) {
             newMap.put(key.get_keyname(), map.get(key));
+    	}
+
+    	return newMap;
+    }
+
+    /**
+     * Returns for a map of keys and sets a corresponding
+     * map of key names and sets (see {@link de.zib.vold.common.Key}).
+     * @param map The original map using keys
+     * @return The new map using key names
+     */
+    private Map<String, String>
+               flatmapFirst(final Map<Key, Set<String>> map) {
+    	Map<String, String> newMap = new HashMap<String, String>();
+
+    	for (Key key: map.keySet()) {
+            if (map.get(key).size() > 1) {
+                logger.warn("More than one endpoint registered with name "
+                + key.get_keyname() + " of type " + key.get_type()
+                + "registered.");
+            }
+
+    		newMap.put(key.get_keyname(), map.get(key).iterator().next());
     	}
 
     	return newMap;
