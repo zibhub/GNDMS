@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2013 Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,14 +15,33 @@
 
 package de.zib.gndms.voldmodel;
 
+/**
+ * An enumeration to define available roles in C3-Grid.
+ *
+ * At the moment, this are the roles DMS for the data management system
+ * and WSS for the workflow scheduler.
+ *
+ * @author Jšrg Bachmann
+ */
 public enum Role {
+    /**
+     * The role for the data management system.
+     */
     DMS,
+    /**
+     * The role for the workflow scheduler.
+     */
     WSS;
 
+    /**
+     * The String representation of the roles, which begins with a capital
+     * letter followed by lower-case ones, i.e. Dms and Wss.
+     * @return The String representation
+     */
     @Override
     public String toString() {
         String s = super.toString();
-        return s.substring( 0, 1 ) + s.substring( 1 ).toLowerCase();
+        return s.substring(0, 1) + s.substring(1).toLowerCase();
     }
 }
 

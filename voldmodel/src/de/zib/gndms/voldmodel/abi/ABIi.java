@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2013 Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,11 @@ import java.util.Map;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
+/**
+ * The interface for an ABI.
+ *
+ * @author Jšrg Bachmann
+ */
 public class ABIi {
     // use reflect to check for correct method names
     {
@@ -28,69 +33,77 @@ public class ABIi {
         Method[] methods = c.getDeclaredMethods();
 
         // search the right method
-        for( Method m : methods ) {
+        for (Method m : methods) {
             // search the right method
-            if( Modifier.PUBLIC != m.getModifiers() )
+            if (Modifier.PUBLIC != m.getModifiers()) {
                 continue;
+            }
 
             Class<?>[] paramtypes = m.getParameterTypes();
 
             // check for parametertypes
-            for( int i = 0; i < paramtypes.length; ++i ) {
-                if( paramtypes[i].isAssignableFrom( String.class ) )
+            for (int i = 0; i < paramtypes.length; ++i) {
+                if (paramtypes[i].isAssignableFrom(String.class)) {
                     continue;
-                else if( paramtypes[i].isAssignableFrom( Collection.class ) ) {
-                    if( i != paramtypes.length - 1 ) {
-                        throw new IllegalStateException( "Method " + m.toGenericString() + " has invalid parameter format: At most the last parameter may be a Collection." );
+                } else if (paramtypes[i].isAssignableFrom(Collection.class)) {
+                    if (i != paramtypes.length - 1) {
+                        throw new IllegalStateException("Method "
+                                + m.toGenericString()
+                                + " has invalid parameter format: At most the "
+                                + "last parameter may be a Collection.");
                     }
-                }
-                else {
-                    throw new IllegalStateException( "Method " + m.toGenericString() + " has invalid parameter format: parameter " + String.valueOf( i + 1 ) + " is not supported." );
+                } else {
+                    throw new IllegalStateException("Method "
+                            + m.toGenericString() + " has invalid parameter "
+                            + "format: parameter " + String.valueOf(i + 1)
+                            + " is not supported.");
                 }
             }
 
             Class<?> returntype = m.getReturnType();
 
             // check returntype
-            {
-                if( String.class.isAssignableFrom( returntype ) )
+            if (String.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Collection.class.isAssignableFrom( returntype ) )
+                } else if (Collection.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Map.class.isAssignableFrom( returntype ) )
+                } else if (Map.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Boolean.class.isAssignableFrom( returntype ) )
+                } else if (Boolean.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Character.class.isAssignableFrom( returntype ) )
+                } else if (Character.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Byte.class.isAssignableFrom( returntype ) )
+                } else if (Byte.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Short.class.isAssignableFrom( returntype ) )
+                } else if (Short.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Integer.class.isAssignableFrom( returntype ) )
+                } else if (Integer.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Long.class.isAssignableFrom( returntype ) )
+                } else if (Long.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Float.class.isAssignableFrom( returntype ) )
+                } else if (Float.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Double.class.isAssignableFrom( returntype ) )
+                } else if (Double.class.isAssignableFrom(returntype)) {
                     continue;
-                else if( Void.class.isAssignableFrom( returntype ) )
+                } else if (Void.class.isAssignableFrom(returntype)) {
                     continue;
+                }
             }
         }
-    }
 
-    protected void printABICommands() {
+    /**
+     * Prints all available public methods of this class.
+     */
+    protected final void printABICommands() {
         Class<?> c = this.getClass();
         Method[] methods = c.getDeclaredMethods();
 
-        for( Method m : methods ) {
+        for (Method m : methods) {
             // print the public methods only
-            if( Modifier.PUBLIC != m.getModifiers() )
+            if (Modifier.PUBLIC != m.getModifiers()) {
                 continue;
-
-            System.out.println( m.getName() + " |--> " + m.toGenericString() );
+            }
+            System.out.println(m.getName() + " |--> " + m.toGenericString());
         }
     }
 }

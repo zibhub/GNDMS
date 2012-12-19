@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2012 Zuse Institute Berlin (ZIB)
+ * Copyright 2008-2013 Zuse Institute Berlin (ZIB)
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,12 @@
 
 package de.zib.gndms.voldmodel;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import de.zib.gndms.voldmodel.abi.ABIi;
 import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
@@ -22,14 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
 
-import java.util.*;
-
 /**
- * The C3-Grid VolD Client.
+ * ADiS is the VolD client for C3-Grid.
  *
  * VolD will be used as the MDS replacement in the new C3-Grid. This class is
  * the client used to store and get data from the VolD storage specific to the
  * needs of C3-Grid.
+ *
+ * @author Jšrg Bachmann, Ulrike Golas
  */
 public class Adis extends ABIi {
     /**
@@ -329,7 +335,8 @@ public class Adis extends ABIi {
         // guard
         checkState();
 
-        Map<Key, Set<String>> result = voldi.lookup(new Key(grid, Type.OID.toString(), "..."));
+        Map<Key, Set<String>> result =
+               voldi.lookup(new Key(grid, Type.OID.toString(), "..."));
 
         if (result == null) {
             return null;
@@ -347,7 +354,8 @@ public class Adis extends ABIi {
         // guard
         checkState();
 
-        Map<Key, Set<String>> result = voldi.lookup(new Key(grid, Type.OID.toString(), oidprefix));
+        Map<Key, Set<String>> result =
+               voldi.lookup(new Key(grid, Type.OID.toString(), oidprefix));
 
         if (result == null) {
             return null;
@@ -364,14 +372,14 @@ public class Adis extends ABIi {
     public final Map<String, Set<String>>
                   getEPbyWorkflow(final String workflow) {
         // TODO: is this method / key actually used?
-    	// Does this make sense? How about the workflow version?
-    	// Up to now, this is not put into VolD ...
+        // Does this make sense? How about the workflow version?
+        // Up to now, this is not put into VolD ...
 
-    	// guard
+        // guard
         checkState();
 
         Map<Key, Set<String>> result = voldi.lookup(new Key(grid,
-        		Type.WORKFLOW.toString(), workflow));
+                Type.WORKFLOW.toString(), workflow));
 
         if (result == null) {
             return null;
@@ -383,7 +391,7 @@ public class Adis extends ABIi {
         for (Map.Entry<Key, Set<String>> entry : result.entrySet()) {
             for (String gram : entry.getValue()) {
                 Map<Key, Set<String>> gramres = voldi.lookup(new Key(grid,
-                		Type.GRAM.toString(), gram));
+                       Type.GRAM.toString(), gram));
 
                 if (gramres == null) {
                     logger.warn("Workflow " + workflow + " had a GRAM EndPoint "
@@ -412,7 +420,7 @@ public class Adis extends ABIi {
         }
 
         voldi.insert(null, simplemap(new Key(grid,
-        		role.toString(), ""), endpoint));
+               role.toString(), ""), endpoint));
         return true;
     }
 
@@ -437,11 +445,11 @@ public class Adis extends ABIi {
         }
 
         Map<Key, Set<String>> result =
-        		voldi.lookup(new Key(grid, type, insertname));
+               voldi.lookup(new Key(grid, type, insertname));
         if (result.size() != 0) {
             logger.warn("EndPoint " + insertname + " of type "
                     + type + " with URL "
-            		+ result.get(new Key(grid, type, insertname))
+                    + result.get(new Key(grid, type, insertname))
                     + "was overwritten.");
         }
         voldi.insert(null, simplemap(new Key(grid, type, insertname), value));
@@ -546,10 +554,10 @@ public class Adis extends ABIi {
             final String gram,
             final Collection<String> workflows
     ) {
-    	// TODO: is this method really used? Are workflows registered
-    	// at VolD?
+        // TODO: is this method really used? Are workflows registered
+        // at VolD?
 
-    	// guard
+        // guard
         checkState();
 
         final Map<Key, Set<String>> request = new HashMap<Key, Set<String>>();
@@ -558,16 +566,16 @@ public class Adis extends ABIi {
         // add workflow |--> cpId
         for (String workflow : workflows) {
             request.put(new Key(grid, Type.WORKFLOW.toString(),
-            		workflow), cpIdSet);
+                   workflow), cpIdSet);
         }
 
         // add cpId |--> gram
         request.put(new Key(grid, Type.CPID_GRAM.toString(),
-        		    cpId), simpleset(gram));
+               cpId), simpleset(gram));
 
         // add cpId |--> subspace
         request.put(new Key(grid, Type.GRAM.toString(), cpId),
-        		    simpleset(subspace));
+              simpleset(subspace));
 
         voldi.insert(null, request);
         return true;
@@ -591,7 +599,7 @@ public class Adis extends ABIi {
 
         for (String oidprefix : oidprefixes) {
             request.put(new Key(grid,
-            		Type.OID.toString(), oidprefix), simpleset(gorfx));
+                     Type.OID.toString(), oidprefix), simpleset(gorfx));
         }
 
         voldi.insert(null, request);
@@ -645,13 +653,13 @@ public class Adis extends ABIi {
      */
     private static Map<String, Set<String>>
                flatmap(final Map<Key, Set<String>> map) {
-    	Map<String, Set<String>> newMap = new HashMap<String, Set<String>>();
+        Map<String, Set<String>> newMap = new HashMap<String, Set<String>>();
 
-    	for (Key key: map.keySet()) {
+        for (Key key: map.keySet()) {
             newMap.put(key.get_keyname(), map.get(key));
-    	}
+        }
 
-    	return newMap;
+        return newMap;
     }
 
     /**
@@ -662,19 +670,19 @@ public class Adis extends ABIi {
      */
     private Map<String, String>
                flatmapFirst(final Map<Key, Set<String>> map) {
-    	Map<String, String> newMap = new HashMap<String, String>();
+        Map<String, String> newMap = new HashMap<String, String>();
 
-    	for (Key key: map.keySet()) {
+        for (Key key: map.keySet()) {
             if (map.get(key).size() > 1) {
                 logger.warn("More than one endpoint registered with name "
                 + key.get_keyname() + " of type " + key.get_type()
                 + "registered.");
             }
 
-    		newMap.put(key.get_keyname(), map.get(key).iterator().next());
-    	}
+            newMap.put(key.get_keyname(), map.get(key).iterator().next());
+        }
 
-    	return newMap;
+        return newMap;
     }
 
     /**
