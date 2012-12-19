@@ -121,7 +121,7 @@ public class Adis extends ABIi {
      */
     private boolean checkRole(final String role) {
         for (Role r : Role.values()) {
-            if (r.name().equals(role)) {
+            if (r.toString().equals(role)) {
                 return true;
             }
         }
