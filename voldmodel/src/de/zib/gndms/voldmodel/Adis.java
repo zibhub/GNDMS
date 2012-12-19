@@ -15,18 +15,14 @@
 
 package de.zib.gndms.voldmodel;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import de.zib.gndms.voldmodel.abi.ABIi;
 import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+
+import java.util.*;
 
 /**
  * The C3-Grid VolD Client.
@@ -326,13 +322,38 @@ public class Adis extends ABIi {
     }
 
     /**
+     * List all data provider URLs hosting data together with their OID prefix.
+     * @return The OID prefixes and data provider URLs
+     */
+    public final Map<String, Set<String>> listGORFX() {
+        // guard
+        checkState();
+
+        Map<Key, Set<String>> result = voldi.lookup(new Key(grid, Type.OID.toString(), "..."));
+
+        if (result == null) {
+            return null;
+        } else {
+            return flatmap(result);
+        }
+     }
+
+    /**
      * List all data provider URLs hosting data with a given OID prefix.
      * @param oidprefix The OID prefix
      * @return The data provider URLs
      */
     public final Collection<String> listGORFXbyOID(final String oidprefix) {
-    	// TODO: Check this - field oidprefix is never used.
-        return listValuesByType(Type.OID.toString());
+        // guard
+        checkState();
+
+        Map<Key, Set<String>> result = voldi.lookup(new Key(grid, Type.OID.toString(), oidprefix));
+
+        if (result == null) {
+            return null;
+        } else {
+            return flatten(result.values());
+        }
     }
 
     /**
