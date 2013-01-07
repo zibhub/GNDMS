@@ -27,6 +27,6 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	cancelCommand: '$CANCEL_COMMAND'; \
 	scriptIoFormat: '$SCRIPT_IO_FORMAT'; \
 	oidPrefixe: '$STAGING_OIDPREFIXE'; \
-	updateInterval: '$STAGING_UPDATE_INTERVAL'"
+	updateInterval: '$UPDATE_INTERVAL'"
 }
 # vim:tw=0

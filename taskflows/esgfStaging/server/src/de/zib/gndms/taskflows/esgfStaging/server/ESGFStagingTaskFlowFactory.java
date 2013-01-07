@@ -13,10 +13,12 @@ import de.zib.gndms.neomodel.common.Dao;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
-import de.zib.gndms.stuff.threading.PeriodicalJob;
+// import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 import de.zib.gndms.voldmodel.Adis;
+import de.zib.gndms.voldmodel.Type;
+import de.zib.gndms.voldmodel.VolDRegistrar;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.PostConstruct;
@@ -30,8 +32,9 @@ import java.util.*;
  */
 public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
 
-    private VoldRegistrar registrar;
-    private Adis adis;
+    //private VoldRegistrar registrar;
+	private VolDRegistrar registrar;
+	private Adis adis;
     private GridConfig gridConfig;
 
     private Dao dao;
@@ -187,11 +190,9 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     @PostConstruct
     public void startVoldRegistration() throws Exception {
         MapConfig config = new MapConfig( getConfigMapData() );
-        if( !config.hasOption( "oidPrefixe" ) ) {
-            logger.error( "Dataprovider not configured: no OID_PREFIXE given." );
-        }
 
-        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl() );
+        //registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
+        registrar = new VolDRegistrar( adis, gridConfig.getBaseUrl(), Type.ESGF, getOfferTypeConfig().getOption( "esgfSiteName" ), getOfferTypeConfig().getLongOption( "updateInterval" ));
         registrar.start();
     }
 
@@ -202,14 +203,14 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     }
 
 
-    private class VoldRegistrar extends PeriodicalJob {
+ /*   private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
         final private String name;
-        public VoldRegistrar( final Adis adis, final String gorfxEP ) throws MandatoryOptionMissingException {
+        public VoldRegistrar( final Adis adis, final String gorfxEP, final String name ) throws MandatoryOptionMissingException {
             this.adis = adis;
             this.gorfxEP = gorfxEP;
-            this.name = getOfferTypeConfig().getOption( "esgfSiteName" );
+            this.name = name;
         }
 
 
@@ -234,7 +235,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
             adis.setESGFStager( getName(), gorfxEP );
         }
     }
-
+*/
 
     public Map< String, String > getConfigMapData() {
         final Session session = getDao().beginSession();

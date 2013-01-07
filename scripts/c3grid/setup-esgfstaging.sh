@@ -1,13 +1,16 @@
+# Setup for an ESGF staging site
+
 #!/bin/bash
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh
 
-# %{} is shell variable substitution at container runtime
-# $STAGING_COMMAND runs in the slice working dir.
-
+# Parameters for the ESGF staging area
 ESGF_STAGING_AREA_PATH="/var/lib/gndms/sub"
 ESGF_STAGING_AREA_SIZE="5000000000" # 5GB
+
+# Set a short, human-readable name for the ESGF staging site to be registered at VolD
+ESGF_STAGING_NAME=""
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
@@ -17,20 +20,19 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 # Set your hostname if it is not detected correctly
 #GRIDHOST="$(hostname -f)"
 
-STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
+# GridFTP parameter
 ESGF_STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$ESGF_STAGING_AREA_PATH"
 
+# Truststore parameters
 ESGF_TRUSTSTORE="/etc/grid-security/esgf.truststore"
 ESGF_TRUSTSTORE_PASSWORD="esgf.trust"
 
-# default time to live for slices of the Staging slice kind (in milliseconds)
+# Default time to live for slices of the ESGF Staging slice kind (in milliseconds)
 # default: one day
 TTL=86400000
 
+# VolD update interval in milliseconds
 UPDATE_INTERVAL=60000
-
-# Set a short, human-readable name for the ESGF staging site to be registered at VolD
-ESGF_STAGING_NAME=
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 

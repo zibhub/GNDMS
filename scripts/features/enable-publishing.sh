@@ -20,8 +20,9 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'PublishingTaskFlow'; \
 	cfgOutFormat: 'PRINT_OK'; \
 	subspace: 'Publishing'; \
 	sliceKind: 'PublishingKind'; \
+	publisherName: '$PUBLISHING_NAME'; \
 	scriptIoFormat: '$SCRIPT_IO_FORMAT'; \
 	oidPrefix: '$PUBLISHING_OIDPREFIX'; \
-	updateInterval: '$PUBLISHING_UPDATE_INTERVAL'"
+	updateInterval: '$UPDATE_INTERVAL'"
 }
 # vim:tw=0

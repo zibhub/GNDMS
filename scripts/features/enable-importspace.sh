@@ -12,5 +12,8 @@ moni call -v .dspace.SetupSliceKind "sliceKind:import; sliceKindMode:$RW; unique
 
 moni call -v .dspace.AssignSliceKind "subspace:ImportSpace; sliceKind: import; mode:'$ADDMODE'"
 
+moni call -v .vold.VolDRegistrar "siteType: 'IMPORT';\
+	siteName: '$IMPORT_NAME'; \
+	updateInterval: $UPDATE_INTERVAL"
 }
 

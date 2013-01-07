@@ -18,10 +18,15 @@ import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.publishing.client.PublishingTaskFlowMeta;
 import de.zib.gndms.taskflows.publishing.client.model.PublishingOrder;
 import de.zib.gndms.voldmodel.Adis;
+import de.zib.gndms.voldmodel.Type;
+import de.zib.gndms.voldmodel.VolDRegistrar;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.util.*;
 
 /**
@@ -32,7 +37,8 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
 
     private Dao dao;
     private GridConfig gridConfig;
-    private VoldRegistrar registrar;
+    // private VoldRegistrar registrar;
+    private VolDRegistrar registrar;
     private Adis adis;
 
 
@@ -142,8 +148,9 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
 
     @PostConstruct
     public void startVoldRegistration() throws Exception {
-        registrar = new VoldRegistrar( adis, getGridConfig().getBaseUrl() );
-        registrar.start();
+        // registrar = new VoldRegistrar( adis, getGridConfig().getBaseUrl() );
+    	registrar = new VolDRegistrar( adis, getGridConfig().getBaseUrl(), Type.PUBLISHER, getConfig().getOption( "publisherName" ), new MapConfig( getConfigMapData()) );
+    	registrar.start();
     }
 
 
@@ -153,15 +160,16 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
     }
 
 
-    private class VoldRegistrar extends PeriodicalJob {
+/*    private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
+        final private String name;
 
-
-        public VoldRegistrar( final Adis adis, final String gorfxEP ) {
+        public VoldRegistrar( final Adis adis, final String gorfxEP ) throws MandatoryOptionMissingException {
             this.adis = adis;
             this.gorfxEP = gorfxEP;
-        }
+            this.name = getConfig().getOption( "publisherName" );
+       }
 
         @Override
         public String getName() {
@@ -196,6 +204,11 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
             final Set< String > oidPrefixe = buildSet( config.getOption( "oidPrefix" ) );
             adis.setOIDPrefixe( gorfxEP, oidPrefixe );
         }
+    }*/
+
+    public @NotNull
+    MapConfig getConfig() {
+        return new MapConfig( getConfigMapData() );
     }
 
     public Map< String, String > getConfigMapData() {
@@ -209,7 +222,7 @@ public class PublishingTaskFlowFactory extends DefaultTaskFlowFactory< Publishin
         finally { session.success(); }
     }
 
-    private static Set< String > buildSet( String s ) {
+/*    private static Set< String > buildSet( String s ) {
         return new HashSet< String >( Arrays.asList( s.split( "(\\s|,|;)+" ) ) );
     }
-}
+*/}

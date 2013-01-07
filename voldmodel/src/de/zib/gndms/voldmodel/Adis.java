@@ -295,7 +295,7 @@ public class Adis extends ABIi {
     }
 
     /**
-     * List all available export sites.
+     * Lists all available export sites.
      * @return All export site URLs
      */
     public final Map<String, String> listExportSites() {
@@ -303,7 +303,15 @@ public class Adis extends ABIi {
     }
 
     /**
-     * List all available publishing sites.
+     * Lists all available transfer sites.
+     * @return All transfer site URLs
+     */
+    public final Map<String, String> listTransferSites() {
+        return listValuesByNameAndType(Type.TRANSFER.toString());
+    }
+
+    /**
+     * Lists all available publishing sites.
      * @return All publishing site URLs
      */
     public final Map<String, String> listPublishingSites() {
@@ -311,7 +319,7 @@ public class Adis extends ABIi {
     }
 
     /**
-     * List all available ESGF data stagers.
+     * Lists all available ESGF data stagers.
      * @return All ESGF stager site URLs
      */
     public final Map<String, String> listESGFStagingSites() {
@@ -319,7 +327,7 @@ public class Adis extends ABIi {
     }
 
     /**
-     * List all available workflows.
+     * Lists all available workflows.
      * @return All available workflows
      */
     public final Collection<String> listWorkflows() {
@@ -328,7 +336,7 @@ public class Adis extends ABIi {
     }
 
     /**
-     * List all data provider URLs hosting data together with their OID prefix.
+     * Lists all data provider URLs hosting data together with their OID prefix.
      * @return The OID prefixes and data provider URLs
      */
     public final Map<String, Set<String>> listGORFX() {
@@ -346,7 +354,7 @@ public class Adis extends ABIi {
      }
 
     /**
-     * List all data provider URLs hosting data with a given OID prefix.
+     * Lists all data provider URLs hosting data with a given OID prefix.
      * @param oidprefix The OID prefix
      * @return The data provider URLs
      */
@@ -365,7 +373,7 @@ public class Adis extends ABIi {
     }
 
     /**
-     * Get all GRAM end points supporting the given workflow.
+     * Gets all GRAM end points supporting the given workflow.
      * @param workflow The workflow name
      * @return The end points
      */
@@ -521,6 +529,18 @@ public class Adis extends ABIi {
      */
     public final boolean setImport(final String name, final String subspace) {
         return setType(Type.IMPORT.toString(), name, subspace);
+    }
+
+    /**
+     * Registers a transfer site.
+     *
+     * This method should be called by the host running the transfer site.
+     * @param name A human readable name
+     * @param subspace The end point URL
+     * @return true on success
+     */
+    public final boolean setTransfer(final String name, final String subspace) {
+        return setType(Type.TRANSFER.toString(), name, subspace);
     }
 
     /**

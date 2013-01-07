@@ -12,4 +12,7 @@ moni call -v .dspace.SetupSliceKind "sliceKind:export; sliceKindMode:$RW; unique
 
 moni call -v .dspace.AssignSliceKind "subspace:ExportSpace; sliceKind: export; mode:'$ADDMODE'"
 
+moni call -v .vold.VolDRegistrar "siteType: 'EXPORT';\
+	siteName: '$EXPORT_NAME'; \
+	updateInterval: $UPDATE_INTERVAL"
 }

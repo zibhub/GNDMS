@@ -1,10 +1,9 @@
+# Setup for the central DMS
+
 #!/bin/bash
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh
-
-# %{} is shell variable substitution at container runtime
-# $STAGING_COMMAND runs in the slice working dir.
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
@@ -14,10 +13,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 # Set your hostname if it is not detected correctly
 #GRIDHOST="$(hostname -f)"
 
-# default time to live for slices of the Staging slice kind (in milliseconds)
-# default: one day
-TTL=86400000
-
+# Set the polling delay for task status queries
 POLLING_INTERVAL=2000
 UPDATE_INTERVAL=60000
 

@@ -45,6 +45,10 @@ public enum Type {
      */
     EXPORT,
     /**
+     * The type for transfer sites.
+     */
+    TRANSFER,
+    /**
      * The type for publishing sites.
      */
     PUBLISHER,

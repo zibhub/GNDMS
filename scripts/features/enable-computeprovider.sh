@@ -1,4 +1,6 @@
-enable_transferSpace() {
+#!/bin/sh
+
+enable_computeprovider() {
 RW="700"
 
 moni call -v .dspace.SetupSubspace  "subspace:TransferSpace; \
@@ -12,7 +14,7 @@ moni call -v .dspace.SetupSliceKind "sliceKind:transfer; sliceKindMode:$RW; uniq
 
 moni call -v .dspace.AssignSliceKind "subspace:TransferSpace; sliceKind: transfer; mode:'$ADDMODE'"
 
-moni call -v .vold.VolDRegistrar "siteType: 'TRANSFER';\
-	siteName: '$TRANSFER_NAME'; \
+moni call -v .vold.VolDRegistrar "siteType: 'CP';\
+	siteName: '$CP_NAME'; \
 	updateInterval: $UPDATE_INTERVAL"
 }
