@@ -73,6 +73,8 @@ public class VolDRegistrar extends PeriodicalJob {
             // also register OID prefix of harvested files
             final Set< String > oidPrefixe = buildSet(config.getOption("oidPrefix"));
             adis.setOIDPrefixe( gorfxEP, oidPrefixe );
+        } else if (type.equals(Type.ESGF)) {
+        	adis.setESGFStager(name, gndms);
         }
 
     }
