@@ -1,6 +1,6 @@
-# Setup for a compute provider
-
 #!/bin/bash
+
+# Setup for a compute provider
 
 SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 

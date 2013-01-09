@@ -1,6 +1,6 @@
-# Setup for a publishing site
-
 #!/bin/bash
+
+# Setup for a publishing site
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh

@@ -1,6 +1,6 @@
-# Setup for a data provider
-
 #!/bin/bash
+
+# Setup for a data provider
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh

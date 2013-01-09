@@ -1,6 +1,6 @@
-# Setup for the central DMS
-
 #!/bin/bash
+
+# Setup for the central DMS
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh

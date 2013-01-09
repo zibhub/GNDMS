@@ -1,6 +1,6 @@
-# Setup for the portal
-
 #!/bin/bash
+
+# Setup for the portal
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh

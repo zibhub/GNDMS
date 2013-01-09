@@ -1,6 +1,6 @@
-# Setup for an export site
-
 #!/bin/bash
+
+# Setup for an export site
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh
