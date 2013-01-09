@@ -373,7 +373,7 @@ define 'gndms' do
 
     desc 'GNDMS logic classes (actions for manipulating resources)'
     define 'logic', :layout => dmsLayout('logic', 'gndms-logic') do
-       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING, SPRING_SECURITY
+       compile.with JETBRAINS_ANNOTATIONS, project('kit'), project('common'), project('stuff'), project('model'), project('neomodel'), project('voldmodel'), JODA_TIME, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, COMMONS_LANG, OPENJPA, SLF4J, SPRING, SPRING_SECURITY
        compile
        package :jar
     end
