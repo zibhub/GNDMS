@@ -190,9 +190,10 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     @PostConstruct
     public void startVoldRegistration() throws Exception {
         MapConfig config = new MapConfig( getConfigMapData() );
-
+        String gorfx = gridConfig.getBaseUrl();
+        
         //registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
-        registrar = new VolDRegistrar( adis, gridConfig.getBaseUrl(), Type.ESGF, getOfferTypeConfig().getOption( "esgfSiteName" ), getOfferTypeConfig().getLongOption( "updateInterval" ));
+        registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, getOfferTypeConfig().getOption("esgfSiteName", gorfx), getOfferTypeConfig().getLongOption( "updateInterval" ));
         registrar.start();
     }
 
