@@ -33,8 +33,8 @@ import java.util.*;
  */
 public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
 
-    private VoldRegistrar registrar;
-	//private VolDRegistrar registrar;
+    // private VoldRegistrar registrar;
+	private VolDRegistrar registrar;
 	private Adis adis;
     private GridConfig gridConfig;
 
@@ -193,8 +193,8 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         MapConfig config = new MapConfig( getConfigMapData() );
         String gorfx = gridConfig.getBaseUrl();
         
-        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
-        //registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, getOfferTypeConfig().getOption("esgfSiteName", gorfx), getOfferTypeConfig().getLongOption( "updateInterval" ));
+        //registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
+        registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, getOfferTypeConfig().getOption("esgfSiteName", gorfx), getOfferTypeConfig().getLongOption( "updateInterval" ));
         registrar.start();
     }
 
