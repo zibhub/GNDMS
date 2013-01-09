@@ -74,7 +74,7 @@ public class VolDRegistrar extends PeriodicalJob {
             final Set< String > oidPrefixe = buildSet(config.getOption("oidPrefix"));
             adis.setOIDPrefixe( gorfxEP, oidPrefixe );
         } else if (type.equals(Type.ESGF)) {
-        	adis.setESGFStager(name, gndms);
+        	adis.setESGFStager(name, gorfxEP);
         }
 
     }
