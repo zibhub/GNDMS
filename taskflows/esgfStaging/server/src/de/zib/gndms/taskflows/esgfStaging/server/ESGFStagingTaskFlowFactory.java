@@ -14,6 +14,7 @@ import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.TaskFlow;
 import de.zib.gndms.neomodel.gorfx.TaskFlowType;
 // import de.zib.gndms.stuff.threading.PeriodicalJob;
+import de.zib.gndms.stuff.threading.PeriodicalJob;
 import de.zib.gndms.taskflows.esgfStaging.client.ESGFStagingTaskFlowMeta;
 import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 import de.zib.gndms.voldmodel.Adis;
@@ -32,8 +33,8 @@ import java.util.*;
  */
 public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStagingOrder, ESGFStagingQuoteCalculator > {
 
-    //private VoldRegistrar registrar;
-	private VolDRegistrar registrar;
+    private VoldRegistrar registrar;
+	//private VolDRegistrar registrar;
 	private Adis adis;
     private GridConfig gridConfig;
 
@@ -192,8 +193,8 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         MapConfig config = new MapConfig( getConfigMapData() );
         String gorfx = gridConfig.getBaseUrl();
         
-        //registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
-        registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, getOfferTypeConfig().getOption("esgfSiteName", gorfx), getOfferTypeConfig().getLongOption( "updateInterval" ));
+        registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
+        //registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, getOfferTypeConfig().getOption("esgfSiteName", gorfx), getOfferTypeConfig().getLongOption( "updateInterval" ));
         registrar.start();
     }
 
@@ -204,7 +205,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
     }
 
 
- /*   private class VoldRegistrar extends PeriodicalJob {
+    private class VoldRegistrar extends PeriodicalJob {
         final private Adis adis;
         final private String gorfxEP;
         final private String name;
@@ -236,7 +237,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
             adis.setESGFStager( getName(), gorfxEP );
         }
     }
-*/
+
 
     public Map< String, String > getConfigMapData() {
         final Session session = getDao().beginSession();
