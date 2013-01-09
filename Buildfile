@@ -29,7 +29,7 @@ VERSION_NUMBER = '0.6.4'
 VERSION_NAME = 'CESARE'
 FALLBACK_VERSION_TAG = 'release-Cesare'
 GROUP_NAME = 'de.zib.gndms'
-MF_COPYRIGHT = 'Copyright 2008-2011 Zuse Institute Berlin (ZIB)'
+MF_COPYRIGHT = 'Copyright 2008-2013 Zuse Institute Berlin (ZIB)'
 LICENSE ='This software has been licensed to you under the terms and conditions of the Apache License 2.0 (APL 2.0) only.'
 MF_LICENSE="#{LICENSE}  See META-INF/LICENSE for detailed terms and conditions."
 USERNAME = ENV['USER'].to_s
@@ -362,13 +362,6 @@ define 'gndms' do
       package :jar      
     end
 
-    desc 'Advanced Discovery Service (ADiS) with VolD backend'
-    define 'voldmodel', :layout => dmsLayout( 'voldmodel', 'gndms-voldmodel' ) do
-       compile.with VOLD_CLIENT, SLF4J, JCOMMANDER, SPRING
-
-       package :jar
-    end
-
     desc 'GT4-dependent utility classes for GNDMS'
     define 'kit', :layout => dmsLayout('kit', 'gndms-kit') do
       compile.with GROOVY, GOOGLE_COLLECTIONS, COMMONS_FILEUPLOAD, COMMONS_CODEC, project('common'), project('stuff'), project('model'), project('neomodel'), JETBRAINS_ANNOTATIONS, GT4_LOG, GT4_COG, GT4_SEC, GT4_XML, JODA_TIME, ARGS4J, INJECT, GT4_SERVLET, COMMONS_LANG, OPENJPA, SLF4J, JSON, SPRING, SPRING_SECURITY
@@ -385,6 +378,12 @@ define 'gndms' do
        package :jar
     end
 
+    desc 'Advanced Discovery Service (ADiS) with VolD backend'
+    define 'voldmodel', :layout => dmsLayout( 'voldmodel', 'gndms-voldmodel' ) do
+       compile.with VOLD_CLIENT, project('kit'), project('stuff'), SLF4J, JCOMMANDER, SPRING
+
+       package :jar
+    end
 
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
