@@ -31,7 +31,7 @@ import com.beust.jcommander.JCommander;
 /**
  * Executor for an interface and a given number of command line arguments.
  *
- * @author Jšrg Bachmann
+ * @author Joerg Bachmann
  */
 public class ABI {
     /**

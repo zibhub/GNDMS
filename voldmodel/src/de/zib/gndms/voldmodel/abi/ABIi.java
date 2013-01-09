@@ -24,7 +24,7 @@ import java.lang.reflect.Modifier;
 /**
  * The interface for an ABI.
  *
- * @author Jšrg Bachmann
+ * @author Joerg Bachmann
  */
 public class ABIi {
     // use reflect to check for correct method names

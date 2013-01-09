@@ -35,7 +35,7 @@ import org.springframework.beans.factory.BeanFactory;
  * the client used to store and get data from the VolD storage specific to the
  * needs of C3-Grid.
  *
- * @author J�rg Bachmann, Ulrike Golas
+ * @author Joerg Bachmann, Ulrike Golas
  */
 public class Adis extends ABIi {
     /**

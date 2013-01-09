@@ -27,7 +27,7 @@ import java.util.Set;
  * and additional information at VolD and updates
  * it periodically.
  *
- * @author J�rg Bachmann, Ulrike Golas
+ * @author Joerg Bachmann, Ulrike Golas
  */
 public class VolDRegistrar extends PeriodicalJob {
     /**

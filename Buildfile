@@ -571,7 +571,7 @@ task 'deploy-gndms-rest' do
     end 
 
     def mkProps( src, tgt, hostname, port, unsecureport, hostcert, hostkey, hostca)
-        props = eval IO.read ( "etc/#{src}" )
+        props = eval IO.read( "etc/#{src}" )
         propFile = File.new( "#{tgt}/#{src}" , 'w')
         propFile.write( props )
         propFile.close

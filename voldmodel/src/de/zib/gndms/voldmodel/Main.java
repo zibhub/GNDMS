@@ -51,7 +51,7 @@ import de.zib.gndms.voldmodel.abi.ABIi;
  * This class invokes ADiS with a set of arguments executing the
  * specified methods.
  *
- * @author Jšrg Bachmann
+ * @author Joerg Bachmann
  */
 public final class Main extends ABI {
     /**

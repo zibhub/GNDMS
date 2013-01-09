@@ -21,7 +21,7 @@ package de.zib.gndms.voldmodel;
  * At the moment, this are the roles DMS for the data management system
  * and WSS for the workflow scheduler.
  *
- * @author Jšrg Bachmann
+ * @author Joerg Bachmann
  */
 public enum Role {
     /**

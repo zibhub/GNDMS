@@ -29,7 +29,7 @@ package de.zib.gndms.voldmodel;
  * - CPID_GRAM for compute providers,
  * - GRAM for compute providers gram end points.
  *
- * @author Jšrg Bachmann
+ * @author Joerg Bachmann
  */
 public enum Type {
     /**
