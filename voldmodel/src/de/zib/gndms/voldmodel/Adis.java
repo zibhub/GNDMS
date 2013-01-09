@@ -15,18 +15,14 @@
 
 package de.zib.gndms.voldmodel;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import de.zib.gndms.voldmodel.abi.ABIi;
 import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
+
+import java.util.*;
 
 /**
  * ADiS is the VolD client for C3-Grid.
@@ -35,7 +31,7 @@ import org.springframework.beans.factory.BeanFactory;
  * the client used to store and get data from the VolD storage specific to the
  * needs of C3-Grid.
  *
- * @author Jšrg Bachmann, Ulrike Golas
+ * @author Jï¿½rg Bachmann, Ulrike Golas
  */
 public class Adis extends ABIi {
     /**
@@ -363,12 +359,19 @@ public class Adis extends ABIi {
         checkState();
 
         Map<Key, Set<String>> result =
-               voldi.lookup(new Key(grid, Type.OID.toString(), oidprefix));
+               voldi.lookup(new Key(grid, Type.OID.toString(), "..."));
 
         if (result == null) {
             return null;
         } else {
-            return flatten(result.values());
+            Set<Key> keys = result.keySet();
+            Map<Key, Set<String>> result2 = new HashMap<Key, Set<String>>();
+            for (Key key : keys) {
+                if (oidprefix.startsWith(key.get_keyname()))  {
+                    result2.put(key, result.get(key));
+                }
+            }
+            return flatten(result2.values());
         }
     }
 

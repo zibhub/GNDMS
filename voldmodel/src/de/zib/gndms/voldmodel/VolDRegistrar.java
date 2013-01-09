@@ -1,12 +1,12 @@
 package de.zib.gndms.voldmodel;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
 import de.zib.gndms.stuff.threading.PeriodicalJob;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class VolDRegistrar extends PeriodicalJob {
 
