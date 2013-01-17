@@ -91,7 +91,8 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
         final Slice sliceModel = findSlice();
 
         doStaging(getOfferTypeConfig(), getOrderBean(), sliceModel);
-      //  changeSliceOwner( slice ) ;
+      // TODO: wieso war das auskommentiert? Wie sollte das stattdessen fuktionieren?
+       changeSliceOwner( sliceModel ) ;
         transitWithPayload( createResult(), TaskState.FINISHED );
         //super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
