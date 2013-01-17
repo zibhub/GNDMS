@@ -136,16 +136,16 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
         String commonPrefix = LanguageAlgebra.getGreatestCommonPrefix(
                 getOrderBean().getDataDescriptor().getObjectList());
 
-        Collection< String > gorfxIDs = null;
+        Collection<String> gorfxIDs = adis.listGORFXbyOID(commonPrefix);
 
-        for( int i = commonPrefix.length(); i > 0; --i ) {
+        /*for( int i = commonPrefix.length(); i > 0; --i ) {
             gorfxIDs = adis.listGORFXbyOID(commonPrefix.substring(0, i));
             if( null != gorfxIDs && 0 != gorfxIDs.size() )
                 break;
-        }
+        }*/
 
-        if( null == gorfxIDs )
-            return new HashSet< String >();
+        if (gorfxIDs == null)
+            return new HashSet<String>();
 
         return gorfxIDs;
     }
