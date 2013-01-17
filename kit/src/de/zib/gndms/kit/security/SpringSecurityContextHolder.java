@@ -46,6 +46,7 @@ public class SpringSecurityContextHolder implements GNDMSSecurityContextHolder {
     }
 
 
+    @Override
     public SecurityContext getSecurityContext() {
 
         return securityContext;

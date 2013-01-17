@@ -1,6 +1,6 @@
-# Setup for an ESGF staging site
-
 #!/bin/bash
+
+# Setup for an ESGF staging site
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh

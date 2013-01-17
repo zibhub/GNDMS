@@ -34,6 +34,7 @@ import de.zib.gndms.logic.model.gorfx.AbstractQuoteCalculator;
 import de.zib.gndms.logic.model.gorfx.TaskFlowAction;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.common.PersistentContract;
+import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.util.TxFrame;
@@ -44,6 +45,7 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContext;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -227,9 +229,16 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 
         final DelegatingOrder<?> order = getOrder();
         String dn = order.getDNFromContext();
+       
+        	SecurityContext cont = order.getSecurityContextHolder().getSecurityContext();
+        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )cont
+                    .getAuthentication()
+                   .getPrincipal();
+       String localUser = userDetails.getLocalUser();
+        
         getLogger().debug( "cso DN: " + dn );
-        getLogger().debug( "changing owner of " + slice.getId() + " to " + order.getLocalUser() );
-        ProcessBuilderAction chownAct = csc.createChownSliceAction( order.getLocalUser(),
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + localUser );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
                 slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
                 slice.getDirectoryId() );
         chownAct.call();

@@ -56,7 +56,7 @@ public class HostAndUserDetailsService implements  AuthenticationUserDetailsServ
         String dn = ( String ) preAuthenticatedAuthenticationToken.getPrincipal();
 
         try {
-            if( GridMapUserDetailsService.searchInGridMapfile( allowedHostsFileName, dn ) ) {
+            if( GridMapUserDetailsService.searchInGridMapfile( allowedHostsFileName, dn ) != null ) {
                 if ( reverseDNSTest )
                     try {
                         if( ! reverseDNSLookup( X509DnConverter.openSslDnExtractCn( dn ),

@@ -18,6 +18,8 @@ package de.zib.gndms.gndms.security;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
+
 import java.util.Collection;
 
 /**
@@ -26,14 +28,14 @@ import java.util.Collection;
  * @date 29.02.12  17:36
  * @brief
  */
-public class GNDMSUserDetails implements UserDetails {
+public class GNDMSUserDetails implements GNDMSUserDetailsInterface {
 
     private static final long serialVersionUID = 774209650763623369L;
 
     private Collection<? extends GrantedAuthority> authorities;
     private String dn;
     private boolean isUser;
-
+    private String localUser;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -55,6 +57,10 @@ public class GNDMSUserDetails implements UserDetails {
         return dn;
     }
 
+    @Override
+    public String getLocalUser() {
+        return localUser;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -88,6 +94,11 @@ public class GNDMSUserDetails implements UserDetails {
         this.dn = dn;
     }
 
+    @Override
+    public void setLocalUser( final String localUser ) {
+
+        this.localUser = localUser;
+    }
 
     public void setAuthorities( final Collection<? extends GrantedAuthority> authorities ) {
 

@@ -1,6 +1,6 @@
-# Setup for a transfer space which can be used between transfers, in case 3rd party transfer is not applicable
-
 #!/bin/bash
+
+# Setup for a transfer space which can be used between transfers, in case 3rd party transfer is not applicable
 
 SCRIPTDIR="$(dirname $0)/../" ;
 source "$SCRIPTDIR"internal/script-setup.sh
