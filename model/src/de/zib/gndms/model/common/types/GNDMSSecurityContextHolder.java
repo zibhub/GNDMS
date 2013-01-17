@@ -17,6 +17,8 @@ package de.zib.gndms.model.common.types;
 
 import java.io.Serializable;
 
+import org.springframework.security.core.context.SecurityContext;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
@@ -26,4 +28,7 @@ import java.io.Serializable;
 public interface GNDMSSecurityContextHolder extends Serializable {
 
     boolean hasContext();
+    
+    SecurityContext getSecurityContext() ;
+
 }
