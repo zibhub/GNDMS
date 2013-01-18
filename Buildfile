@@ -388,7 +388,7 @@ define 'gndms' do
     desc 'GNDMS core infrastructure classes'
     define 'infra', :layout => dmsLayout('infra', 'gndms-infra') do
         # Infra *must* have all dependencies since we use this list in copy/link-deps
-        compile.with JAVAX_MAIL, JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA
+        compile.with JAVAX_MAIL, JETBRAINS_ANNOTATIONS, OPENJPA, project('common'), project('logic'), project('kit'), project('stuff'), project('neomodel'), project('model'), ARGS4J, JODA_TIME, JAXB, GT4_SERVLET, GROOVY, GOOGLE_COLLECTIONS, INJECT, DB_DERBY, GT4_LOG, GT4_GRAM, GT4_COG, GT4_SEC, GT4_XML, JAXB, GT4_COMMONS, COMMONS_CODEC, COMMONS_LANG, COMMONS_COLLECTIONS, HTTP_CORE, TestNG.dependencies, COMMONS_FILEUPLOAD, NEODATAGRAPH, SLF4J, SPRING, JNA, SPRING_SECURITY
         compile
 
         meta_inf << file(_('src/META-INF/00_system.xml'))
