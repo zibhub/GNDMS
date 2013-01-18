@@ -57,11 +57,17 @@ public class GridMapUserDetailsService implements UserDetailsService {
         List<GrantedAuthority> authorityList =  new ArrayList<GrantedAuthority>( 1 );
         // search admin
         boolean isUser = true;
+        String localUser = null;
         try {
-            if( searchInGridMapfile( adminGridMapfileName, dn ) ) {
+            localUser = searchInGridMapfile( adminGridMapfileName, dn );
+        	if( localUser != null) {
                 authorityList.add( adminRole() );
-            } else  if( searchInGridMapfile( gridMapfileName, dn ) )
+                
+            } else {
+            	localUser = searchInGridMapfile( gridMapfileName, dn );
+            	if( localUser != null )
                 authorityList.add( userRole() );
+            }
         } catch ( Exception e ) {
             throw new RuntimeException( e );
         }
@@ -73,6 +79,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
         userDetails.setAuthorities( authorityList );
         userDetails.setDn( dn );
         userDetails.setIsUser( isUser );
+        userDetails.setLocalUser(localUser);
 
         return userDetails;
     }
@@ -90,7 +97,7 @@ public class GridMapUserDetailsService implements UserDetailsService {
     }
 
 
-    public static boolean searchInGridMapfile( final String fileName,
+    public static String searchInGridMapfile( final String fileName,
                                            final String dn ) throws IOException {
         
         BufferedReader reader = new BufferedReader( new FileReader( fileName ) );
@@ -100,12 +107,12 @@ public class GridMapUserDetailsService implements UserDetailsService {
             while ( ( line = reader.readLine() ) != null ) {
 
                 if( line.startsWith( "\""+ dn + "\"" ) )
-                    return true;
+                    return line.substring(dn.length()+2).trim();
 
             }
         } finally {  reader.close(); }
 
-        return false;
+        return null;
     }
 
 
