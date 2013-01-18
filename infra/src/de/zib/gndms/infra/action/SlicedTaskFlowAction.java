@@ -45,7 +45,6 @@ import de.zib.gndms.neomodel.gorfx.Taskling;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -230,10 +229,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         final DelegatingOrder<?> order = getOrder();
         String dn = order.getDNFromContext();
        
-        	SecurityContext cont = order.getSecurityContextHolder().getSecurityContext();
-        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )cont
-                    .getAuthentication()
-                   .getPrincipal();
+        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
        String localUser = userDetails.getLocalUser();
         
         getLogger().debug( "cso DN: " + dn );
