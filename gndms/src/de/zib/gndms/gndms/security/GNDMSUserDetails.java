@@ -16,7 +16,6 @@ package de.zib.gndms.gndms.security;
  */
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 

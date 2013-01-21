@@ -237,6 +237,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
                 slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
                 slice.getDirectoryId() );
+        getLogger().debug( "calling " + chownAct.getProcessBuilder().command().toString() );
         chownAct.call();
     }
     
