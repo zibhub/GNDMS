@@ -171,13 +171,15 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         fta.call( );
 
         // extend termination time, if it had been published
-        if( getOrderBean().getSourceSlice() != null ) {
+        // TODO: Problem: this only works for the central / local DMS installation
+        // does it have to be extended for remote ones? Or does this happen somewhere else?
+        if( getOrderBean().getSourceSlice() != null && getOrderBean().getSourceSlice().getUriMap().get(UriFactory.BASE_URL) == config.getBaseUrl()) {
             final String sliceId = getOrderBean().getSourceSlice().getUriMap().get( UriFactory.SLICE );
 
             final TxFrame txf = new TxFrame( getEntityManager() );
             try {
                 final Slice slice = getEntityManager().find(Slice.class, sliceId);
-                if( slice.getPublished() ) {
+                if(slice!=null && slice.getPublished() ) {
                     final DateTime now = new DateTime( DateTimeUtils.currentTimeMillis() );
                     final DateTime month = now.plusMonths( 1 );
 
