@@ -33,4 +33,5 @@ if [ "$?" -ne "0" ]; then
     failWith 2 "$uid not in $GRID_MAPFILE"
 fi
 
+echo "calling chown"
 $CHOWN -R $uid $sliceDir
