@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -78,6 +79,9 @@ public abstract class AbstractDirectoryAux implements DirectoryAux {
 
     public List< String > listContent( String path ) {
         final File dir = new File( path );
+        if (dir == null || dir.list() == null) {
+        	return new ArrayList<String>();
+        }
         return Arrays.asList(dir.list());
     }
 
