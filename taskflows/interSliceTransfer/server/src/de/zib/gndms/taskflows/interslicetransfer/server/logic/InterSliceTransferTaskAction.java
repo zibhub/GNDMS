@@ -173,8 +173,6 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         // extend termination time, if it had been published
         // TODO: Problem: this only works for the central / local DMS installation
         // does it have to be extended for remote ones? Or does this happen somewhere else?
-        String bu1 =  getOrderBean().getSourceSlice().getUriMap().get(UriFactory.BASE_URL);
-        String bu2=   config.getBaseUrl();
 
         if( getOrderBean().getSourceSlice() != null && getOrderBean().getSourceSlice().getUriMap().get(UriFactory.BASE_URL).equals(config.getBaseUrl())) {
             final String sliceId = getOrderBean().getSourceSlice().getUriMap().get( UriFactory.SLICE );
