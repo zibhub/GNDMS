@@ -80,6 +80,7 @@ public abstract class AbstractDirectoryAux implements DirectoryAux {
     public List< String > listContent( String path ) {
         final File dir = new File( path );
         if (dir == null || dir.list() == null) {
+        	logger.debug(path + " is no directory and cannot be listed");
         	return new ArrayList<String>();
         }
         return Arrays.asList(dir.list());
