@@ -701,7 +701,7 @@ public class Adis extends ABIi {
 
         for (Key key: map.keySet()) {
             if (map.get(key).size() > 1) {
-                logger.warn("More than one endpoint registered with name "
+                logger.warn("More than one endpoint with name "
                 + key.get_keyname() + " of type " + key.get_type()
                 + "registered.");
             }

@@ -16,6 +16,7 @@ package de.zib.gndms.logic.model.dspace;
  */
 
 import de.zib.gndms.common.model.gorfx.types.VoidTaskResult;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.dspace.Slice;
@@ -80,7 +81,19 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
             throw new IllegalArgumentException( "Could not find slice " + getOrder().getModelId() );
 
         try {
-            logger.debug( "Delete directory: " + slice.getSubspace().getPathForSlice( slice ) );
+            ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+            String gndmsUser = System.getProperty("user.name");
+            logger.debug( "changing owner of " + slice.getId() + " to " + gndmsUser );
+            slice.setOwner(gndmsUser);
+            ProcessBuilderAction chownAct = csc.createChownSliceAction( gndmsUser,
+                    slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                    slice.getDirectoryId() );
+            logger.debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+            chownAct.getProcessBuilder().redirectErrorStream(true);
+            chownAct.call();
+            logger.debug("Output for chown:" + chownAct.getOutputReceiver().toString());
+        	
+        	logger.debug( "Delete directory: " + slice.getSubspace().getPathForSlice( slice ) );
             getDirectoryAux().deleteDirectory( slice.getOwner(), slice.getSubspace().getPathForSlice( slice ) );
         }
         catch( NoSuchResourceException e ) {

@@ -230,7 +230,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         String dn = order.getDNFromContext();
        
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
-       String localUser = userDetails.getLocalUser();
+        String localUser = userDetails.getLocalUser();
         
         getLogger().debug( "cso DN: " + dn );
         getLogger().debug( "changing owner of " + slice.getId() + " to " + localUser );
@@ -240,7 +240,6 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         getLogger().debug( "calling " + chownAct.getProcessBuilder().command().toString() );
         chownAct.getProcessBuilder().redirectErrorStream(true);
         chownAct.call();
-        getLogger().debug("Errors for chown:" + chownAct.getErrorReceiver().toString());
         getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
     }
     
