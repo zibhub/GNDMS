@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans.xsd 
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- regular spring configuration file defining the beans for this bundle. 
+		We've kept the osgi definitions in a separate configuration file so that 
+		this file can easily be used for integration testing outside of an OSGi environment -->
+		
+	<bean id="marshaller" class="org.springframework.oxm.xstream.XStreamMarshaller">
+		<property name="autodetectAnnotations" value="true" />
+	</bean>
+
+	<!-- this is the converter for POST -->
+	<bean id="converter"
+		class="org.springframework.http.converter.xml.MarshallingHttpMessageConverter">
+		<constructor-arg ref="marshaller" />
+	</bean>
+
+	<bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
+		<constructor-arg>
+			<bean
+				class="de.zib.gndms.gndmstest.SSLConnectionFactory">
+				<property name="connectTimeout" value="10000" />
+			</bean>
+		</constructor-arg>
+		<property name="messageConverters">
+			<list>
+				<bean class="org.springframework.http.converter.FormHttpMessageConverter" />
+				<ref bean="converter" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="gorfxClient" class="de.zib.gndms.gndmc.gorfx.FullGORFXClient" scope="prototype">
+		<property name="restTemplate" ref="restTemplate" />
+	</bean>
+	
+	<bean id="taskflowClient" class="de.zib.gndms.gndmc.gorfx.TaskFlowClient" scope="prototype">
+		<property name="restTemplate" ref="restTemplate" />
+	</bean>
+	
+	<bean id="taskClient" class="de.zib.gndms.gndmc.gorfx.TaskClient" scope="prototype">
+		<property name="restTemplate" ref="restTemplate" />
+	</bean>
+
+</beans>
