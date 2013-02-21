@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Setup for a compute provider
+
+# Set a short, human-readable name for the compute provider to be registered at VolD
+CP_NAME=""
+
 # Setup for a data provider
 
 SCRIPTDIR="$(dirname $0)/../" ;
@@ -46,7 +51,7 @@ TTL=86400000
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 #c3grid_generic
-enable_providerstagein
+enable_computeAndDataprovider
 enable_permissions
 enable_sliceChown
 enable_filetransfer()

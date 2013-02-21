@@ -1,3 +1,5 @@
+#!/bin/sh
+
 enable_providerstagein() {
 RW="700"
 
