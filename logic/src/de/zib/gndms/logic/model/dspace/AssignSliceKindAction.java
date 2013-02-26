@@ -92,7 +92,7 @@ public class AssignSliceKindAction extends ConfigAction<ConfigActionResult> {
      *
      * Depending on the chosen <tt>Mode</tt> value, the sliceKind entity and the MetaSubspace entity are assigned to or removed from each other.
      *
-     * <p>The change on the model will be registerd to the postponed actions.
+     * <p>The change on the model will be registered to the postponed actions.
     * 
      * @param em an EntityManager managing SliceKind and MetaSubspace entities.
      * @param writer
