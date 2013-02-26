@@ -13,8 +13,4 @@ moni call -v .dspace.SetupSubspace  "subspace:ComputeStaging; \
 moni call -v .dspace.SetupSliceKind "sliceKind:CPKind; sliceKindMode:$RW; uniqueDirName:CP; timeToLive: $TTL; mmode: $MODE"
 
 moni call -v .dspace.AssignSliceKind "subspace:ComputeStaging; sliceKind: CPKind; mode:'$ADDMODE'"
-
-moni call -v .vold.VolDRegistrar "siteType: 'CP';\
-	siteName: '$CP_NAME'; \
-	updateInterval: $UPDATE_INTERVAL"
 }
