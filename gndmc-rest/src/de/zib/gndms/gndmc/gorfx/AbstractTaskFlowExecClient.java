@@ -96,7 +96,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
     public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote,
                         final String wid ) {
 
-        GNDMSResponseHeader context = setupContext( new GNDMSResponseHeader() );
+        GNDMSResponseHeader context = setupContext(new GNDMSResponseHeader());
 
         if( null == gorfxClient ) {
             throw new IllegalStateException( "You need to set gorfxClient before executing a TaskFlow!" );
