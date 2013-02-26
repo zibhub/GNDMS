@@ -27,5 +27,5 @@ define 'voldregistration' do
             deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
             cp package(:jar).to_s, deploy_target
         end
-    end
-end
+     end
+
