@@ -9,7 +9,7 @@ PLUGIN_VERSION_NUMBER = '0.6.4'
 setupGNDMSModules()
 
 desc 'Plug-in for the vold registration task-flow'
-define 'dummy' do
+define 'voldregistration' do
     project.version = PLUGIN_VERSION_NUMBER
     manifest['Copyright'] = MF_COPYRIGHT
     manifest['License'] = MF_LICENSE
