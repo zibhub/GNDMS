@@ -29,7 +29,8 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 
 # Set the OID prefixes for this data provider
 # Note, that multiple prefixes can be given
-STAGING_OIDPREFIXE="prefix1 prefix2, prefix3;prefix4"
+# STAGING_OIDPREFIXE="prefix1 prefix2, prefix3;prefix4"
+STAGING_OIDPREFIXE="de.zib.c3-4lom"
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
@@ -49,6 +50,6 @@ TTL=86400000
 enable_providerstagein
 enable_permissions
 enable_sliceChown
-enable_filetransfer()
-enable_gsiftpDeadlockPrevention
+#enable_filetransfer
+#enable_gsiftpDeadlockPrevention
 refresh_system
