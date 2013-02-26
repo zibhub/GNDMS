@@ -24,8 +24,8 @@ define 'voldregistration' do
 
         desc 'deploys the vold registration jar'
         task 'deploy' do
-            deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
-            cp package(:jar).to_s, deploy_target
+            deploy_target = "#{ENV['JETTY_HOME']}/gndms"
+            cp project('voldregistration').package(:jar).to_s, deploy_target
         end
      end
 
