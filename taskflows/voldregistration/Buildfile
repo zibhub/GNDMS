@@ -19,7 +19,7 @@ define 'dummy' do
     desc 'The vold registration of the plugin'
     define 'reg', :layout => dmsTestLayout('server', 'dummy-server') do
         meta_inf << file( _( 'src/META-INF/services' ) )
-        compile.with project('client'),  GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, GNDMS_VOLDMODEL, INJECT, SLF4J, JETBRAINS_ANNOTATIONS, OPENJPA
+        compile.with GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, GNDMS_VOLDMODEL, INJECT, SLF4J, JETBRAINS_ANNOTATIONS, OPENJPA
 
         compile
         package :jar
