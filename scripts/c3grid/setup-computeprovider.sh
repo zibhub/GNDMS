@@ -5,7 +5,7 @@
 SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # Set a short, human-readable name for the compute provider to be registered at VolD
-CP_NAME=""
+SITE_NAME=""
 
 # Parameters for the transfer staging area
 TRANSFER_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
@@ -20,10 +20,13 @@ UPDATE_INTERVAL="60000"
 
 # Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
 
+TYPE="CPID_GRAM"
+
 #c3grid_generic
 enable_computeprovider
+enable_voldregistration
 enable_permissions
 enable_sliceChown
-enable_filetransfer()
-enable_gsiftpDeadlockPrevention
+#enable_filetransfer()
+#enable_gsiftpDeadlockPrevention
 #refresh_system

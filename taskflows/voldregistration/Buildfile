@@ -1,0 +1,33 @@
+require "#{ENV['GNDMS_REST']}/buildr/gndms_modules"
+include GNDMS_MODULES
+
+PLUGIN_VERSION_NUMBER = '0.6.4'
+# Don't touch below unless you know what you are doing
+# --------------------------------------------------------------------------------------------------
+
+
+setupGNDMSModules()
+
+desc 'Plug-in for the vold registration task-flow'
+define 'dummy' do
+    project.version = PLUGIN_VERSION_NUMBER
+    manifest['Copyright'] = MF_COPYRIGHT
+    manifest['License'] = MF_LICENSE
+    compile.options.source = SOURCE
+    compile.options.target = TARGET
+
+    desc 'The vold registration of the plugin'
+    define 'reg', :layout => dmsTestLayout('server', 'dummy-server') do
+        meta_inf << file( _( 'src/META-INF/services' ) )
+        compile.with project('client'),  GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, GNDMS_VOLDMODEL, INJECT, SLF4J, JETBRAINS_ANNOTATIONS, OPENJPA
+
+        compile
+        package :jar
+
+        desc 'deploys the vold registration jar'
+        task 'deploy' do
+            deploy_target = "#{ENV['JETTY_HOME']}/webapps/root/WEB-INF/lib"
+            cp package(:jar).to_s, deploy_target
+        end
+    end
+end
