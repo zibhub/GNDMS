@@ -1,4 +1,4 @@
-require "#{ENV['GNDMS_REST']}/buildr/gndms_modules"
+require "#{ENV['GNDMS_SOURCE']}/buildr/gndms_modules"
 include GNDMS_MODULES
 
 PLUGIN_VERSION_NUMBER = '0.6.4'
