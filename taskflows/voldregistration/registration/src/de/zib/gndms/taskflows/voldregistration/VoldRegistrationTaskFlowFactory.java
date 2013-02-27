@@ -109,8 +109,8 @@ public class VoldRegistrationTaskFlowFactory extends DefaultTaskFlowFactory< Vol
             voldUrl = "";
         }
 
-        //defaultConfig.put( "type", "esgfStaging" );
-        //defaultConfig.put( "siteName", "esgfKind");
+        defaultConfig.put( "type", "please set" );
+        defaultConfig.put( "siteName", "please set");
         defaultConfig.put( "updateInterval", "60000");
         defaultConfig.put( "baseUrl", voldUrl );
         
