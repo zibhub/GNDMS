@@ -16,16 +16,18 @@ define 'voldregistration' do
     compile.options.source = SOURCE
     compile.options.target = TARGET
 
-        meta_inf << file( _( 'src/META-INF' ) )
+desc 'The registration of the plugin'
+    define 'registration', :layout => dmsLayout('registration', 'voldRegistration') do
         compile.with GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, GNDMS_VOLDMODEL, INJECT, SLF4J, JETBRAINS_ANNOTATIONS, OPENJPA
 
         compile
-        package :jar
+        meta_inf << file( _( 'src/META-INF' ) )
+       package :jar
 
         desc 'deploys the vold registration jar'
         task 'deploy' do
             deploy_target = "#{ENV['JETTY_HOME']}/gndms"
-            cp project('voldregistration').package(:jar).to_s, deploy_target
+            cp project('voldregistration:registration').package(:jar).to_s, deploy_target
         end
      end
-
+end
