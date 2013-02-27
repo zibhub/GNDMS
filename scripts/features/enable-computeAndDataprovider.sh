@@ -28,8 +28,4 @@ moni call -v .gorfx.ConfigTaskFlowType "taskFlowType: 'ProviderStageIn'; \
 	scriptIoFormat: '$SCRIPT_IO_FORMAT'; \
 	oidPrefixe: '$STAGING_OIDPREFIXE'; \
 	updateInterval: '$UPDATE_INTERVAL'"
-
-moni call -v .vold.VolDRegistrar "siteType: 'CP';\
-	siteName: '$CP_NAME'; \
-	updateInterval: $UPDATE_INTERVAL"
 }

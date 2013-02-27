@@ -3,7 +3,7 @@
 # Setup for a compute provider
 
 # Set a short, human-readable name for the compute provider to be registered at VolD
-CP_NAME=""
+SITE_NAME=""
 
 # Setup for a data provider
 
@@ -48,10 +48,15 @@ UPDATE_INTERVAL="60000"
 # default: one day
 TTL=86400000
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# If you do not want to have an automatic VolD registration of the CP, please uncomment the line enable_voldregistration
+---------------------------------------------------------------------------------------------------------------------------------------------------
+
+TYPE="CPID_GRAM"
 
 #c3grid_generic
 enable_computeAndDataprovider
+enable_voldregistration
 enable_permissions
 enable_sliceChown
 enable_filetransfer()
