@@ -10,7 +10,7 @@ moni call -v .dspace.SetupSubspace  "subspace:ComputeStaging; \
 	size:'$TRANSFER_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:CPKind; sliceKindMode:$RW; uniqueDirName:CP; timeToLive: $TTL; mmode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:CPKind; sliceKindMode:$RW; uniqueDirName:CP; timeToLive: $TTL; mode: $MODE"
 
 moni call -v .dspace.AssignSliceKind "subspace:ComputeStaging; sliceKind: CPKind; mode:'$ADDMODE'"
 }

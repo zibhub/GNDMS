@@ -10,7 +10,7 @@ moni call -v .dspace.SetupSubspace  "subspace:'ProviderStaging'; \
 	size:'$STAGING_AREA_SIZE'; \
 	mode:'$MODE'"
 
-moni call -v .dspace.SetupSliceKind "sliceKind:'CPKind'; sliceKindMode:$RW; uniqueDirName:CP; timeToLive: $TTL; mmode: $MODE"
+moni call -v .dspace.SetupSliceKind "sliceKind:'CPKind'; sliceKindMode:$RW; uniqueDirName:CP; timeToLive: $TTL; mode: $MODE"
 moni call -v .dspace.SetupSliceKind "sliceKind:'ProviderKind'; sliceKindMode:$RW; uniqueDirName:RW; timeToLive: $TTL; mode: $MODE"
 
 moni call -v .dspace.AssignSliceKind "subspace:'ProviderStaging'; sliceKind:'CPKind'; mode:'$ADDMODE'"
