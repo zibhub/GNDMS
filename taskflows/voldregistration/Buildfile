@@ -21,7 +21,7 @@ desc 'The registration of the plugin'
         compile.with GNDMS_COMMON, GNDMS_STUFF, GNDMS_MODEL, GNDMS_NEOMODEL,  GNDMS_KIT, GNDMS_INFRA, GNDMS_LOGIC, GNDMS_VOLDMODEL, INJECT, SLF4J, JETBRAINS_ANNOTATIONS, OPENJPA
 
         compile
-        meta_inf << file( _( 'src/META-INF' ) )
+        meta_inf << file( _( 'src/META-INF/services' ) )
        package :jar
 
         desc 'deploys the vold registration jar'
