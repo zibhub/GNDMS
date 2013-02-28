@@ -141,7 +141,8 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         defaultConfig.put( "sliceKind", "esgfKind");
         defaultConfig.put( "trustStoreLocation", trustStoreLocation );
         defaultConfig.put( "trustStorePassword", "gndmstrust" );
-        
+        defaultConfig.put( "updateInterval", "60000" );
+       
         return defaultConfig;
     }
 
