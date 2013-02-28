@@ -109,8 +109,6 @@ public class VoldRegistrationTaskFlowFactory extends DefaultTaskFlowFactory< Vol
             voldUrl = "";
         }
 
-        defaultConfig.put( "type", "CPID_GRAM" );
-        defaultConfig.put( "siteName", "please set");
         defaultConfig.put( "updateInterval", "60000");
         defaultConfig.put( "baseUrl", voldUrl );
         
@@ -163,8 +161,14 @@ public class VoldRegistrationTaskFlowFactory extends DefaultTaskFlowFactory< Vol
     @PostConstruct
     public void startVoldRegistration() throws Exception {
         String gorfx = gridConfig.getBaseUrl();
+        if( !getOfferTypeConfig().hasOption( "type" ) ) {
+            logger.error( "type for Vold registation not set" );
+        }
+        if( !getOfferTypeConfig().hasOption( "sitName" ) ) {
+            logger.error( "site name for Vold registation not set" );
+        }
         Type type = Type.valueOf(getOfferTypeConfig().getOption("type","CPID_GRAM"));
-        String name = getOfferTypeConfig().getOption("siteName","not set");
+        String name = getOfferTypeConfig().getOption("siteName","");
         
         registrar = new VolDRegistrar( adis, gorfx, type, name, getOfferTypeConfig().getLongOption( "updateInterval" ));
         registrar.start();
