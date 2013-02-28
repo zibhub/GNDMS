@@ -109,7 +109,7 @@ public class VoldRegistrationTaskFlowFactory extends DefaultTaskFlowFactory< Vol
             voldUrl = "";
         }
 
-        defaultConfig.put( "type", "please set" );
+        defaultConfig.put( "type", "CPID_GRAM" );
         defaultConfig.put( "siteName", "please set");
         defaultConfig.put( "updateInterval", "60000");
         defaultConfig.put( "baseUrl", voldUrl );
