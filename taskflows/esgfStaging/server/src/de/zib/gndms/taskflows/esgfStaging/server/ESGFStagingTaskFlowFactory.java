@@ -196,7 +196,7 @@ public class ESGFStagingTaskFlowFactory extends DefaultTaskFlowFactory< ESGFStag
         String name = getOfferTypeConfig().getOption("esgfSiteName", gorfx);
         
         //registrar = new VoldRegistrar( adis, gridConfig.getBaseUrl(), getOfferTypeConfig().getOption( "esgfSiteName" ));
-        registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, name, getOfferTypeConfig().getLongOption( "updateInterval" ));
+        registrar = new VolDRegistrar( adis, gorfx, Type.ESGF, name, getOfferTypeConfig().getLongOption( "updateInterval", 60000 ));
         registrar.start();
     }
 
