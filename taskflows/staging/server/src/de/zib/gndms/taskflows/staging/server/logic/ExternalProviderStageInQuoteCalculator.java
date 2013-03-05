@@ -135,7 +135,7 @@ public class ExternalProviderStageInQuoteCalculator extends
     }
 
 
-    private ProcessBuilderAction createEstAction( final File estCommandFileParam, final Quote contParam ) {
+    private ProcessBuilderAction createEstAction( final File estCommandFileParam, Quote contParam ) {
         final @NotNull ProcessBuilder pb = new ProcessBuilder();
         try {
             pb.command(estCommandFileParam.getCanonicalPath());
@@ -148,6 +148,9 @@ public class ExternalProviderStageInQuoteCalculator extends
         ProcessBuilderAction action;
         Map<String,String> addNote = new HashMap<String,String>();
         addNote.put( "c3grid.CommonRequest.Context.Auth.DN", getOrder().getDNFromContext());
+        if (contParam == null) {
+        	contParam = new Quote();
+        }
         contParam.addAdditionalNotes(addNote);
         action = stagingIOHelper.createPBAction( getOrderBean(), contParam, null);
         action.setProcessBuilder(pb);
