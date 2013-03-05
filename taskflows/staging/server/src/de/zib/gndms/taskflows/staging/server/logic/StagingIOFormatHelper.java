@@ -89,6 +89,9 @@ public class StagingIOFormatHelper {
         	moreProps = new Properties();
         }
        	moreProps.put("c3grid.CommonRequest.Context.Auth.DN", dn);
+       	if (!moreProps.containsKey("c3grid.CommonRequest.Context")) { 
+       		moreProps.put("c3grid.CommonRequest.Context", "Auth.DN");
+       	}
                
         return ProviderStageInTools.createPBAction( order, moreProps);
         
