@@ -55,6 +55,10 @@ public class StagingIOFormatHelper {
         return  createDefaultPBAction( order, contParam, fp );
     }
 
+    public ProcessBuilderAction createPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp , String dn) {
+
+        return  createDefaultPBAction( order, contParam, fp , dn);
+    }
 
     public void formatFromMap( MapConfig config ) {
 
@@ -77,9 +81,21 @@ public class StagingIOFormatHelper {
         return reader.getProduct();
     }
 
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp, String dn ) {
+       
+        Properties moreProps = allProps(order, contParam,fp);
 
-    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
+        if (moreProps == null) {
+        	moreProps = new Properties();
+        }
+       	moreProps.put("c3grid.CommonRequest.Context.Auth.DN", dn);
+               
+        return ProviderStageInTools.createPBAction( order, moreProps);
+        
+    }
 
+
+    private Properties allProps( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
         Properties moreProps = null;
         if( contParam != null ) {
             moreProps = new Properties();
@@ -95,10 +111,13 @@ public class StagingIOFormatHelper {
                 moreProps = new Properties( );
             fp.toProperties( "c3grid.CommonRequest.Permissions", moreProps );
         }
+        return moreProps;
+    }
 
-        if( moreProps != null )
-            return ProviderStageInTools.createPBAction( order, moreProps);
+    private ProcessBuilderAction createDefaultPBAction( ProviderStageInOrder order, Quote contParam, FilePermissions fp ) {
+
+        Properties moreProps = allProps(order, contParam,fp);
         
-        return ProviderStageInTools.createPBAction( order, null );
+        return ProviderStageInTools.createPBAction( order, moreProps );
     }
 }
