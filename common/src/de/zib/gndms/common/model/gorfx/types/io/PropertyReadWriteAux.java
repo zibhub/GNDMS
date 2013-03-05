@@ -116,6 +116,25 @@ public class PropertyReadWriteAux {
         return hm;
     }
 
+    public static HashMap<String, String> readMapFullKey( @NotNull Properties prop, @NotNull String key ) {
+
+        List<String> keys = readList( prop, key, ' ' );
+        if( key.trim().equals( "" ) )
+            return null;
+
+        HashMap<String, String> hm = new HashMap<String, String>( );
+        key = key + ".";
+        for( String k : keys ) {
+            String s = prop.getProperty( key + k );
+       //     if( s == null )
+       //         throw new IllegalStateException( "Missing property entry for " + key + k );
+       // for some situations its desired that s can be null
+            hm.put( key + k, s );
+        }
+
+        return hm;
+    }
+
 
     public static MinMaxPair readMinMaxPair( @NotNull Properties prop, @NotNull String minkey, @NotNull String maxkey  ) {
 

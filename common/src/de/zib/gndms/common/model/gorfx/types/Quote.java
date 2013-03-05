@@ -112,6 +112,16 @@ public class Quote implements Cloneable {
             additionalNotes = null;
 	}
 
+    public void addAdditionalNotes(final Map<String, String> additionalNotesParam) {
+        if( additionalNotesParam != null ) {
+        	Map<String, String> all = additionalNotesParam;
+        	if (additionalNotes != null) {
+        		all.putAll(additionalNotes);
+        	}
+            additionalNotes = Collections.unmodifiableMap(all);
+        }
+	}
+
 
     @Override
 	public Quote clone() throws CloneNotSupportedException {
