@@ -59,6 +59,6 @@ enable_computeAndDataprovider
 enable_voldregistration
 enable_permissions
 enable_sliceChown
-enable_filetransfer()
-enable_gsiftpDeadlockPrevention
-refresh_system
+#enable_filetransfer()
+#enable_gsiftpDeadlockPrevention
+#refresh_system
