@@ -7,14 +7,19 @@ GREP=/bin/grep
 BASENAME=/bin/basename
 DIRNAME=/usr/bin/dirname
 PROGRAM=$( $BASENAME $0 )
-SERVLETUSER="tomcat"
+#SERVLETUSER="tomcat"
+#SERVLETUSER="gndms"
+#SERVLETUSER="jetty"
+SERVLETUSER=""
+#FIXEDBASEDIR="/projects/c3storage/dms_workspace"
+FIXEDBASEDIR=""
 
-# Alternative zum festen Eintragen des Usernamens an dieser Stelle: Sourcen
-# einer Datei, in der SERVLETUSER definiert wird.  Das ist aber gefaehrlich,
-# weil in der gesourcten Datei prinzipell auch beliebiger Code drinstehen
-# koennte, der dann hier mit Root-Rechten ausgefuehrt wird.
-
-FIXEDBASEDIR="/projects/c3storage/dms_workspace"
+if [ -z "$SERVLETUSER" -a -n "$SUDO_USER" ]
+then
+    echo "$PROGRAM: \$SERVLETUSER is not set - assuming it is $SUDO_USER"
+    SERVLETUSER="$SUDO_USER"
+    # Workaround fuer unvollstaendig durchgefuehrtes Setup dieses Skripts
+fi
 
 failWith() {
     ec=$1
@@ -49,9 +54,11 @@ then
         failWith 5 "Directory $baseDir is not within $FIXEDBASEDIR, aborting"
     fi
 else
-    :
+    echo "$PROGRAM: Blindly accepting to work in $baseDir because \$FIXEDBASEDIR is not set"
     # Die unsichere Variante: Da das Basisverzeichnis nicht bekannt ist,
-    # wird ohne weitere Pruefung die Angabe von extern (Tomcat) uebernommen.
+    # wird ohne weitere Pruefung die Angabe von extern uebernommen. 
+    # Es koennen somit theoretisch im gesamten Dateisystem die Owner
+    # geaendert werden, was offensichtlich ein Sicherheitsrisiko darstellt.
 fi
 
 sliceDir="$baseDir/$sliceId"
@@ -59,9 +66,9 @@ sliceDir="$baseDir/$sliceId"
 if echo "$sliceId" | $GREP -q '\.\.' 
 then
     failWith 3 "Detected directory traversal attempt using sliceId $sliceId"
-    ## es wurde versucht chownSlice in einem Verzeichnis a la
-    ## /projects/c3storage/dms_workspace/RW/../../../foo/bar auszufuehren, also
-    ## ausserhalb des vom DMS verwalteten Bereichs. Das ist nicht erlaubt!
+    # Es wurde versucht chownSlice in einem Verzeichnis a la
+    # /projects/c3storage/dms_workspace/RW/../../../foo/bar auszufuehren, also
+    # ausserhalb des vom DMS verwalteten Bereichs. Das ist nicht erlaubt!
 fi
 
 if [ ! -d "$sliceDir" ]; then 
@@ -85,7 +92,7 @@ elif $GREP -q $GRID_MAPFILE -e "\b$uid\b"
 then
     echo "$PROGRAM accepting username $uid because it is contained in gridmapfile"
 else
-    failWith 6 "$uid is neither the servlet engine's username ($SERVLETUSER) nor in $GRID_MAPFILE"
+    failWith 6 "$uid is neither the servlet engine's username (${SERVLETUSER:-[undefined]}) nor in $GRID_MAPFILE"
 fi
 
 echo "$PROGRAM calling $CHOWN -R $uid $sliceDir"
