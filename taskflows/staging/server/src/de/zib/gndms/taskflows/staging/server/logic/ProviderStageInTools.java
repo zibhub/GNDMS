@@ -51,7 +51,6 @@ public final class ProviderStageInTools {
         final ProviderStageInOrderConverter converter = new ProviderStageInOrderConverter(writer, order );
         converter.convert();
         props.put( "c3grid.CommonRequest.Context.Workflow.Id", WidAux.getWid() );
-        props.put( "c3grid.CommonRequest.Context.Auth.DN", order.getActContext().get("Auth.DN") );
         props.put( SfrProperty.GORFX_ID.key, WidAux.getGORFXid() );
         return props;
     }
