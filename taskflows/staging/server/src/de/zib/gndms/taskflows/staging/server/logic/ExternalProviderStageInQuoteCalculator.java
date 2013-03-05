@@ -30,10 +30,13 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.gorfx.PermissionDeniedTaskFlowException;
 import de.zib.gndms.logic.model.gorfx.taskflow.UnsatisfiableOrderException;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.common.Session;
 import de.zib.gndms.neomodel.gorfx.Task;
 import de.zib.gndms.stuff.Sleeper;
+import de.zib.gndms.taskflows.staging.client.model.ProviderStageInOrder;
+
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +45,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -98,7 +103,7 @@ public class ExternalProviderStageInQuoteCalculator extends
 
 
     @SuppressWarnings( { "HardcodedLineSeparator", "MagicNumber" } )
-    private Quote createOfferViaEstScript( final File estCommandFileParam, final Quote contParam ) {
+    private Quote createOfferViaEstScript( final File estCommandFileParam, final Quote contParam) {
 
         logger.debug( "Estimating quotes using " + estCommandFileParam );
 
@@ -141,7 +146,10 @@ public class ExternalProviderStageInQuoteCalculator extends
         }
 
         ProcessBuilderAction action;
-        action = stagingIOHelper.createPBAction( getOrderBean(), contParam, null );
+        Map<String,String> addNote = new HashMap<String,String>();
+        addNote.put( "c3grid.CommonRequest.Context.Auth.DN", getOrder().getDNFromContext());
+        contParam.addAdditionalNotes(addNote);
+        action = stagingIOHelper.createPBAction( getOrderBean(), contParam, null);
         action.setProcessBuilder(pb);
         action.setOutputReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
         action.setErrorReceiver(new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY));
