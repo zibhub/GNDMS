@@ -7,10 +7,9 @@ source "$SCRIPTDIR"internal/script-setup.sh
 
 # Set your hostname if it is not detected correctly
 #GRIDHOST="$(hostname -f)"
-GRIDHOST="mardschana2.zib.de"
 
 # Parameters for the transfer staging area
-TRANSFER_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
+TRANSFER_AREA_PATH="/var/lib/gndms/sub"
 TRANSFER_AREA_SIZE="1000000" # Currently unused
 TRANSFER_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$TRANSFER_AREA_PATH"
 
@@ -24,11 +23,12 @@ TTL=86400000
 # VolD update interval in milliseconds
 UPDATE_INTERVAL="60000"
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 enable_transferSpace
 
-# uncomment these if the transferspace is setup standallone
+# uncomment these if the transferspace is setup standalone
 # additionally make sure that filetransfer and gsi-deadlock prevention are enabled.
 #enable_permissions
 #enable_sliceChown

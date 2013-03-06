@@ -7,11 +7,10 @@ source "$SCRIPTDIR"internal/script-setup.sh
 
 # Set your hostname if it is not detected correctly
 #GRIDHOST="$(hostname -f)"
-GRIDHOST="mardschana2.zib.de"
 
 # Parameters for the import staging area
-IMPORT_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
-IMPORT_AREA_SIZE="1000000" # Currently unused
+IMPORT_AREA_PATH="/var/lib/gndms/sub"
+IMPORT_AREA_SIZE="1000000" 
 IMPORT_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$TRANSFER_AREA_PATH"
 
 # Set a short, human-readable name for the import site to be registered at VolD
@@ -24,7 +23,8 @@ TTL=86400000
 # VolD update interval in milliseconds
 UPDATE_INTERVAL=60000
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 enable_importSpace
 

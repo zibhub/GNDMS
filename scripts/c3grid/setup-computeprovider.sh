@@ -5,7 +5,7 @@
 SCRIPTDIR="$(dirname $0)/../" ; source "$SCRIPTDIR"internal/script-setup.sh
 
 # Set a short, human-readable name for the compute provider to be registered at VolD
-SITE_NAME="c3-4lom"
+SITE_NAME=""
 
 # Parameters for the transfer staging area
 TRANSFER_AREA_PATH="/var/lib/gndms/sub"
@@ -24,7 +24,7 @@ TTL=86400000
 
 # Do not edit below this line unless very sure 
 # If you do not want to have an automatic VolD registration of the CP, please uncomment the line enable_voldregistration
----------------------------------------------------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 TYPE="CPID_GRAM"
 

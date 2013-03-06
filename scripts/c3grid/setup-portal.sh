@@ -7,14 +7,13 @@ source "$SCRIPTDIR"internal/script-setup.sh
 
 # Set your hostname if it is not detected correctly
 #GRIDHOST="$(hostname -f)"
-GRIDHOST="mardschana2.zib.de"
 
 # Set a short, human-readable name for the portal
 PORTAL_NAME=""
 
 # Parameters for the import staging area
-IMPORT_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
-IMPORT_AREA_SIZE="1000000" # Currently unused
+IMPORT_AREA_PATH="/var/lib/gndms/sub"
+IMPORT_AREA_SIZE="1000000" 
 IMPORT_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$IMPORT_AREA_PATH"
 
 # Set a short, human-readable name for the import space to be registered at VolD
@@ -22,8 +21,8 @@ IMPORT_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$IMPORT_AREA_PATH"
 IMPORT_NAME="$PORTAL_NAME"
 
 # Parameters for the export staging area
-EXPORT_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
-EXPORT_AREA_SIZE="1000000" # Currently unused
+EXPORT_AREA_PATH="/var/lib/gndms/sub"
+EXPORT_AREA_SIZE="1000000" 
 EXPORT_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$EXPORT_AREA_PATH"
 
 # Set a short, human-readable name for the export space to be registered at VolD
@@ -31,7 +30,7 @@ EXPORT_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$EXPORT_AREA_PATH"
 EXPORT_NAME="$PORTAL_NAME"
 
 # Parameters for the transfer staging area
-TRANSFER_AREA_PATH="/NFS3/sesam2_work/work/c3storage"
+TRANSFER_AREA_PATH="/var/lib/gndms/sub"
 TRANSFER_AREA_SIZE="1000000" # Currently unused
 TRANSFER_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$IMPORT_AREA_PATH"
 
@@ -42,7 +41,8 @@ TRANSFER_NAME="$PORTAL_NAME"
 # VolD update interval in milliseconds
 UPDATE_INTERVAL="60000"
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 enable_importSpace
 enable_exportSpace

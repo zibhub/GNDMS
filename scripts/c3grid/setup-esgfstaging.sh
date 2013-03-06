@@ -34,7 +34,8 @@ TTL=86400000
 # VolD update interval in milliseconds
 UPDATE_INTERVAL=60000
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 #c3grid_generic
 enable_esgfstageing

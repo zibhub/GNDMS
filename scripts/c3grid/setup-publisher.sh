@@ -22,7 +22,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 
 # Set the OID prefixes for this publisher
 # Note, that multiple prefixes can be given
-PUBLISHING_OIDPREFIX="c3-po.zib.de"
+PUBLISHING_OIDPREFIX=""
 
 # VolD update interval in milliseconds
 UPDATE_INTERVAL="60000"
@@ -31,7 +31,8 @@ UPDATE_INTERVAL="60000"
 # default: one day
 TTL=86400000
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 #c3grid_generic
 enable_publishing

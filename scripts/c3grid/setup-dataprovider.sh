@@ -30,7 +30,8 @@ STAGING_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$STAGING_AREA_PATH"
 # Set the OID prefixes for this data provider
 # Note, that multiple prefixes can be given
 # STAGING_OIDPREFIXE="prefix1 prefix2, prefix3;prefix4"
-STAGING_OIDPREFIXE="de.zib.c3-4lom"
+# STAGING_OIDPREFIXE="de.zib.c3-4lom"
+STAGING_OIDPREFIXE=""
 
 # In- and Output format for script properties
 # currently only PROPS (java-properties) and XML are supported
@@ -44,7 +45,8 @@ UPDATE_INTERVAL="60000"
 # default: one day
 TTL=86400000
 
-# Do not edit below this line unless very sure ---------------------------------------------------------------------------------------------------------------------------------------------------
+# Do not edit below this line unless very sure 
+# ---------------------------------------------------------------------------------------------------------------------------------------------------
 
 #c3grid_generic
 enable_providerstagein
