@@ -9,7 +9,7 @@ SITE_NAME=""
 
 # Parameters for the transfer staging area
 TRANSFER_AREA_PATH="/var/lib/gndms/sub"
-TRANSFER_AREA_SIZE="5000000"
+TRANSFER_AREA_SIZE="5000000000"
 TRANSFER_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$IMPORT_AREA_PATH"
 
 # Set your hostname if it is not detected correctly
