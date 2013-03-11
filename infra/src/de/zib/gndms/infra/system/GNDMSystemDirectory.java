@@ -68,7 +68,12 @@ public class GNDMSystemDirectory implements SystemDirectory, BeanFactoryAware {
 
 	private final Map<String, Configlet> configlets = ( new MapMaker() ).makeMap();
 
-    private final @NotNull BoundInjector boundInjector = new BoundInjector();
+    public Map<String, Configlet> getConfiglets() {
+		return configlets;
+	}
+
+
+	private final @NotNull BoundInjector boundInjector = new BoundInjector();
 
     private GNDMSInjector injector;
 

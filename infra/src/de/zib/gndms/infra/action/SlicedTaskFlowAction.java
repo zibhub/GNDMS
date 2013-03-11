@@ -23,9 +23,11 @@ import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.infra.GridConfig;
+import de.zib.gndms.infra.system.GNDMSystemDirectory;
 import de.zib.gndms.kit.config.ConfigProvider;
 import de.zib.gndms.kit.config.MandatoryOptionMissingException;
 import de.zib.gndms.kit.config.MapConfig;
+import de.zib.gndms.kit.configlet.ConfigletProvider;
 import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.model.dspace.DeleteSliceTaskAction;
@@ -223,9 +225,17 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 
         ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
 
-        if( csc == null )
-            throw new IllegalStateException( "chown configlet is null!");
-
+        if( csc == null ) {
+        	// Log für Köln
+        	ConfigletProvider confProv = getConfigletProvider();
+        	getLogger().debug("ConfigletProvider: " + confProv.toString());
+        	GNDMSystemDirectory sysDir = (GNDMSystemDirectory) confProv;
+        	getLogger().debug("GNDMSystemDirectory: " + sysDir.toString());
+        	getLogger().debug("Configlets: " + sysDir.getConfiglets().toString());
+        	
+        	throw new IllegalStateException( "chown configlet is null!");
+        }
+        
         final DelegatingOrder<?> order = getOrder();
         String dn = order.getDNFromContext();
        

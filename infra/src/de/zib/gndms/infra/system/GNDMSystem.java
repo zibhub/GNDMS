@@ -22,9 +22,12 @@ import de.zib.gndms.common.kit.security.SetupSSL;
 import de.zib.gndms.common.kit.security.SetupSSLFactory;
 import de.zib.gndms.infra.GridConfig;
 import de.zib.gndms.kit.access.EMFactoryProvider;
+import de.zib.gndms.kit.configlet.Configlet;
 import de.zib.gndms.logic.action.ActionCaller;
 import de.zib.gndms.logic.model.*;
+import de.zib.gndms.logic.model.dspace.ChownSliceConfiglet;
 import de.zib.gndms.logic.util.LogicTools;
+import de.zib.gndms.model.common.ConfigletState;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.ModelUUIDGen;
 import de.zib.gndms.neomodel.common.Dao;
@@ -700,11 +703,20 @@ public final class GNDMSystem
     }
 
     public void listEntities( EntityManagerFactory emf  )  {
-
         logger.debug( "enitites in emf " +emf.toString()  );
-        for ( EntityType<?> e : emf.getMetamodel().getEntities() )
+        for ( EntityType<?> e : emf.getMetamodel().getEntities() ){
             logger.debug( e.getName() );
-
+        }
+        
+        // test für Köln
+        try {
+        	logger.debug("All configlets: " + instanceDir.getConfiglets().toString());
+        	ChownSliceConfiglet	cs = instanceDir.getConfiglet(ChownSliceConfiglet.class, "sliceChown");
+        	logger.debug(cs.toString());
+        	logger.debug("Skript: " + cs.getChownScript() + " Name: " +cs.getName() + " Config: " + cs.getMapConfig().toString() + " ScriptKind: " + cs.getScriptKind());
+        } catch (Exception e) {
+        	logger.debug(e.toString());
+        } 
     }
 
     @NotNull
