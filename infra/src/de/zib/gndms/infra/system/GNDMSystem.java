@@ -711,6 +711,10 @@ public final class GNDMSystem
         // test fuer Koeln
         try {
         	logger.debug("All configlets: " + instanceDir.getConfiglets().toString());
+        } catch (Exception e) {
+        	logger.debug(e.toString());
+        } 
+        try {
         	ChownSliceConfiglet	cs = instanceDir.getConfiglet(ChownSliceConfiglet.class, "sliceChown");
         	logger.debug(cs.toString());
         	logger.debug("Skript: " + cs.getChownScript() + " Name: " +cs.getName() + " Config: " + cs.getMapConfig().toString() + " ScriptKind: " + cs.getScriptKind());
