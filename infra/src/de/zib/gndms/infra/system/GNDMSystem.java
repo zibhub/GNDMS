@@ -144,6 +144,7 @@ public final class GNDMSystem
 			// removed it from this source file to reduce source file size
 			actionCaller.init( this );
             logger.info("getSubGridName() /* gridconfig subGridName */ is '" + getInstanceDir().getSubGridName() + '\'');
+            listEntities( emf );
 		}
 		catch (Exception e) {
 			logger.error("Initialization failed", e);
