@@ -131,7 +131,6 @@ public final class GNDMSystem
             initDefaultSSLContext();
 			prepareDbStorage();
             dao = new Dao(getGridName(), neo);
-            listEntities( emf );
 			tryTxExecution();
 
 			// initialization intentionally deferred to initialize
@@ -709,7 +708,6 @@ public final class GNDMSystem
             logger.debug( e.getName() );
         }
         
-        // test fuer Koeln
         try {
         	logger.debug("All configlets: " + instanceDir.getConfiglets().toString());
         } catch (Exception e) {
