@@ -35,6 +35,8 @@ public class Quote implements Cloneable {
     private Long expectedSize;
     // map for additional notes
     private Map<String,String> additionalNotes;
+    // map for context information
+    private Map<String,String> context;
     // what is the origin of the quote
     private String site;
 
@@ -122,6 +124,31 @@ public class Quote implements Cloneable {
         }
 	}
 
+    public boolean hasContext( ) {
+        return context != null && context.size() > 0;
+    }
+
+    @SuppressWarnings({ "ReturnOfCollectionOrArrayField" })
+	public Map<String, String> getContext() {
+		return context;
+	}
+
+    public void addContext(final Map<String, String> contextParam) {
+        if( contextParam != null ) {
+        	Map<String, String> all = contextParam;
+        	if (context != null) {
+        		all.putAll(context);
+        	}
+            context = Collections.unmodifiableMap(all);
+        }
+	}
+
+    public void setContext(final Map<String, String> contextParam) {
+        if( contextParam != null )
+            context = Collections.unmodifiableMap( contextParam );
+        else
+            context = null;
+	}
 
     @Override
 	public Quote clone() throws CloneNotSupportedException {
@@ -135,7 +162,6 @@ public class Quote implements Cloneable {
 			clone.setExpectedSize(getExpectedSize());
 		return clone;
 	}
-
 
     public String getSite() {
         return site;

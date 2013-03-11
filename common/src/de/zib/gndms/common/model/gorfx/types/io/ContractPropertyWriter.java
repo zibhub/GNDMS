@@ -70,9 +70,16 @@ public class ContractPropertyWriter extends AbstractPropertyIO implements Contra
     public void writeAdditionalNotes( Map<String, String> additionalNotes ) {
         
         if( additionalNotes != null ) 
-            PropertyReadWriteAux.writeMap( getProperties( ), SfrProperty.EST_REQUEST_INFO.key, additionalNotes );
+        	
+        	PropertyReadWriteAux.writeMap( getProperties( ), SfrProperty.EST_REQUEST_INFO.key, additionalNotes );
     }
 
+    public void writeContext( Map<String, String> context ) {
+        
+        if( context != null ) 
+        	
+        	PropertyReadWriteAux.writeMap( getProperties( ), SfrProperty.CONTEXT.key, context );
+    }
 
     public void done() {
     }

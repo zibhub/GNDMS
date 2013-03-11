@@ -70,7 +70,10 @@ public class ContractConverter extends GORFXConverterBase<ContractWriter, Quote>
 
         if ( getModel( ).hasAdditionalNotes() )
             getWriter( ).writeAdditionalNotes( getModel().getAdditionalNotes() );
-        
+
+        if ( getModel( ).hasContext() )
+            getWriter( ).writeContext( getModel().getContext() );
+
         getWriter().done();
     }
 }

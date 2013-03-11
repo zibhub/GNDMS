@@ -67,6 +67,12 @@ public class ContractStdoutWriter implements ContractWriter {
             System.out.println( "    " + k + " ; " + additionalNotes.get( k ) );
     }
 
+    public void writeContext( Map<String, String> context ) {
+        System.out.println( "Context information: " );
+        Set<String> ks = context.keySet();
+        for( String k : ks )
+            System.out.println( "    " + k + " ; " + context.get( k ) );
+    }
 
     public void begin() {
 

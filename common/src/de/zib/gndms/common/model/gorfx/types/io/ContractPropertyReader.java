@@ -75,7 +75,7 @@ public class ContractPropertyReader extends AbstractPropertyReader<Quote> {
         if ( getProperties().containsKey( SfrProperty.EST_REQUEST_INFO.key ) )
             con.addAdditionalNotes( PropertyReadWriteAux.readMap( getProperties( ), SfrProperty.EST_REQUEST_INFO.key ) );
         if ( getProperties().containsKey( SfrProperty.CONTEXT.key ) )
-            con.addAdditionalNotes( PropertyReadWriteAux.readMapFullKey( getProperties( ), SfrProperty.CONTEXT.key ) );
+            con.addContext( PropertyReadWriteAux.readMap( getProperties( ), SfrProperty.CONTEXT.key ) );
      }
 
 

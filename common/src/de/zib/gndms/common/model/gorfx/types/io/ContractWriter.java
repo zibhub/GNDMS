@@ -37,4 +37,5 @@ public interface ContractWriter extends GORFXWriterBase {
     void writeExpectedSize( Long l );
     void writeResultValidUntil( FutureTime dat );
     void writeAdditionalNotes( Map<String, String> additionalNotes );
+    void writeContext( Map<String, String> context );
 }
