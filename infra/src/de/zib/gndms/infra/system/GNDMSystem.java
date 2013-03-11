@@ -708,7 +708,7 @@ public final class GNDMSystem
             logger.debug( e.getName() );
         }
         
-        // test für Köln
+        // test fuer Koeln
         try {
         	logger.debug("All configlets: " + instanceDir.getConfiglets().toString());
         	ChownSliceConfiglet	cs = instanceDir.getConfiglet(ChownSliceConfiglet.class, "sliceChown");

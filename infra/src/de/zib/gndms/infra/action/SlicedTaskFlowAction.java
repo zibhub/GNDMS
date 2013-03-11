@@ -226,7 +226,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
 
         if( csc == null ) {
-        	// Log für Köln
+        	// Log fuer Koeln
         	ConfigletProvider confProv = getConfigletProvider();
         	getLogger().debug("ConfigletProvider: " + confProv.toString());
         	GNDMSystemDirectory sysDir = (GNDMSystemDirectory) confProv;
