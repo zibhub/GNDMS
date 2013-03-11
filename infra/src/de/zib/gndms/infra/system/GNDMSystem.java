@@ -51,6 +51,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import javax.persistence.metamodel.EntityType;
 import java.io.*;
+import java.util.Iterator;
 import java.util.UUID;
 import java.util.concurrent.Future;
 
@@ -716,7 +717,13 @@ public final class GNDMSystem
         try {
         	ChownSliceConfiglet	cs = instanceDir.getConfiglet(ChownSliceConfiglet.class, "sliceChown");
         	logger.debug(cs.toString());
-        	logger.debug("Skript: " + cs.getChownScript() + " Name: " +cs.getName() + " Config: " + cs.getMapConfig().toString() + " ScriptKind: " + cs.getScriptKind());
+        	logger.debug("Skript: " + cs.getChownScript() + " Name: " +cs.getName() + " ScriptKind: " + cs.getScriptKind());
+        	String config = "";
+        	for (Iterator<String> it = cs.getMapConfig().iterator(); it.hasNext();) {
+        		String key = it.next();
+        		config = config + ("[" + key + "," + cs.getMapConfig().getOption(key) + "]");
+        	}
+        	logger.debug(" Config: " + config);
         } catch (Exception e) {
         	logger.debug(e.toString());
         } 
