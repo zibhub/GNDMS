@@ -80,7 +80,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
         final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
         final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 
-        final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions() );
+        final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions(), getOrder().getDNFromContext() );
         action.setProcessBuilder(procBuilder);
         action.setOutputReceiver(outRecv);
         action.setErrorReceiver(errRecv);
@@ -122,7 +122,7 @@ public class ExternalProviderStageInAction extends AbstractProviderStageInAction
 
 		final StringBuilder outRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
 		final StringBuilder errRecv = new StringBuilder(INITIAL_STRING_BUILDER_CAPACITY);
-		final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions() );
+		final ProcessBuilderAction action = stagingIOHelper.createPBAction( orderParam, null, actualPermissions(), getOrder().getDNFromContext()  );
 		action.setProcessBuilder(procBuilder);
 		action.setOutputReceiver(outRecv);
 		action.setErrorReceiver(errRecv);
