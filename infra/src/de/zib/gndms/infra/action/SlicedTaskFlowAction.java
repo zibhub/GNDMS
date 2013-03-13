@@ -190,11 +190,14 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         sconf.setTerminationTime( getContract().getResultValidity() );
         sconf.setSize( DEFAULT_SLICE_SIZE );
 
+    	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )getOrder().getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
+        
         ResponseEntity< Specifier< Void > > sliceResponseEntity = subspaceService.createSlice(
                 subspaceId,
                 sliceKindId,
                 sconf.getStringRepresentation(),
-                getOrder().getDNFromContext() );
+                userDetails.getLocalUser() );
+
 
         if (! HttpStatus.CREATED.equals( sliceResponseEntity.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
