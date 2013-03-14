@@ -41,7 +41,6 @@ import de.zib.gndms.model.gorfx.types.DelegatingOrder;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
-import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
