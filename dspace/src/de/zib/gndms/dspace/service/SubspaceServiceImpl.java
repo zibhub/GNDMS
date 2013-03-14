@@ -24,17 +24,25 @@ import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
+import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.kit.security.SpringSecurityContextHolder;
+import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.gorfx.types.DelegatingOrder;
+import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+import de.zib.gndms.taskflows.dmsstaging.client.model.DmsStageInOrder;
+
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
@@ -43,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -58,8 +67,15 @@ import java.util.*;
 
 @Controller
 @RequestMapping(value = "/dspace")
-public class SubspaceServiceImpl implements SubspaceService {
-    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+public class SubspaceServiceImpl extends ModelTaskAction<ModelIdHoldingOrder> implements SubspaceService {
+    
+	  public SubspaceServiceImpl( ) {
+	        super( ModelIdHoldingOrder.class );
+	    }
+
+
+
+	private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 	private EntityManagerFactory emf;
     private String localBaseUrl;
     private String baseUrl;
@@ -182,6 +198,8 @@ public class SubspaceServiceImpl implements SubspaceService {
 			return new ResponseEntity<List<Specifier<Void>>>(null, headers,
 					HttpStatus.NOT_FOUND);
 		}
+		
+
 
 		try {
             List< String > sliceKinds = slicekindProvider.list( subspace );
@@ -350,9 +368,17 @@ public class SubspaceServiceImpl implements SubspaceService {
                 sliceSize = Long.parseLong( parameters.get( SliceConfiguration.SLICE_SIZE ) );
             else
                 sliceSize = sliceKind.getDefaultTimeToLive();
+            
+            DelegatingOrder<Order> order = new DelegatingOrder<Order>();
+            order.setSecurityContextHolder( new SpringSecurityContextHolder(
+                    SecurityContextHolder.getContext() ) );
+        	logger.debug("Principal user is: "+( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal());
 
+        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
+        	logger.debug("local user is: "+userDetails.getLocalUser());
+        	
             // use provider to create slice
-            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn,
+            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, userDetails.getLocalUser(),
                     terminationTime, sliceSize );
             
             subspaceProvider.invalidate( subspaceId );
