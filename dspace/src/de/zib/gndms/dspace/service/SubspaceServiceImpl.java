@@ -24,21 +24,17 @@ import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
 import de.zib.gndms.common.logic.config.SetupMode;
 import de.zib.gndms.common.logic.config.WrongConfigurationException;
-import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.rest.*;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
 import de.zib.gndms.kit.security.SpringSecurityContextHolder;
-import de.zib.gndms.logic.model.ModelTaskAction;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
 import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
-import de.zib.gndms.model.gorfx.types.DelegatingOrder;
-import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
 
@@ -66,11 +62,7 @@ import java.util.*;
 
 @Controller
 @RequestMapping(value = "/dspace")
-public class SubspaceServiceImpl extends ModelTaskAction<ModelIdHoldingOrder> implements SubspaceService {
-    
-	  public SubspaceServiceImpl( ) {
-	        super( ModelIdHoldingOrder.class );
-	    }
+public class SubspaceServiceImpl implements SubspaceService {
 
 
 

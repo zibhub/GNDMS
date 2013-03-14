@@ -161,8 +161,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             // check if slice kind dir exists
             File p = f.getParentFile();
             if(! p.exists() )
-                directoryAux.mkdir( System.getProperty( "user.name" ),
-                    p.getAbsolutePath(), AccessMask.fromString( "1777" ) );
+                directoryAux.mkdir( uid, p.getAbsolutePath(), AccessMask.fromString( "1777" ) );
             
             directoryAux.mkdir( uid, f.getAbsolutePath(), sliceKind.getPermission() );
         } catch ( SecurityException e ) {
