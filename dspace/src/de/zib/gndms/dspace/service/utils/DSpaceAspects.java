@@ -21,6 +21,7 @@ import de.zib.gndms.logic.model.dspace.SliceKindProvider;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
 import de.zib.gndms.logic.model.dspace.SubspaceProvider;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.util.TxFrame;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -80,11 +81,11 @@ public class DSpaceAspects {
         {
             final Slice slice = sliceProvider.getSlice( subspaceId, sliceId );
 
-            final UserDetails userDetails = ( UserDetails )SecurityContextHolder
+            final GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )SecurityContextHolder
                     .getContext()
                     .getAuthentication()
                     .getPrincipal();
-            final String dn = userDetails.getUsername();
+            final String dn = userDetails.getLocalUser();
             final String owner = slice.getOwner();
 
             // TODO: check for user / group rights here

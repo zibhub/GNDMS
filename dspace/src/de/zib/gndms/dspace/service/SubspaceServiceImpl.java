@@ -373,6 +373,7 @@ public class SubspaceServiceImpl extends ModelTaskAction<ModelIdHoldingOrder> im
 
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
         	logger.debug("local user is: "+userDetails.getLocalUser());
+        	logger.debug("Username is: "+userDetails.getUsername());
         	
             // use provider to create slice
             String slice = sliceProvider.createSlice( subspaceId, sliceKindId, userDetails.getLocalUser(),
