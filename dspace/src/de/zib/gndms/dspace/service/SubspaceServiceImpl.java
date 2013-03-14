@@ -368,12 +368,10 @@ public class SubspaceServiceImpl extends ModelTaskAction<ModelIdHoldingOrder> im
             else
                 sliceSize = sliceKind.getDefaultTimeToLive();
             
-            DelegatingOrder<Order> order = new DelegatingOrder<Order>();
-            order.setSecurityContextHolder( new SpringSecurityContextHolder(
-                    SecurityContextHolder.getContext() ) );
-        	logger.debug("Principal user is: "+( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal());
+            SpringSecurityContextHolder securityContextHolder=new SpringSecurityContextHolder(SecurityContextHolder.getContext() );
+        	logger.debug("Principal user is: "+(( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal()).toString());
 
-        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )order.getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
+        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
         	logger.debug("local user is: "+userDetails.getLocalUser());
         	
             // use provider to create slice
