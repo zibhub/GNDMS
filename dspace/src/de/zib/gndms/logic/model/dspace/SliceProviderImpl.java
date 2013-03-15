@@ -21,6 +21,7 @@ import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ActionConfigurer;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -38,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -171,6 +174,45 @@ public class SliceProviderImpl implements SliceProvider {
         createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
 
         final Slice slice = createSliceAction.call();
+        
+        return slice.getId();
+    }
+
+    @Override
+    public String createSlice(
+            final String subspaceId,
+            final String sliceKindId,
+            final String dn,
+            final String localUser,
+            final DateTime ttm,
+            final long sliceSize ) throws NoSuchElementException {
+
+        if( !sliceKindProvider.exists( subspaceId, sliceKindId ) ) {
+            logger.info( "Illegal Access: slicekind " + sliceKindId + " in subspace " + subspaceId + " not available." );
+            throw new NoSuchElementException( "SliceKind " + sliceKindId + " does not exist in subspace " + subspaceId + "." );
+        }
+
+        Subspace subspace = subspaceProvider.get( subspaceId );
+        SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
+
+        final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
+        actionConfigurer.configureAction( createSliceAction );
+        system.getInstanceDir().getSystemAccessInjector().injectMembers( createSliceAction );
+        createSliceAction.setModel( subspace );
+        createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
+
+        final Slice slice = createSliceAction.call();
+
+        ChownSliceConfiglet csc = system.getInstanceDir().getConfiglet(ChownSliceConfiglet.class, "sliceChown");
+        
+        logger.debug( "setting owner of " + slice.getId() + " to " + localUser);
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
+                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                slice.getDirectoryId() );
+        logger.debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+        chownAct.getProcessBuilder().redirectErrorStream(true);
+        chownAct.call();
+        logger.debug("Output for chown:" + chownAct.getOutputReceiver().toString());
         
         return slice.getId();
     }

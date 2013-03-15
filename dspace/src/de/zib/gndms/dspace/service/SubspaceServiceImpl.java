@@ -28,9 +28,11 @@ import de.zib.gndms.common.rest.*;
 import de.zib.gndms.dspace.service.utils.UnauthorizedException;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.kit.config.ParameterTools;
+import de.zib.gndms.kit.security.SpringSecurityContextHolder;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import de.zib.gndms.model.util.TxFrame;
@@ -43,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -350,9 +353,12 @@ public class SubspaceServiceImpl implements SubspaceService {
                 sliceSize = Long.parseLong( parameters.get( SliceConfiguration.SLICE_SIZE ) );
             else
                 sliceSize = sliceKind.getDefaultTimeToLive();
-
+            
+            SpringSecurityContextHolder securityContextHolder=new SpringSecurityContextHolder(SecurityContextHolder.getContext() );
+        	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
+            
             // use provider to create slice
-            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn,
+            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn, userDetails.getLocalUser(),
                     terminationTime, sliceSize );
             
             subspaceProvider.invalidate( subspaceId );
