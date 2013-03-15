@@ -15,7 +15,7 @@ public class AdisTest {
 		adis.setVoldURL("http://c3-r2d2.zib.de:8080/vold");
 		System.out.println(String.format("%s", adis.listESGFStagingSites()));
 		
-		adis.setVoldURL("http://c3-po.zib.de:8080/vold");
+		adis.setVoldURL("http://c3-r2d2.zib.de:8080/vold");
 		System.out.println(String.format("%s", adis.listESGFStagingSites()));		
 
 		   VolDClient voldi;

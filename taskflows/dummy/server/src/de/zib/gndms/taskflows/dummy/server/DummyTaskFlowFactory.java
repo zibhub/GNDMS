@@ -1,6 +1,7 @@
 package de.zib.gndms.taskflows.dummy.server;
 
 
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFlowInfo;
 import de.zib.gndms.common.model.gorfx.types.TaskStatistics;
 import de.zib.gndms.logic.model.TaskAction;
@@ -94,5 +95,12 @@ public class DummyTaskFlowFactory extends DefaultTaskFlowFactory<DummyOrder,Dumm
     public TaskAction createAction() {
         return new DummyTaskAction(  );
     }
+
+
+	@Override
+	public TaskAction createAction(Quote quote) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

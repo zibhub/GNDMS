@@ -27,7 +27,7 @@ public class ClientESGFStaging extends AbstractStagingClient {
 	
 	public ClientESGFStaging() throws Exception {
 		super("https://c3-4lom.zib.de:8443/gndms/c3grid");
-		p = PropertyFileLoader.loadPropertyFile("META-INF/config.conf");
+		p = PropertyFileLoader.loadPropertyFile("web/META-INF/config.conf");
 	}
 
 	protected static Order updateOrder() {

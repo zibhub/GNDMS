@@ -38,9 +38,9 @@ public class ClientC3Staging extends AbstractStagingClient {
         // Contains the object ids (oids) of the desired data objects. (required)
         List<String> objectList = new ArrayList<String>();
         // // Staging from c3-4lom
-        //objectList.add("de.zib.c3-4lom");
+        objectList.add("de.zib.c3-4lom");
         // Staging from c3-r2d2
-        objectList.add("de.zib.test");
+        //objectList.add("de.zib.test");
         
         // Space constraint, e.g latitude (required), longitude (required),
         // altitude (height-level) (optional) and other constraints (areaCRS, verticalCRS) (optional).
