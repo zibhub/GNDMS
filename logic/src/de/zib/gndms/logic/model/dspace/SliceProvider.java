@@ -65,4 +65,7 @@ public interface SliceProvider {
     void invalidate( String sliceId );
 
     long getDiskUsage(final String subspace, final String sliceId) throws NoSuchElementException;
+
+	String createSlice(String subspaceId, String sliceKindId, String dn,
+			String localUser, DateTime terminationTime, long sliceSize) throws NoSuchElementException;
 }
