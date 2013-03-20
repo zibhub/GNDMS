@@ -25,7 +25,7 @@ public class AdisTest {
 
 	        System.out.println("DMS :" + voldi.lookup(new Key( "c3grid", "Dms", "..." )));
 	        System.out.println("ESGF :" + voldi.lookup(new Key( "c3grid", "ESGF", "..." )));
-	        System.out.println("ESGF :" + voldi.lookup(new Key( "c3grid", "PUBLISHER", "..." )));
+	        System.out.println("Publisher :" + voldi.lookup(new Key( "c3grid", "PUBLISHER", "..." )));
 
 	        adis.checkState();
 

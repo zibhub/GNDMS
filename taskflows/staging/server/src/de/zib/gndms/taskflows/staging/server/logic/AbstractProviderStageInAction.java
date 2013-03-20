@@ -75,6 +75,10 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 
         restoreSecurityContext();
         createNewSlice();
+        
+        String gndmsUser = System.getProperty("user.name");
+        changeSliceOwner(findSlice(getSliceId()), gndmsUser);
+
         super.onCreated(wid, state, isRestartedTask, altTaskState);
     }
 

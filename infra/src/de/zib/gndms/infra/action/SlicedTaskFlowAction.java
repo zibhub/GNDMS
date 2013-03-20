@@ -195,9 +195,10 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
                 sliceKindId,
                 sconf.getStringRepresentation(),
                 getOrder().getDNFromContext() );
-
+        
         if (! HttpStatus.CREATED.equals( sliceResponseEntity.getStatusCode() ) )
             throw new IllegalStateException( "Slice creation failed" );
+
 
         setSliceSpecifier( sliceResponseEntity.getBody() );
 
@@ -253,6 +254,30 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
     }
     
+    protected  void changeSliceOwner( Slice slice , String user) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null ) {
+        	// Log fuer Koeln
+        	ConfigletProvider confProv = getConfigletProvider();
+        	getLogger().debug("ConfigletProvider: " + confProv.toString());
+        	GNDMSystemDirectory sysDir = (GNDMSystemDirectory) confProv;
+        	getLogger().debug("GNDMSystemDirectory: " + sysDir.toString());
+        	getLogger().debug("Configlets: " + sysDir.getConfiglets().toString());
+        	
+        	throw new IllegalStateException( "chown configlet is null!");
+        }
+                
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + user );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( user,
+                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                slice.getDirectoryId() );
+        getLogger().debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+        chownAct.getProcessBuilder().redirectErrorStream(true);
+        chownAct.call();
+        getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
+    }
     
     protected void checkQuotas() throws Exception {
         final Slice sliceModel = findSlice();
