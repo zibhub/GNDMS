@@ -42,7 +42,7 @@ SCRIPT_IO_FORMAT="PROPERTIES"
 #SCRIPT_IO_FORMAT="XML"
 
 # VolD update interval in milliseconds
-UPDATE_INTERVAL="60000"
+UPDATE_INTERVAL="50000"
 
 # default time to live for slices of the Staging slice kind (in milliseconds)
 # default: one day
