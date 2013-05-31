@@ -56,7 +56,7 @@ public interface SliceProvider {
      */
     Slice getSlice(String subspace, String slice) throws NoSuchElementException;
 
-    String createSlice( String subspace, String sliceKind, String dn, DateTime ttm, long sliceSize ) throws Exception;
+    String createSlice( String subspace, String sliceKind, String dn, DateTime ttm, long sliceSize ) throws NoSuchElementException;
 
     void updateSlice( Slice slice, EntityManager entityManager );
 
@@ -65,7 +65,4 @@ public interface SliceProvider {
     void invalidate( String sliceId );
 
     long getDiskUsage(final String subspace, final String sliceId) throws NoSuchElementException;
-
-	String createSlice(String subspaceId, String sliceKindId, String dn,
-			String localUser, DateTime terminationTime, long sliceSize) throws NoSuchElementException;
 }

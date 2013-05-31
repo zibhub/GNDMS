@@ -142,9 +142,7 @@ public class SliceProviderImpl implements SliceProvider {
 	}
 
 	@Override
-	public String createSlice(final String subspaceId,
-			final String sliceKindId, final String dn, final DateTime ttm,
-			final long sliceSize) throws Exception {
+	public String createSlice( String subspaceId, String sliceKindId, String dn, DateTime ttm, long sliceSize ) throws NoSuchElementException{
 
 		if (!sliceKindProvider.exists(subspaceId, sliceKindId)) {
 			logger.info("Illegal Access: slicekind " + sliceKindId
@@ -173,7 +171,7 @@ public class SliceProviderImpl implements SliceProvider {
 				directoryAux.deleteDirectory(dn, createSliceAction.getPath());
 				logger.debug("delete directory " +createSliceAction.getPath() + " due to failed transaction " + e);
 			}
-			throw new Exception("Could not create slice ");
+			throw new NoSuchElementException("Could not create slice ");
 		}
 
 		logger.debug("created slice id: " + slice.getId() + " terminationtime "
@@ -183,47 +181,6 @@ public class SliceProviderImpl implements SliceProvider {
 	}
 
 	
-
-    @Override
-    public String createSlice(
-            final String subspaceId,
-            final String sliceKindId,
-            final String dn,
-            final String localUser,
-            final DateTime ttm,
-            final long sliceSize ) throws NoSuchElementException {
-
-        if( !sliceKindProvider.exists( subspaceId, sliceKindId ) ) {
-            logger.info( "Illegal Access: slicekind " + sliceKindId + " in subspace " + subspaceId + " not available." );
-            throw new NoSuchElementException( "SliceKind " + sliceKindId + " does not exist in subspace " + subspaceId + "." );
-        }
-
-        Subspace subspace = subspaceProvider.get( subspaceId );
-        SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
-
-        final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
-        actionConfigurer.configureAction( createSliceAction );
-        system.getInstanceDir().getSystemAccessInjector().injectMembers( createSliceAction );
-        createSliceAction.setModel( subspace );
-        createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
-
-        final Slice slice = createSliceAction.call();
-
-        ChownSliceConfiglet csc = system.getInstanceDir().getConfiglet(ChownSliceConfiglet.class, "sliceChown");
-        
-        logger.debug( "setting owner of " + slice.getId() + " to " + localUser);
-        ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
-                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
-                slice.getDirectoryId() );
-        logger.debug( "calling " + chownAct.getProcessBuilder().command().toString() );
-        chownAct.getProcessBuilder().redirectErrorStream(true);
-        chownAct.call();
-        logger.debug("Output for chown:" + chownAct.getOutputReceiver().toString());
-        
-        return slice.getId();
-    }
-
-
 	public Taskling deleteSlice(final String subspaceId, final String sliceId)
 			throws NoSuchElementException {
 

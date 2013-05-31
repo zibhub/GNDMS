@@ -183,7 +183,7 @@ public class InterSliceTransferExample extends GORFXTaskFlowExample {
         istOrder.setDestinationSpecifier( sliceSpecifier );
 
         taskFlowExecClient.execTF( istOrder, dn );
-        System.out.println("taskFlowExecClient.getResultSlice() "+ taskFlowExecClient.getResultSlice());
+//        System.out.println("taskFlowExecClient.getResultSlice() "+ taskFlowExecClient.getResultSlice());
 
         return taskFlowExecClient.getResultSlice();
     }

@@ -363,14 +363,22 @@ public class SubspaceServiceImpl implements SubspaceService {
             SpringSecurityContextHolder securityContextHolder=new SpringSecurityContextHolder(SecurityContextHolder.getContext() );
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
 
-            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn, userDetails.getLocalUser(),
-
-                    terminationTime, sliceSize );
+			String slice = null;
+			try {
+				slice = sliceProvider.createSlice( subspaceId, sliceKindId, userDetails.getLocalUser(), terminationTime, sliceSize );
+			} catch (Exception e) {
+				logger.error("failed to create a slice "+e);
+			}
             
             subspaceProvider.invalidate( subspaceId );
-
             // generate specifier and return it
             Specifier<Void> spec = new Specifier<Void>();
+
+			if (slice == null) {
+				logger.error("failed to create a slice ");
+				return new ResponseEntity<Specifier<Void>>(spec, headers,
+						HttpStatus.NOT_FOUND);
+			}
 
             HashMap<String, String> urimap = new HashMap<String, String>( 2 );
             urimap.put( UriFactory.SERVICE, "dspace" );
@@ -387,10 +395,6 @@ public class SubspaceServiceImpl implements SubspaceService {
         catch( WrongConfigurationException e ) {
             logger.warn( e.getMessage() );
             return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.BAD_REQUEST );
-        }
-        catch( NoSuchElementException e ) {
-            logger.warn( e.getMessage() );
-            return new ResponseEntity<Specifier<Void>>( null, headers, HttpStatus.NOT_FOUND );
         }
         catch( ParameterTools.ParameterParseException e ) {
             logger.info( "Illegal request: Could not parse paramter string \""
