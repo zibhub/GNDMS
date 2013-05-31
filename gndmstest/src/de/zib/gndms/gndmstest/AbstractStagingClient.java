@@ -7,22 +7,28 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.sun.jndi.toolkit.url.Uri;
+
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskControl;
 import de.zib.gndms.common.model.gorfx.types.TaskFailure;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.model.gorfx.types.TaskStatus;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
+import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.gorfx.AbstractTaskFlowExecClient;
 import de.zib.gndms.gndmc.gorfx.FullGORFXClient;
 import de.zib.gndms.gndmc.gorfx.TaskClient;
 import de.zib.gndms.gndmc.gorfx.TaskFlowClient;
+import de.zib.gndms.model.gorfx.types.TaskState;
 
 public abstract class AbstractStagingClient extends AbstractTaskFlowExecClient{
 	
 	ApplicationContext context;
 	String gorfxEpUrl;
+	public String id;
 	
 	public AbstractStagingClient(String url) throws Exception {
 		this.gorfxEpUrl = url;
@@ -70,6 +76,10 @@ public abstract class AbstractStagingClient extends AbstractTaskFlowExecClient{
 		ArrayList<String> l = new ArrayList<String>();
 		for (Specifier<Quote> s : quotes) {
 			l.add(s.getPayload().getSite());
+			System.out.println(String.format("specifier %s", s ));
+			Quote q=s.getPayload();
+			System.out.println(String.format("expectedSize %s", q.getExpectedSize()));
+			System.out.println(String.format("s.getPayload().getSite() %s", s.getPayload().getSite()));
 		}
 		System.out.println(String.format("wähle quote %s", l));
 		return 0;
@@ -78,6 +88,12 @@ public abstract class AbstractStagingClient extends AbstractTaskFlowExecClient{
 	@Override
 	protected void handleTaskSpecifier(Specifier<Facets> ts) {
 		System.out.println(String.format("handleTask %s", ts.getUrl()));
+		String[] splitResult = ts.getUrl().split("_");
+		System.out.println(splitResult[1]);
+		id =splitResult[1];
+		String taskID = ts.getUriMap().get(UriFactory.TASK_ID);
+		System.out.println(taskID);
+
 	}
 
 	@Override

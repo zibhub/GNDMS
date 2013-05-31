@@ -51,6 +51,7 @@ import org.springframework.http.ResponseEntity;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @date: 12.08.12
@@ -61,7 +62,7 @@ import java.io.File;
 public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends TaskFlowAction< K > {
 
     public static final long DEFAULT_SLICE_SIZE = 100*1024*1024; // 100MB
-
+    private final AtomicInteger counter = new AtomicInteger();
 
     private GridConfig gridConfig;
 
@@ -177,40 +178,55 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 
         setSliceSpecifier( sliceSpec );
     }
-    
 
-    protected void createNewSlice() throws MandatoryOptionMissingException {
-        final ConfigProvider config = getOfferTypeConfig();
+	protected synchronized void createNewSlice()
+			throws MandatoryOptionMissingException {
+		final ConfigProvider config = getOfferTypeConfig();
+		counter.incrementAndGet();
+		logger.debug("counter "+counter.get());
 
-        final String subspaceId = config.getOption( "subspace" );
-        String sliceKindId = config.getOption( "sliceKind" );
+		final String subspaceId = config.getOption("subspace");
+		String sliceKindId = config.getOption("sliceKind");
 
+		SliceConfiguration sconf = new SliceConfiguration();
+		if (getContract().getResultValidity() != null) {
+			sconf.setTerminationTime(getContract().getResultValidity());
+		}
 
-        SliceConfiguration sconf = new SliceConfiguration();
-        sconf.setTerminationTime( getContract().getResultValidity() );
-        sconf.setSize( DEFAULT_SLICE_SIZE );
+		if (getContract().getExpectedSize() != null
+				&& getContract().getExpectedSize() > 0) {
+			sconf.setSize(getContract().getExpectedSize());
+		} else {
+			logger.debug("no slice size provided, setting slice size to the default value "
+					+ DEFAULT_SLICE_SIZE);
+			sconf.setSize(DEFAULT_SLICE_SIZE);
+		}
 
-    	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface )getOrder().getSecurityContextHolder().getSecurityContext().getAuthentication().getPrincipal();
-        
-        ResponseEntity< Specifier< Void > > sliceResponseEntity = subspaceService.createSlice(
-                subspaceId,
-                sliceKindId,
-                sconf.getStringRepresentation(),
-                userDetails.getLocalUser() );
+		GNDMSUserDetailsInterface userDetails = (GNDMSUserDetailsInterface) getOrder()
+				.getSecurityContextHolder().getSecurityContext()
+				.getAuthentication().getPrincipal();
 
+		ResponseEntity<Specifier<Void>> sliceResponseEntity = subspaceService
+				.createSlice(subspaceId, sliceKindId,
+						sconf.getStringRepresentation(),
+						userDetails.getLocalUser());
 
-        if (! HttpStatus.CREATED.equals( sliceResponseEntity.getStatusCode() ) )
-            throw new IllegalStateException( "Slice creation failed" );
+		if (!HttpStatus.CREATED.equals(sliceResponseEntity.getStatusCode())) {
+			if (counter.get() < 3) {
+				logger.error("Slice creation failed, retrying... ");
+				createNewSlice();
+			} else
+				throw new IllegalStateException("Slice creation failed");
+		}
 
-        setSliceSpecifier( sliceResponseEntity.getBody() );
+		setSliceSpecifier(sliceResponseEntity.getBody());
 
-        // to provoke nasty test condition uncomment the following line
-        //throw new NullPointerException( );
-        getLogger().info("createNewSlice() = " + getSliceId());
-    }
+		// to provoke nasty test condition uncomment the following line
+		// throw new NullPointerException( );
+		getLogger().info("createNewSlice() = " + getSliceId());
+	}
 
-
-    protected void deleteSlice( final String sliceId ) {
+    protected synchronized void deleteSlice( final String sliceId ) {
 
         final DeleteSliceTaskAction deleteSliceTaskAction = new DeleteSliceTaskAction();
         getInjector().injectMembers( deleteSliceTaskAction );
@@ -219,12 +235,12 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected void killSlice() {
+    protected synchronized void killSlice() {
         deleteSlice(getSliceId());
     }
 
 
-    protected  void changeSliceOwner( Slice slice ) {
+    protected synchronized void changeSliceOwner( Slice slice ) {
 
         ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
 
@@ -256,8 +272,32 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
     }
     
+    protected  void changeSliceOwner( Slice slice , String user) {
+
+        ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
+
+        if( csc == null ) {
+        	// Log fuer Koeln
+        	ConfigletProvider confProv = getConfigletProvider();
+        	getLogger().debug("ConfigletProvider: " + confProv.toString());
+        	GNDMSystemDirectory sysDir = (GNDMSystemDirectory) confProv;
+        	getLogger().debug("GNDMSystemDirectory: " + sysDir.toString());
+        	getLogger().debug("Configlets: " + sysDir.getConfiglets().toString());
+        	
+        	throw new IllegalStateException( "chown configlet is null!");
+        }
+                
+        getLogger().debug( "changing owner of " + slice.getId() + " to " + user );
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( user,
+                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                slice.getDirectoryId() );
+        getLogger().debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+        chownAct.getProcessBuilder().redirectErrorStream(true);
+        chownAct.call();
+        getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
+    }
     
-    protected void checkQuotas() throws Exception {
+    protected synchronized void checkQuotas() throws Exception {
         final Slice sliceModel = findSlice();
         final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
         final long sliceSize = slice.getTotalStorageSize();
@@ -266,13 +306,18 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         getQuoteCalculator().setOrder( ( DelegatingOrder )getOrder() );
         final long needSize = getQuoteCalculator().createQuotes().get( 0 ).getExpectedSize();
 
-        if( sliceUsage + needSize > sliceSize )
-            throw new IllegalStateException(
-                    "Staging would exceed slice size: Need "
-                            + String.valueOf( needSize )
-                            + " Bytes but have only "
-                            + String.valueOf( sliceSize - sliceUsage )
-                            + " Bytes left." );
+		if (sliceUsage + needSize > sliceSize) {
+			logger.debug("needsize = " + needSize);
+			logger.debug("sliceUsage = " + sliceUsage);
+			logger.debug("sliceSize = " + sliceSize);
+
+			throw new IllegalStateException(
+					"Staging would exceed slice size: Need "
+							+ String.valueOf(needSize)
+							+ " Bytes but have only "
+							+ String.valueOf(sliceSize - sliceUsage)
+							+ " Bytes left.");
+		}
     }
 
 

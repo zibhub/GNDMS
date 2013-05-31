@@ -27,7 +27,7 @@ failWith() {
     msg="$1"
 
     echo $msg
-    # Evtl waere es sinnvoller folgendes zu verwenden: echo "$msg" >&2
+    # Evtl waere es sinnvoller, folgendes zu verwenden: echo "$msg" >&2
     # Auf diesem Weg wuerde die Standardfehlerausgabe genutzt werden (und keine Substitution durch die Shell zugelassen).
     exit $ec 
 }
@@ -82,8 +82,6 @@ then
 else
     failWith 4 "Invalid username: $uid"
 fi
-
-
 
 if [ -n "$SERVLETUSER" -a "$SERVLETUSER" = "$uid" ]
 then

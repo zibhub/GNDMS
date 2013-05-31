@@ -358,13 +358,13 @@ public class SubspaceServiceImpl implements SubspaceService {
             if( parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
                 sliceSize = Long.parseLong( parameters.get( SliceConfiguration.SLICE_SIZE ) );
             else
-                sliceSize = sliceKind.getDefaultTimeToLive();
+                sliceSize = sliceKind.getDefaultSliceSize()*10;
             
             SpringSecurityContextHolder securityContextHolder=new SpringSecurityContextHolder(SecurityContextHolder.getContext() );
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
-        	
-            // use provider to create slice
-            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, userDetails.getLocalUser(),
+
+            String slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn, userDetails.getLocalUser(),
+
                     terminationTime, sliceSize );
             
             subspaceProvider.invalidate( subspaceId );

@@ -24,6 +24,7 @@ import org.springframework.http.ResponseEntity;
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.model.gorfx.types.MinMaxPair;
+import de.zib.gndms.common.model.gorfx.types.Order;
 import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.model.gorfx.types.TaskFailure;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
@@ -53,7 +54,9 @@ public class Client extends AbstractTaskFlowExecClient {
 	ApplicationContext context;
 	String gorfxEpUrl = "https://c3-4lom.zib.de:8443/gndms/c3grid";
     protected EntityManagerFactory emf;
-
+	private static ESGFStagingOrder order;
+//	private static ProviderStageInOrder order;
+	private static Properties p;
 	/**
 	 * @param args
 	 */
@@ -61,27 +64,27 @@ public class Client extends AbstractTaskFlowExecClient {
 		Client c = new Client();
 		c.setupAll();
 
-		Properties p = new Properties();
-		p.load(new FileInputStream(new File("config.conf")));
+		p = new Properties();
+		p.load(new FileInputStream(new File("web/META-INF/config.conf")));
 		String dn = p.getProperty("nutzerDN");
 				
-		//System.out.println(c.createSlice(c.gorfxEpUrl,dn));
+//		System.out.println(c.createSlice(c.gorfxEpUrl,dn));
 
        	//SliceClient ssc = c.createClientObject(SliceClient.class);
        	//ssc.setServiceURL(c.gorfxEpUrl);
         //System.out.println(ssc.getSliceInformation("ProviderStaging", "ProviderKind", "f3e9e23f-37e0-4bc0-9ea4-5b23f885b269", dn));
 
-		//System.out.println(c.deleteSlice(c.gorfxEpUrl,"ProviderStaging", "ProviderKind", "f3e9e23f-37e0-4bc0-9ea4-5b23f885b269",dn));
+		System.out.println(c.deleteSlice(c.gorfxEpUrl,"ProviderStaging", "ProviderKind", "909d7bd5-ad57-46a6-bdd9-8d3c0d0bae0d",dn));
 		
 		
-		ESGFStagingOrder order = new ESGFStagingOrder();
-		order.addLink(
-				"http://bmbf-ipcc-ar5.dkrz.de/thredds/fileServer/cmip5/output1/NCC/NorESM1-M/rcp45/3hr/atmos/3hr/r1i1p1/v20110912/clt/clt_3hr_NorESM1-M_rcp45_r1i1p1_202601010130-203512312230.nc",
-				"bd6090395568077613e25292556ab858");
+//		order = new ESGFStagingOrder();
+//		order.addLink(
+//				"http://bmbf-ipcc-ar5.dkrz.de/thredds/fileServer/cmip5/output1/NCC/NorESM1-M/rcp45/3hr/atmos/3hr/r1i1p1/v20110912/clt/clt_3hr_NorESM1-M_rcp45_r1i1p1_202601010130-203512312230.nc",
+//				"bd6090395568077613e25292556ab858");
 
-        // ProviderStageInOrder order = createOrder();
+//         order = createOrder();
 
-    	c.execTF(order, dn);
+//    	c.execTF(order, dn);
 
 	}
 
@@ -181,7 +184,7 @@ public class Client extends AbstractTaskFlowExecClient {
        	sc.setServiceURL(serviceURL);
 		
 		//ResponseEntity<Specifier<Void>> response = 
-				sc.createSlice("ProviderStaging", "ProviderKind", "", dn);
+//				sc.createSlice("ProviderStaging", "ProviderKind", "", dn);
 		ResponseEntity<Specifier<Void>> response = 
 				sc.createSlice("ProviderStaging", "ProviderKind", "terminationTime=100", dn);
 		if (HttpStatus.CREATED.equals(response.getStatusCode())) {
@@ -223,7 +226,7 @@ public class Client extends AbstractTaskFlowExecClient {
 	protected GNDMSResponseHeader setupContext(GNDMSResponseHeader context) {
 		Properties p = new Properties();
 		try {
-			p.load(new FileInputStream(new File("config.conf")));
+			p.load(new FileInputStream(new File("web/META-INF/config.conf")));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -235,21 +238,57 @@ public class Client extends AbstractTaskFlowExecClient {
 		String pw = p.getProperty("myproxyPassword");
 		System.out.println(String.format("setzt das MyProxyToken %s %s", name,
 				pw));
-		context.addMyProxyToken(CertificatePurpose.ESGF.toString(), name, pw,true);
-//		context.addMyProxyToken(CertificatePurpose.C3GRID.toString(), name, pw, true);
+//		context.addMyProxyToken(CertificatePurpose.ESGF.toString(), name, pw,true);
+		context.addMyProxyToken(CertificatePurpose.C3GRID.toString(), name, pw, true);
 		return super.setupContext(context);
 	}
 
 	public void handleStatus(TaskStatus stat) {
-		System.out.println("status");
+		System.out.println("status "+stat.getStatus().toString());
 	}
 
-	@Override
-	protected Integer selectQuote(List<Specifier<Quote>> specifiers) {
-		System.out.println("wähle quote");
+//	@Override
+//	protected Integer selectQuote(List<Specifier<Quote>> specifiers) {
+//		System.out.println("wähle quote");
+//		return 0;
+//	}
+
+//	@Override
+//	protected Integer selectQuote(List<Specifier<Quote>> specifiers) {
+//		Quote q = specifiers.get(0).getPayload();
+//    	long size = q.getExpectedSize();
+//    	if (size != 0) {
+//	    	String taskID = specifiers.get(0).getUriMap().get(UriFactory.TASKFLOW_ID);
+//	    	SliceConfiguration conf = new SliceConfiguration();
+//	    	conf.setSize(size);
+//	    	((ESGFStagingOrder) order).setSliceConfiguration(conf);
+//	    	TaskFlowClient tfClient = getTfClient();
+//	    	tfClient.setOrder(order.getTaskFlowType(), taskID, order, p.getProperty("nutzerDN"), 
+//	    			"testworkflow");
+//    	}
+    	
+    	@Override
+    	protected Integer selectQuote(List<Specifier<Quote>> specifiers) {
+    		Quote q = specifiers.get(0).getPayload();
+        	long size = q.getExpectedSize();
+        	if (size != 0) {
+    	    	String taskID = specifiers.get(0).getUriMap().get(UriFactory.TASKFLOW_ID);
+    	    	SliceConfiguration conf = new SliceConfiguration();
+    	    	conf.setSize(size);
+    	    	(( ESGFStagingOrder) order).setSliceConfiguration(conf);
+    	    	TaskFlowClient tfClient = getTfClient();
+    	    	tfClient.setOrder(order.getTaskFlowType(), taskID, order, p.getProperty("nutzerDN"), 
+    	    			"testworkflow");
+        	}
+    	
+    	ArrayList<String> l = new ArrayList<String>();
+		for (Specifier<Quote> s : specifiers) {
+			l.add(s.getPayload().getSite());
+		}
+		System.out.println(String.format("wähle quote %s", l));
 		return 0;
 	}
-
+	
 	@Override
 	protected void handleTaskSpecifier(Specifier<Facets> ts) {
 		System.out.println("gehandelt");
@@ -257,12 +296,12 @@ public class Client extends AbstractTaskFlowExecClient {
 
 	@Override
 	public void handleResult(TaskResult res) {
-		System.out.println("ergebnis da");
+		System.out.println("ergebnis da "+res.getResult().toString());
 	}
 
 	@Override
 	public void handleFailure(TaskFailure fail) {
-		System.out.println("fehler");
+		System.out.println("fehler: "+fail.getMessage());
 	}
     public EntityManagerFactory getEmf( ) {
         return emf;

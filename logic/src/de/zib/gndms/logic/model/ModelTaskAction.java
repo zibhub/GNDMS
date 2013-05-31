@@ -1,4 +1,5 @@
 package de.zib.gndms.logic.model;
+
 /*
  * Copyright 2008-2011 Zuse Institute Berlin (ZIB)
  *
@@ -15,6 +16,8 @@ package de.zib.gndms.logic.model;
  *  limitations under the License.
  */
 
+import java.sql.SQLException;
+
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.TxFrame;
@@ -22,104 +25,112 @@ import de.zib.gndms.model.util.TxFrame;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
+import org.apache.openjpa.lib.jdbc.ReportingSQLException;
+
 /**
  * @author Maik Jorra
  * @email jorra@zib.de
- * @date 22.12.11  16:57
+ * @date 22.12.11 16:57
  * @brief
  */
-public abstract class ModelTaskAction<O extends ModelIdHoldingOrder> extends DefaultTaskAction<O> {
+public abstract class ModelTaskAction<O extends ModelIdHoldingOrder> extends
+		DefaultTaskAction<O> {
 
+	private DirectoryAux directoryAux;
 
-    private DirectoryAux directoryAux;
+	public ModelTaskAction(final Class<O> orderClass) {
 
+		super(orderClass);
+	}
 
-    public ModelTaskAction( final Class<O> orderClass ) {
+	/**
+	 * Delivers the model for the id given in the order object.
+	 * 
+	 * \PRECONDITION ensuredOrder must have been called.
+	 * 
+	 * @param modelClass
+	 *            the model calls...
+	 * @return The entity referenced by
+	 */
+	protected synchronized <M> M getModelEntity(final Class<M> modelClass) {
 
-        super( orderClass );
-    }
+		return getEntity(modelClass, getOrder().getModelId());
+	}
 
+	/**
+	 * Loades an entity from the database.
+	 * 
+	 * @param modelClass
+	 *            The class of the entity.
+	 * @param modelId
+	 *            The id, i.e. primary key, of the entity.
+	 * @return The entity instance, in detached state.
+	 */
+	protected <M> M getEntity(final Class<M> modelClass, final String modelId) {
 
-    /**
-     * Delivers the model for the id given in the order object.
-     *
-     * \PRECONDITION ensuredOrder must have been called.
-     *
-     * @param modelClass the model calls...
-     * @return The entity referenced by
-     */
-    protected <M> M getModelEntity( final Class<M> modelClass ) {
+		M model;
+		EntityManager em = getEmf().createEntityManager();
+		TxFrame tx = new TxFrame(em);
+		try {
+			model = em.find(modelClass, modelId);
+			tx.commit();
+		} finally {
+			tx.finish();
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+		return model;
+	}
 
-        return getEntity( modelClass, getOrder().getModelId() );
-    }
+	/**
+	 * Deletes the model-entity, whose id given in the order.
+	 * 
+	 * \PRECONDITION ensuredOrder must have been called.
+	 * 
+	 * @param modelClass
+	 *            the model class...
+	 * @return The entity referenced by
+	 */
+	protected <M> void deleteModelEntity(final Class<M> modelClass) {
 
+		deleteEntity(modelClass, getOrder().getModelId());
+	}
 
-    /**
-     * Loades an entity from the database.
-     *
-     * @param modelClass The class of the entity.
-     * @param modelId The id, i.e. primary key, of the entity.
-     * @return The entity instance, in detached state.
-     */
-    protected <M> M getEntity( final Class<M> modelClass, final String modelId ) {
+	/**
+	 * Deletes an entity from the database.
+	 * 
+	 * @param modelClass
+	 *            The class of the entity, required for the look-up
+	 * @param modelId
+	 *            The id, i.e. primary key, of the entity.
+	 */
+	protected <M> void deleteEntity(final Class<M> modelClass,
+			final String modelId) {
 
-        M model;
-        EntityManager em = getEmf().createEntityManager();
-        TxFrame tx = new TxFrame( em );
-        try{
-            model = em.find( modelClass, modelId );
-            tx.commit();
-        } finally {
-            tx.finish();
-        }
-        return model;
-    }
+		M model;
+		EntityManager em = getEmf().createEntityManager();
+		TxFrame tx = new TxFrame(em);
+		try {
+			model = em.find(modelClass, modelId);
+			em.remove(model);
+			tx.commit();
+		} finally {
+			tx.finish();
+			if (em != null && em.isOpen()) {
+				em.close();
+			}
+		}
+	}
 
+	public DirectoryAux getDirectoryAux() {
 
-    /**
-     * Deletes the model-entity, whose id given in the order.
-     *
-     * \PRECONDITION ensuredOrder must have been called.
-     *
-     * @param modelClass the model class...
-     * @return The entity referenced by
-     */
-    protected <M> void deleteModelEntity( final Class<M> modelClass ) {
+		return directoryAux;
+	}
 
-        deleteEntity( modelClass, getOrder().getModelId() );
-    }
+	@Inject
+	public void setDirectoryAux(final DirectoryAux directoryAux) {
 
-
-    /**
-     * Deletes an entity from the database.
-     *
-     * @param modelClass The class of the entity, required for the look-up
-     * @param modelId The id, i.e. primary key, of the entity.
-     */
-    protected <M> void deleteEntity( final Class<M> modelClass, final String modelId ) {
-
-        M model;
-        EntityManager em = getEmf().createEntityManager();
-        TxFrame tx = new TxFrame( em );
-        try{
-            model = em.find( modelClass, modelId );
-            em.remove( model );
-            tx.commit();
-        } finally {
-            tx.finish();
-        }
-    }
-
-
-    public DirectoryAux getDirectoryAux() {
-
-        return directoryAux;
-    }
-
-
-    @Inject
-    public void setDirectoryAux( final DirectoryAux directoryAux ) {
-
-        this.directoryAux = directoryAux;
-    }
+		this.directoryAux = directoryAux;
+	}
 }

@@ -25,6 +25,8 @@ import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -56,6 +58,9 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     private long storageSize;
     private DirectoryAux directoryAux;
     private String uid = System.getProperty( "user.name" );
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+
+	private String path;
 
     
     public CreateSliceAction( ) {
@@ -136,7 +141,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
      * @return the new created slice instance
      */
     @Override
-    public Slice execute( @NotNull EntityManager em ) {
+    public synchronized Slice execute( @NotNull EntityManager em ) {
 
         if( directoryAux == null )
             directoryAux = getInjector().getInstance( DirectoryAux.class );
@@ -165,7 +170,7 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             
             directoryAux.mkdir( uid, f.getAbsolutePath(), sliceKind.getPermission() );
         } catch ( SecurityException e ) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("unable to create directory "+ f.getAbsolutePath() + " due to exception: "+e);
         }
         
         /*
@@ -180,10 +185,19 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
+        logger.debug("space before available "+sp.getAvailableSize());
 
         sp.requestSpace( sl.getTotalStorageSize() );
+        logger.debug("avail space after requesting "+sp.getAvailableSize());
 
-        em.persist( sl );
+        setPathForSlice(f.getAbsolutePath());
+		try {
+			em.persist(sl);
+		} catch (Exception e) {
+			logger.debug("couldn't execute transaction " + e);
+			sp.releaseSpace(sl.getTotalStorageSize());
+			directoryAux.deleteDirectory(uid, f.getAbsolutePath());
+		}
 
         addChangedModel(sl);
         addChangedModel(sp);
@@ -192,7 +206,18 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
     }
 
 
-    public SliceKind getSliceKind( ) {
+	public void setPathForSlice(String absolutePath) {
+
+		this.path = absolutePath;
+	}
+
+    public String getPath() {
+
+        return path;
+    }
+
+
+	public SliceKind getSliceKind( ) {
 
         return sliceKind;
     }

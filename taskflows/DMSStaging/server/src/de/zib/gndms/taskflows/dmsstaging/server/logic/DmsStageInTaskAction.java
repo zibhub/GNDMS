@@ -17,6 +17,7 @@
 package de.zib.gndms.taskflows.dmsstaging.server.logic;
 
 import de.zib.gndms.common.model.gorfx.types.Quote;
+import de.zib.gndms.common.model.gorfx.types.TaskFailure;
 import de.zib.gndms.common.model.gorfx.types.TaskResult;
 import de.zib.gndms.common.rest.CertificatePurpose;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
@@ -51,6 +52,7 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
     private GORFXClient gorfxClient;
 
     private ProviderStageInResult result;
+    private  TaskFailure failure;
     
     private Quote acceptedQuote;
 
@@ -98,6 +100,11 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
                 result = ProviderStageInResult.class.cast( res );
             }
 
+            @Override
+            public void handleFailure( TaskFailure fail ) {
+            	failure = fail;
+ 
+            }
 
             @Override
             protected GNDMSResponseHeader setupContext( final GNDMSResponseHeader context ) {
@@ -126,9 +133,34 @@ public class DmsStageInTaskAction extends TaskFlowAction< DmsStageInOrder > {
                 getOrder().getActId() );
         
         // ensure correct base URL
-        result.getSliceSpecifier().getUriMap().put( UriFactory.BASE_URL, getAcceptedQuote().getSite() );
 
-        transitWithPayload(new DmsStageInResult(result.getSliceSpecifier()), TaskState.FINISHED);
+        if (result != null) {
+        	result.getSliceSpecifier().getUriMap().put( UriFactory.BASE_URL, getAcceptedQuote().getSite() );
+
+		if (getAcceptedQuote() == null) {
+			throw new Exception("no quote found");
+		}
+
+		if (getAcceptedQuote().getSite() == null) {
+			throw new Exception("could not extract URL site from the quote");
+		}
+
+		if (result == null || result.getSliceSpecifier() == null) {
+			throw new Exception("could not get SliceSpecifier");
+		}
+
+		result.getSliceSpecifier().getUriMap().put( UriFactory.BASE_URL, getAcceptedQuote().getSite() );
+
+        	transitWithPayload(new DmsStageInResult(result.getSliceSpecifier()), TaskState.FINISHED);
+        } 
+        
+      if (failure != null) {
+            String fail = "Client failed with: " + failure.getFaultClass() 
+            		+ "\n    message: " + failure.getMessage() 
+            		+ "\n    at     : " + failure.getFaultLocation() 
+            		+ "\n    trace  : " + failure.getFaultTrace() ;
+        	throw new IllegalStateException(fail);
+       }
     }
 
 

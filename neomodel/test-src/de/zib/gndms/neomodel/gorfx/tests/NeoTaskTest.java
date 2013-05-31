@@ -42,7 +42,7 @@ public class NeoTaskTest extends NeoTest {
     private static final String TASK_ID = "ca:fe:ba:be";
     private static final DateTime CLASS_STARTUP_TIME = new DateTime();
 
-    @Test( groups = { "neo" } )
+/**    @Test( groups = { "neo" } )
     public void createTask() {
         TaskFlowType ot = session.createTaskFlowType();
         ot.setId("offerTypeNr1");
@@ -53,7 +53,7 @@ public class NeoTaskTest extends NeoTest {
         newTask(ot, TASK_ID);
 
         session.success();
-    }
+    } 
 
     private Task newTask(TaskFlowType ot, String id) {
         Task task = session.createTask();
@@ -216,5 +216,5 @@ public class NeoTaskTest extends NeoTest {
         TaskFlowType ot = session.findTaskFlowType("offerTypeNr1");
         ot.delete();
         session.success();
-    }
+    }*/
 }

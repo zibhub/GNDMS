@@ -16,6 +16,7 @@ package de.zib.gndms.gndmc.dspace;
  * limitations under the License.
  */
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SubspaceInformation;
 import de.zib.gndms.common.dspace.service.SubspaceService;
 import de.zib.gndms.common.logic.config.Configuration;
@@ -112,4 +113,12 @@ public class SubspaceClient extends AbstractClient implements SubspaceService {
         return ( ResponseEntity< Specifier< Void > > )( Object )unifiedPost( Specifier.class,
                 "", specifier.getUrl(),  dn );
     }
+
+
+	public ResponseEntity<Specifier<Void>> createSlice(
+			final Specifier<Void> specifier, String config, final String dn) {
+		return (ResponseEntity<Specifier<Void>>) (Object) unifiedPost(
+				Specifier.class, config, specifier.getUrl(), dn);
+
+	}
 }

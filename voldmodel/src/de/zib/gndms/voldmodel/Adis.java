@@ -24,6 +24,7 @@ import java.util.Set;
 import de.zib.gndms.voldmodel.abi.ABIi;
 import de.zib.vold.client.VolDClient;
 import de.zib.vold.common.Key;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanFactory;
@@ -59,7 +60,7 @@ public class Adis extends ABIi {
      * @param context The context containing the voldRestTemplate.
      */
     public Adis(final BeanFactory context) {
-        this.voldi = new VolDClient(context);
+        this.voldi = new VolDClient();
         this.voldi.setEnc("utf-8");
         this.grid = "c3grid";
     }

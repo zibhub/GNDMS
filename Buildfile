@@ -259,20 +259,19 @@ require './buildr/neo4j'
 include NEO4J
 
 NEODATAGRAPH = neo4jars(['geronimo-jta_1.1_spec-1.1.1.jar',
-                        'neo4j-examples-1.2.jar',
-                        'neo4j-graph-algo-0.7-1.2.jar',
-                        'neo4j-ha-0.5-1.2.jar',
-                        'neo4j-index-1.2-1.2.jar',
-                        'neo4j-kernel-1.2-1.2.jar',
-                        'neo4j-lucene-index-0.2-1.2.jar',
-                        'neo4j-management-1.2-1.2.jar',
-                        'neo4j-online-backup-0.7-1.2.jar',
-                        'neo4j-remote-graphdb-0.8-1.2.jar',
-                        'neo4j-shell-1.2-1.2.jar',
-                        'neo4j-udc-0.1-1.2-neo4j.jar',
-                        'netty-3.2.1.Final.jar',
+                        'concurrentlinkedhashmap-lru-1.3.1.jar',
+                        'neo4j-graph-algo-1.8.2.jar',
+                        'lucene-core-3.5.0.jar',
+                        'neo4j-shell-1.8.2.jar',
+                        'neo4j-kernel-1.8.2.jar',
+                        'neo4j-lucene-index-1.8.2.jar',
+                        'neo4j-graph-matching-1.8.2.jar',
+                        'neo4j-jmx-1.8.2.jar',
+                        'neo4j-cypher-1.8.2.jar',
+                        'neo4j-udc-1.8.2.jar',
+                        'server-api-1.8.2.jar',
                         'org.apache.servicemix.bundles.jline-0.9.94_1.jar',
-                        'org.apache.servicemix.bundles.lucene-3.0.1_2.jar',
+                        'scala-library-2.9.1-1.jar',
                         'protobuf-java-2.3.0.jar'
 ])
 

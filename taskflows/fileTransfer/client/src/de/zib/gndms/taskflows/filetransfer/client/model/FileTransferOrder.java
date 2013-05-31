@@ -52,6 +52,8 @@ public class FileTransferOrder extends AbstractOrder {
      */ 
     private Map<String, String> fileMap;
 
+	private String expectedSliceSize;
+
     public FileTransferOrder() {
         super( );
         super.setTaskFlowType( FileTransferMeta.FILE_TRANSFER_TYPE_KEY );
@@ -96,5 +98,14 @@ public class FileTransferOrder extends AbstractOrder {
 
     public void setFileMap( Map<String, String> fileMap ) {
         this.fileMap = fileMap;
+    }
+
+
+	public void setExpectedSliceSize(String expectedSliceSize) {
+		this.expectedSliceSize = expectedSliceSize;
+	}
+
+	public String ExpectedSliceSize() {
+        return expectedSliceSize;
     }
 }

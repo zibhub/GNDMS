@@ -73,7 +73,7 @@ public class DmsStageInQuoteCalculator extends AbstractQuoteCalculator< DmsStage
                taskFlowId = taskFlow.getBody().getUriMap().get( "id" );
             }
             catch( Exception e ) {
-                logger.debug( "Could not create taskFlow for recovering quotes on site '" + gorfxID + "'" );
+                logger.debug( "Could not create taskFlow for recovering quotes on site '" + gorfxID + "' " +e);
                 continue;
             }
 

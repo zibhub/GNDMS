@@ -16,9 +16,11 @@ package de.zib.gndms.taskflows.interslicetransfer.server.logic;
  */
 
 
+import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.common.kit.security.CustomSSLContextRequestFactory;
 import de.zib.gndms.common.kit.security.SetupSSL;
+import de.zib.gndms.common.model.gorfx.types.Quote;
 import de.zib.gndms.common.rest.Specifier;
 import de.zib.gndms.common.rest.UriFactory;
 import de.zib.gndms.gndmc.dspace.SliceClient;
@@ -69,6 +71,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
     private SliceClient sliceClient;
     private SubspaceClient subspaceClient;
+	private Quote acceptedQuote;
 
 
     public InterSliceTransferTaskAction() {
@@ -117,6 +120,8 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         // check for quotas
         {
             final InterSliceTransferOrder order = getOrderBean();
+            
+
             if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() ) {
 
                 final ResponseEntity< SliceInformation > sourceSliceConfigResponse
@@ -126,6 +131,11 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                 final long sliceSize = destinationSliceConfigResponse.getBody().getSize();
                 final long sliceUsage = destinationSliceConfigResponse.getBody().getDiskUsage();
                 final long needSize = sourceSliceConfigResponse.getBody().getDiskUsage();
+                
+
+                logger.debug("Destination sliceSize "+sliceSize);
+                logger.debug("Destination sliceUsage "+sliceUsage);
+                logger.debug("source needSize "+needSize);
 
                 if( sliceUsage + needSize > sliceSize )
                     throw new IllegalStateException(
@@ -216,67 +226,100 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
     }
 
 
-    private void prepareDestination() {
+	private void prepareDestination() {
 
-        final DelegatingOrder<InterSliceTransferOrder> order = getOrder();
-        final InterSliceTransferOrder orderBean = order.getOrderBean();
-        
-        if( orderBean.getDestinationURI() != null )
-            return;
+		final DelegatingOrder<InterSliceTransferOrder> order = getOrder();
+		final InterSliceTransferOrder orderBean = order.getOrderBean();
 
-        Specifier<Void> sliceSpecifier;
-        final Specifier<Void> specifier = orderBean.getDestinationSpecifier();
+		if (orderBean.getDestinationURI() != null)
+			return;
 
-        if( null == specifier.getUriMap() )
-            throw new UnsatisfiableOrderException( "No UriMap given in destination specifier" );
+		Specifier<Void> sliceSpecifier;
+		final Specifier<Void> specifier = orderBean.getDestinationSpecifier();
 
-        if( specifier.getUriMap().containsKey( UriFactory.SLICE ) ) {
-            // we got a slice specifier
-            sliceSpecifier = specifier;
-        } else {
-            // must be a slice kind specifier
-            // lets create a new slice
-            ResponseEntity<Specifier<Void>> sliceSpecifierResponse =
-                    subspaceClient.createSlice( specifier, order.getDNFromContext() );
+		if (null == specifier.getUriMap())
+			throw new UnsatisfiableOrderException(
+					"No UriMap given in destination specifier");
 
-            if( HttpStatus.CREATED.equals( sliceSpecifierResponse.getStatusCode() ) ) {
-                sliceSpecifier = sliceSpecifierResponse.getBody();
-                orderBean.setDestinationSpecifier( sliceSpecifier );
-            } else
-                throw new IllegalStateException( "Can't create slice in: " + specifier.getUrl() );
-        }
+		if (specifier.getUriMap().containsKey(UriFactory.SLICE)) {
+			// we got a slice specifier
+			sliceSpecifier = specifier;
 
-        // fetch grid-ftp uri
-        orderBean.setDestinationURI( getGsiFtpUrl( order, sliceSpecifier ) );
+		} else {
+			// must be a slice kind specifier
+			// lets create a new slice
 
-        // update task in data-base
-        Session  session = getDao().beginSession();
-        try {
-            Task task = getTask( session );
-            task.setOrder(order);
-            //noinspection ConstantConditions
-            final InterSliceTransferResult payload = (InterSliceTransferResult) task.getPayload();
-            payload.setSliceSpecifier( sliceSpecifier );
-            task.setPayload( payload );
-            session.success();
-        } finally { session.finish(); }
-    }
+			logger.debug("specifier url " + specifier.getUrl());
+			final Specifier<Void> sourceSlice = orderBean.getSourceSlice();
 
+			final ResponseEntity<SliceInformation> sourceSliceConfigResponse = sliceClient
+					.getSliceInformation(sourceSlice, getOrder()
+							.getDNFromContext());
 
+			SliceConfiguration sconf = new SliceConfiguration();
 
-    private String getGsiFtpUrl( final DelegatingOrder<InterSliceTransferOrder> order,
-                                 final Specifier<Void> specifier )
-    {
+			if (getAcceptedQuote() != null) {
+				logger.debug("getAcceptedQuote getExpectedSize"
+						+ getAcceptedQuote().getExpectedSize());
+				sconf.setSize(getAcceptedQuote().getExpectedSize());
+			}
 
-        final ResponseEntity<String> responseEntity =
-                sliceClient.getGridFtpUrl( specifier,  order.getDNFromContext() );
-        if( HttpStatus.OK.equals( responseEntity.getStatusCode() ) )
-            return  responseEntity.getBody();
-        else 
-            throw new IllegalStateException( "Can't fetch gridFTP URL for slice: " +
-                                             specifier.getUrl() );
-    }
+			else {
 
+				sconf.setSize(sourceSliceConfigResponse.getBody().getSize());
+			}
+
+			sconf.setTerminationTime(sourceSliceConfigResponse.getBody()
+					.getTerminationTime());
+
+			logger.debug("sconf.getTerminationTime "
+					+ sconf.getTerminationTime());
+			logger.debug("sconf.getSize " + sconf.getSize());
+
+			ResponseEntity<Specifier<Void>> sliceSpecifierResponse = subspaceClient
+					.createSlice(specifier, sconf.getStringRepresentation(),
+							order.getDNFromContext());
+
+			if (HttpStatus.CREATED.equals(sliceSpecifierResponse
+					.getStatusCode())) {
+				sliceSpecifier = sliceSpecifierResponse.getBody();
+				orderBean.setDestinationSpecifier(sliceSpecifier);
+			} else
+				throw new IllegalStateException("Can't create slice in: "
+						+ specifier.getUrl());
+		}
+
+		// fetch grid-ftp uri
+		orderBean.setDestinationURI(getGsiFtpUrl(order, sliceSpecifier));
+
+		// update task in data-base
+		Session session = getDao().beginSession();
+		try {
+			Task task = getTask(session);
+			task.setOrder(order);
+			// noinspection ConstantConditions
+			final InterSliceTransferResult payload = (InterSliceTransferResult) task
+					.getPayload();
+			payload.setSliceSpecifier(sliceSpecifier);
+			task.setPayload(payload);
+			session.success();
+		} finally {
+			session.finish();
+		}
+	}
+
+	private String getGsiFtpUrl(
+			final DelegatingOrder<InterSliceTransferOrder> order,
+			final Specifier<Void> specifier) {
+
+		final ResponseEntity<String> responseEntity = sliceClient
+				.getGridFtpUrl(specifier, order.getDNFromContext());
+		if (HttpStatus.OK.equals(responseEntity.getStatusCode()))
+			return responseEntity.getBody();
+		else
+			throw new IllegalStateException(
+					"Can't fetch gridFTP URL for slice: " + specifier.getUrl());
+	}
 
     public SliceClient getSliceClient() {
 
@@ -351,5 +394,15 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         restTemplate = new RestTemplate( requestFactory );
 
         restTemplate.setMessageConverters( new LinkedList< HttpMessageConverter<?> >(){{ add( messageConverter ); }} );
+    }
+
+
+    public Quote getAcceptedQuote() {
+        return acceptedQuote;
+    }
+
+
+    public void setAcceptedQuote( Quote acceptedQuote ) {
+        this.acceptedQuote = acceptedQuote;
     }
 }

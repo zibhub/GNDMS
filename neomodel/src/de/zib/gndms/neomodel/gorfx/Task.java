@@ -30,7 +30,7 @@ import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.index.Index;
-import org.neo4j.index.impl.lucene.ValueContext;
+import org.neo4j.index.lucene.ValueContext;
 
 import java.io.*;
 import java.util.ArrayList;

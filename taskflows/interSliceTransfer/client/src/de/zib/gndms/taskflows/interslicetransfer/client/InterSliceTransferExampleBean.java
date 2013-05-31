@@ -41,6 +41,7 @@ public class InterSliceTransferExampleBean {
     private static final DocumentedKey SUBSPACE_NAME_KEY;
     private static final DocumentedKey SLICE_KIND_NAME_KEY;
     private static final List<DocumentedKey> KEYS_WITH_DOCUMENTATION;
+	private static DocumentedKey SLICE_SIZE;
 
     static {
         ArrayList<DocumentedKey> keys = new ArrayList<DocumentedKey>( 4 );
@@ -61,6 +62,11 @@ public class InterSliceTransferExampleBean {
                 "The name of the sliceKind of the import slice.\n" +
                 "Must exist in  gndms.interSliceTransfer.remoteSubspaceName" );
         KEYS_WITH_DOCUMENTATION = Collections.unmodifiableList( keys );
+        SLICE_SIZE = DocumentedKey.createAndRegisterKey(
+                keys,
+                "c3grid.FileTransferRequest.SLICE_SIZE",
+                "expected slice size of transfers"
+        );
     }
 
     private String checkOutDestinationUri;
@@ -73,6 +79,8 @@ public class InterSliceTransferExampleBean {
 
     private String sliceKind;
 
+	private String expectedSliceSize;
+
 
     public String getSubspace() {
 
@@ -83,6 +91,10 @@ public class InterSliceTransferExampleBean {
     public String getSliceKind() {
 
         return sliceKind;
+    }
+    public String getExpectedSliceSize() {
+
+        return expectedSliceSize;
     }
 
 
@@ -121,7 +133,7 @@ public class InterSliceTransferExampleBean {
         destinationBaseUri = props.getProperty( REMOTE_DESTINATION_BASE_KEY.key );
         subspace = props.getProperty( SUBSPACE_NAME_KEY.key );
         sliceKind = props.getProperty( SLICE_KIND_NAME_KEY.key );
-
+        expectedSliceSize = props.getProperty(SLICE_SIZE.key);
         FileTransferOrderPropertyReader fileTransferOrderPropertyReader = new
                 FileTransferOrderPropertyReader( props );
 

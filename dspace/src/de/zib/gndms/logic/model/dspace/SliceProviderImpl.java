@@ -21,6 +21,7 @@ import de.zib.gndms.infra.grams.LinuxDirectoryAux;
 import de.zib.gndms.infra.system.GNDMSystem;
 import de.zib.gndms.kit.util.DirectoryAux;
 import de.zib.gndms.logic.action.ActionConfigurer;
+import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
@@ -38,121 +39,157 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
 /**
- * The slice provider which handles the available subspaces providing 
- * a mapping of slice ids and slices.
+ * The slice provider which handles the available subspaces providing a mapping
+ * of slice ids and slices.
  * 
  * @author Ulrike Golas
  */
 
 public class SliceProviderImpl implements SliceProvider {
-    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private GNDMSystem system;
-    private EntityManagerFactory emf;
+	private GNDMSystem system;
+	private EntityManagerFactory emf;
 
-    private SubspaceProvider subspaceProvider;
-    private SliceKindProvider sliceKindProvider;
+	private SubspaceProvider subspaceProvider;
+	private SliceKindProvider sliceKindProvider;
 
-    private ActionConfigurer actionConfigurer;
+	private ActionConfigurer actionConfigurer;
 
-    private GridResourceCache< Slice > cache;
+	private GridResourceCache<Slice> cache;
 
-    private DirectoryAux directoryAux;
+	private DirectoryAux directoryAux;
 
+	public SliceProviderImpl(EntityManagerFactory emf) {
+		this.actionConfigurer = new ActionConfigurer(emf);
+		this.actionConfigurer.setEntityUpdateListener(new Invalidator());
+		this.cache = new GridResourceCache<Slice>(Slice.class, emf);
+		this.emf = emf;
+		this.directoryAux = new LinuxDirectoryAux();
+	}
 
-    public SliceProviderImpl( EntityManagerFactory emf ) {
-        this.actionConfigurer = new ActionConfigurer( emf );
-        this.actionConfigurer.setEntityUpdateListener( new Invalidator() );
-        this.cache = new GridResourceCache<Slice>( Slice.class, emf );
-        this.emf = emf;
-        this.directoryAux = new LinuxDirectoryAux();
-    }
+	@Inject
+	public void setSystem(GNDMSystem system) {
+		this.system = system;
+	}
 
+	@Inject
+	public void setEntityManagerFactory(final EntityManagerFactory emf) {
+		actionConfigurer.setEntityManagerFactory(emf);
+		cache.setEmf(emf);
+	}
 
-    @Inject
-    public void setSystem(GNDMSystem system) {
-        this.system = system;
-    }
+	@Inject
+	public void setSubspaceProvider(SubspaceProvider subspaceProvider) {
+		this.subspaceProvider = subspaceProvider;
+	}
 
-
-    @Inject
-    public void setEntityManagerFactory( final EntityManagerFactory emf ) {
-        actionConfigurer.setEntityManagerFactory( emf );
-        cache.setEmf( emf );
-    }
-
-
-    @Inject
-    public void setSubspaceProvider( SubspaceProvider subspaceProvider ) {
-        this.subspaceProvider = subspaceProvider;
-    }
-
-
-    @Inject
-    public void setSliceKindProvider( SliceKindProvider sliceKindProvider ) {
-        this.sliceKindProvider = sliceKindProvider;
-    }
-
+	@Inject
+	public void setSliceKindProvider(SliceKindProvider sliceKindProvider) {
+		this.sliceKindProvider = sliceKindProvider;
+	}
 
 	@Override
 	public final boolean exists(final String subspace, final String slice) {
-        try{
-            cache.get( subspace );
-        }
-        catch( NoSuchResourceException e )
-        {
-            return false;
-        }
-        return true;
+		try {
+			cache.get(subspace);
+		} catch (NoSuchResourceException e) {
+			return false;
+		}
+		return true;
 	}
 
+	@Override
+	public final List<String> listSlices(final String subspace)
+			throws NoSuchElementException {
+		// TODO: query for all slices
+		return null;
+	}
 
-    @Override
-    public final List<String> listSlices( final String subspace ) throws NoSuchElementException {
-        // TODO: query for all slices
-        return null;
-    }
+	@Override
+	public final Slice getSlice(final String subspace, final String sliceId)
+			throws NoSuchElementException {
+		try {
+			return cache.get(sliceId);
+		} catch (NullPointerException e) {
+			throw new NoSuchElementException(e.getMessage());
+		}
+	}
 
+	public long getDiskUsage(final String subspace, final String sliceId)
+			throws NoSuchElementException {
+		Slice slice = getSlice(subspace, sliceId);
 
-    @Override
-    public final Slice getSlice( final String subspace, final String sliceId ) throws NoSuchElementException {
-        try {
-            return cache.get( sliceId );
-        }
-        catch( NullPointerException e ) {
-            throw new NoSuchElementException( e.getMessage() );
-        }
-    }
+		final String directory = slice.getSubspace().getPathForSlice(slice);
 
-    
-    public long getDiskUsage(final String subspace, final String sliceId) throws NoSuchElementException {
-        Slice slice = getSlice( subspace, sliceId );
-     
-        final String directory = slice.getSubspace().getPathForSlice( slice );
-        
-        return directoryAux.diskUsage( slice.getOwner(), directory );
-    }
+		return directoryAux.diskUsage(slice.getOwner(), directory);
+	}
 
+	public void updateSlice(Slice slice, EntityManager entityManager) {
+		final TxFrame txf = new TxFrame(entityManager);
+		try {
+			entityManager.persist(slice);
+			txf.commit();
+		} finally {
+			txf.finish();
+		}
+	}
 
-    public void updateSlice( Slice slice, EntityManager entityManager ) {
-        final TxFrame txf = new TxFrame( entityManager );
-        try {
-            entityManager.persist(slice);
-            txf.commit();
-        }
-        finally { txf.finish();  }
-    }
+	@Override
+	public String createSlice(final String subspaceId,
+			final String sliceKindId, final String dn, final DateTime ttm,
+			final long sliceSize) throws Exception {
 
+		if (!sliceKindProvider.exists(subspaceId, sliceKindId)) {
+			logger.info("Illegal Access: slicekind " + sliceKindId
+					+ " in subspace " + subspaceId + " not available.");
+			throw new NoSuchElementException("SliceKind " + sliceKindId
+					+ " does not exist in subspace " + subspaceId + ".");
+		}
+
+		Subspace subspace = subspaceProvider.get(subspaceId);
+		SliceKind sliceKind = sliceKindProvider.get(subspaceId, sliceKindId);
+
+		final CreateSliceAction createSliceAction = new CreateSliceAction(dn,
+				ttm, sliceKind, sliceSize);
+		actionConfigurer.configureAction(createSliceAction);
+		system.getInstanceDir().getSystemAccessInjector()
+				.injectMembers(createSliceAction);
+		createSliceAction.setModel(subspace);
+		createSliceAction.setDirectoryAux(new LinuxDirectoryAux());
+		Slice slice = null;
+		try {
+			slice = createSliceAction.call();
+		} catch (Exception e) {
+			logger.error("couldn't execute transaction " + e);
+			//do cleanUp - remove currently created directory on the filesystem if the slice couldn't be commited into database. 
+			if (createSliceAction.getPath() != null) {
+				directoryAux.deleteDirectory(dn, createSliceAction.getPath());
+				logger.debug("delete directory " +createSliceAction.getPath() + " due to failed transaction " + e);
+			}
+			throw new Exception("Could not create slice ");
+		}
+
+		logger.debug("created slice id: " + slice.getId() + " terminationtime "
+				+ slice.getTerminationTime() + " slicesize "
+				+ slice.getTotalStorageSize());
+		return slice.getId();
+	}
+
+	
 
     @Override
     public String createSlice(
             final String subspaceId,
             final String sliceKindId,
             final String dn,
+            final String localUser,
             final DateTime ttm,
             final long sliceSize ) throws NoSuchElementException {
 
@@ -171,49 +208,63 @@ public class SliceProviderImpl implements SliceProvider {
         createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
 
         final Slice slice = createSliceAction.call();
+
+        ChownSliceConfiglet csc = system.getInstanceDir().getConfiglet(ChownSliceConfiglet.class, "sliceChown");
+        
+        logger.debug( "setting owner of " + slice.getId() + " to " + localUser);
+        ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
+                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+                slice.getDirectoryId() );
+        logger.debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+        chownAct.getProcessBuilder().redirectErrorStream(true);
+        chownAct.call();
+        logger.debug("Output for chown:" + chownAct.getOutputReceiver().toString());
         
         return slice.getId();
     }
 
 
-    public Taskling deleteSlice(
-            final String subspaceId,
-            final String sliceId ) throws NoSuchElementException {
+	public Taskling deleteSlice(final String subspaceId, final String sliceId)
+			throws NoSuchElementException {
 
-        if( !cache.exists( sliceId ) ) {
-            logger.info( "Illegal Access: slice " + sliceId + " in subspace " + subspaceId + " cannot be deleted because it is not available." );
-            throw new NoSuchElementException( "Slice " + sliceId + " does not exist in subspace " + subspaceId + "." );
-        }
+		if (!cache.exists(sliceId)) {
+			logger.info("Illegal Access: slice " + sliceId + " in subspace "
+					+ subspaceId
+					+ " cannot be deleted because it is not available.");
+			throw new NoSuchElementException("Slice " + sliceId
+					+ " does not exist in subspace " + subspaceId + ".");
+		}
 
-        final Subspace subspace = subspaceProvider.get( subspaceId );
-        final Slice slice = cache.get( sliceId );
-        
-        final DeleteSliceTaskAction deleteAction = new DeleteSliceTaskAction();
-        deleteAction.setDirectoryAux( new LinuxDirectoryAux() );
-        system.getInstanceDir().getSystemAccessInjector().injectMembers( deleteAction );
-        deleteAction.setEmf( emf );
-        //actionConfigurer.configureAction(deleteAction);
+		final Subspace subspace = subspaceProvider.get(subspaceId);
+		final Slice slice = cache.get(sliceId);
 
-        final Order order = new ModelIdHoldingOrder( sliceId );
-        final String wid = UUID.randomUUID().toString();
-        logger.info( "Delete sliceID (" + sliceId + ") with tracking number " + wid );
-        final Taskling ling = system.submitTaskAction( deleteAction, order, wid );
+		final DeleteSliceTaskAction deleteAction = new DeleteSliceTaskAction();
+		deleteAction.setDirectoryAux(new LinuxDirectoryAux());
+		system.getInstanceDir().getSystemAccessInjector()
+				.injectMembers(deleteAction);
+		deleteAction.setEmf(emf);
+		// actionConfigurer.configureAction(deleteAction);
 
-        cache.invalidate(sliceId);
+		final Order order = new ModelIdHoldingOrder(sliceId);
+		final String wid = UUID.randomUUID().toString();
+		logger.info("Delete sliceID (" + sliceId + ") with tracking number "
+				+ wid);
+		final Taskling ling = system.submitTaskAction(deleteAction, order, wid);
 
-        return ling;
-    }
-    
-    
-    @Override
-    public void invalidate( final String sliceId ) {
-        cache.invalidate( sliceId );
-    }
+		cache.invalidate(sliceId);
 
+		return ling;
+	}
 
-    private class Invalidator implements ModelUpdateListener< GridResource > {
-        public void onModelChange( GridResource model ) {
-            SliceProviderImpl.this.cache.invalidate( model.getId() );
-        }
-    }
+	@Override
+	public void invalidate(final String sliceId) {
+		cache.invalidate(sliceId);
+	}
+
+	private class Invalidator implements ModelUpdateListener<GridResource> {
+		public void onModelChange(GridResource model) {
+			SliceProviderImpl.this.cache.invalidate(model.getId());
+		}
+	}
+
 }

@@ -94,6 +94,7 @@ public class InterSliceTransferTaskFlowFactory
         action.prepareRestTemplate(system.getSetupSSLFactory().getKeyPassword());
         action.prepareSliceClient();
         action.prepareSubspaceClient();
+        action.setAcceptedQuote( quote );
 
         return action;
     }

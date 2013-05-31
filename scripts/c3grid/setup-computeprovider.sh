@@ -10,13 +10,13 @@ SITE_NAME=""
 # Parameters for the transfer staging area
 TRANSFER_AREA_PATH="/var/lib/gndms/sub"
 TRANSFER_AREA_SIZE="5000000000"
-TRANSFER_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$IMPORT_AREA_PATH"
+TRANSFER_AREA_GSI_FTP_URL="gsiftp://$GRIDHOST""$TRANSFER_AREA_PATH"
 
 # Set your hostname if it is not detected correctly
 # GRIDHOST=""
 
 # VolD update interval in milliseconds
-UPDATE_INTERVAL="60000"
+UPDATE_INTERVAL="50000"
 
 # default time to live for slices of the Computing slice kind (in milliseconds)
 # default: one day

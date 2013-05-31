@@ -16,7 +16,7 @@ import de.zib.gndms.taskflows.esgfStaging.client.model.ESGFStagingOrder;
 public class ClientESGFStaging extends AbstractStagingClient {
 	
 	static Properties p;
-	private static Order order;
+	public static Order order;
 	
 	public static void main(String[] args) throws Exception {
 		ClientESGFStaging c = new ClientESGFStaging();
@@ -26,8 +26,10 @@ public class ClientESGFStaging extends AbstractStagingClient {
 	}
 	
 	public ClientESGFStaging() throws Exception {
-		super("https://c3-4lom.zib.de:8443/gndms/c3grid");
-		p = PropertyFileLoader.loadPropertyFile("META-INF/config.conf");
+
+		super("https://c3-po.zib.de:8443/gndms/c3grid");
+
+		p = PropertyFileLoader.loadPropertyFile("web/META-INF/config.conf");
 	}
 
 	protected static Order updateOrder() {
@@ -49,6 +51,7 @@ public class ClientESGFStaging extends AbstractStagingClient {
 	    	String taskID = specifiers.get(0).getUriMap().get(UriFactory.TASKFLOW_ID);
 	    	SliceConfiguration conf = new SliceConfiguration();
 	    	conf.setSize(size);
+	    	System.out.println("expected slice size "+size);
 	    	((ESGFStagingOrder) order).setSliceConfiguration(conf);
 	    	TaskFlowClient tfClient = getTfClient();
 	    	tfClient.setOrder(order.getTaskFlowType(), taskID, order, p.getProperty("nutzerDN"), 

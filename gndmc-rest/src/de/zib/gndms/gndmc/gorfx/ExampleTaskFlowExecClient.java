@@ -127,6 +127,9 @@ public abstract class ExampleTaskFlowExecClient extends AbstractTaskFlowExecClie
         if( payload.getAdditionalNotes() != null )
             for( String k : payload.getAdditionalNotes().keySet() )
                 System.out.println(  "     " + k + ": " + payload.getAdditionalNotes().get( k ) );
+        else if( payload.getContext() != null )
+            for( String k : payload.getContext().keySet() )
+                System.out.println(  "     " + k + ": " + payload.getContext().get( k ) );
         else
             System.out.println( "   none" );
     }

@@ -131,7 +131,7 @@ public class ProviderStageInTaskFlowFactory
 
         HashMap<String, String> config = new HashMap<String, String>( 2 );
         config.put( "subspace", "providerStaging" );
-        config.put( "sliceKind", "staging" );
+        config.put( "sliceKind", "providerKind" );
         config.put( "stagingClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
                                     ".ExternalProviderStageInAction" );
         config.put( "estimationClass", "de.zib.gndms.logic.model.gorfx.c3grid" +
