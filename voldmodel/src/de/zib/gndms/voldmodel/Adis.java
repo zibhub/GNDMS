@@ -60,7 +60,7 @@ public class Adis extends ABIi {
      * @param context The context containing the voldRestTemplate.
      */
     public Adis(final BeanFactory context) {
-        this.voldi = new VolDClient();
+        this.voldi = new VolDClient(context);
         this.voldi.setEnc("utf-8");
         this.grid = "c3grid";
     }
