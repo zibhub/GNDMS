@@ -350,22 +350,31 @@ public class SubspaceServiceImpl implements SubspaceService {
             DateTime terminationTime;
             long sliceSize;
 
-            if( parameters.containsKey( SliceConfiguration.TERMINATION_TIME ) )
-                terminationTime = fmt.parseDateTime( parameters.get( SliceConfiguration.TERMINATION_TIME ) );
-            else
-                terminationTime = new DateTime().plus( sliceKind.getDefaultTimeToLive() );
-            
-            if( parameters.containsKey( SliceConfiguration.SLICE_SIZE ) )
-                sliceSize = Long.parseLong( parameters.get( SliceConfiguration.SLICE_SIZE ) );
-            else
-                sliceSize = sliceKind.getDefaultSliceSize()*10;
+			if (parameters.containsKey(SliceConfiguration.TERMINATION_TIME)) {
+				terminationTime = fmt.parseDateTime(parameters
+						.get(SliceConfiguration.TERMINATION_TIME));
+			} else {
+				logger.debug("no termination time provided, setting the default value  "
+						+ sliceKind.getDefaultTimeToLive());
+				terminationTime = new DateTime().plus(sliceKind
+						.getDefaultTimeToLive());
+			}
+
+			if (parameters.containsKey(SliceConfiguration.SLICE_SIZE)) {
+				sliceSize = Long.parseLong(parameters
+						.get(SliceConfiguration.SLICE_SIZE));
+			} else {
+				logger.debug("no slice size provided, setting the default value  "
+						+ sliceKind.getDefaultSliceSize() * 10);
+				sliceSize = sliceKind.getDefaultSliceSize() * 10;
+			}
             
             SpringSecurityContextHolder securityContextHolder=new SpringSecurityContextHolder(SecurityContextHolder.getContext() );
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
 
 			String slice = null;
 			try {
-				slice = sliceProvider.createSlice( subspaceId, sliceKindId, userDetails.getLocalUser(), terminationTime, sliceSize );
+				slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn, userDetails.getLocalUser(), terminationTime, sliceSize );
 			} catch (Exception e) {
 				logger.error("failed to create a slice "+e);
 			}

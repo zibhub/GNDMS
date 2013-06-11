@@ -189,27 +189,32 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 		String sliceKindId = config.getOption("sliceKind");
 
 		SliceConfiguration sconf = new SliceConfiguration();
-		if (getContract().getResultValidity() != null) {
-			sconf.setTerminationTime(getContract().getResultValidity());
-		}
 
 		if (getContract().getExpectedSize() != null
 				&& getContract().getExpectedSize() > 0) {
 			sconf.setSize(getContract().getExpectedSize());
 		} else {
-			logger.debug("no slice size provided, setting slice size to the default value "
-					+ DEFAULT_SLICE_SIZE);
-			sconf.setSize(DEFAULT_SLICE_SIZE);
+			if (getQuoteCalculator() != null
+					&& getQuoteCalculator().getPreferredQuote() != null
+					&& getQuoteCalculator().getPreferredQuote()
+							.getExpectedSize() != null) {
+
+				sconf.setSize(getQuoteCalculator().getPreferredQuote()
+						.getExpectedSize());
+			} else {
+				logger.debug("no slice size provided, setting slice size to the default value "
+						+ DEFAULT_SLICE_SIZE);
+				sconf.setSize(DEFAULT_SLICE_SIZE);
+			}
 		}
 
-		GNDMSUserDetailsInterface userDetails = (GNDMSUserDetailsInterface) getOrder()
-				.getSecurityContextHolder().getSecurityContext()
-				.getAuthentication().getPrincipal();
+		logger.debug("slice size "+sconf.getSize());
 
-		ResponseEntity<Specifier<Void>> sliceResponseEntity = subspaceService
-				.createSlice(subspaceId, sliceKindId,
-						sconf.getStringRepresentation(),
-						userDetails.getLocalUser());
+        ResponseEntity< Specifier< Void > > sliceResponseEntity = subspaceService.createSlice(
+                subspaceId,
+                sliceKindId,
+                sconf.getStringRepresentation(),
+                getOrder().getDNFromContext() );
 
 		if (!HttpStatus.CREATED.equals(sliceResponseEntity.getStatusCode())) {
 			if (counter.get() < 3) {

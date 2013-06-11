@@ -166,7 +166,7 @@ public class SliceProviderImpl implements SliceProvider {
 			slice = createSliceAction.call();
 		} catch (Exception e) {
 			logger.error("couldn't execute transaction " + e);
-			//do cleanUp - remove currently created directory on the filesystem if the slice couldn't be commited into database. 
+			//do cleanUp - remove currently created directory on the filesystem if the slice couldn't be commited into database.
 			if (createSliceAction.getPath() != null) {
 				directoryAux.deleteDirectory(dn, createSliceAction.getPath());
 				logger.debug("delete directory " +createSliceAction.getPath() + " due to failed transaction " + e);
@@ -180,7 +180,59 @@ public class SliceProviderImpl implements SliceProvider {
 		return slice.getId();
 	}
 
-	
+	 @Override
+	    public String createSlice(
+	            final String subspaceId,
+	            final String sliceKindId,
+	            final String dn,
+	            final String localUser,
+	            final DateTime ttm,
+	            final long sliceSize ) throws NoSuchElementException {
+
+	        if( !sliceKindProvider.exists( subspaceId, sliceKindId ) ) {
+	            logger.info( "Illegal Access: slicekind " + sliceKindId + " in subspace " + subspaceId + " not available." );
+	            throw new NoSuchElementException( "SliceKind " + sliceKindId + " does not exist in subspace " + subspaceId + "." );
+	        }
+
+	        Subspace subspace = subspaceProvider.get( subspaceId );
+	        SliceKind sliceKind = sliceKindProvider.get( subspaceId, sliceKindId );
+
+	        final CreateSliceAction createSliceAction = new CreateSliceAction( dn, ttm, sliceKind, sliceSize );
+	        actionConfigurer.configureAction( createSliceAction );
+	        system.getInstanceDir().getSystemAccessInjector().injectMembers( createSliceAction );
+	        createSliceAction.setModel( subspace );
+	        createSliceAction.setDirectoryAux( new LinuxDirectoryAux() );
+
+	        Slice slice = null;
+			try {
+				slice = createSliceAction.call();
+			} catch (Exception e) {
+				logger.error("couldn't execute transaction " + e);
+				//do cleanUp - remove currently created directory on the filesystem if the slice couldn't be commited into database.
+				if (createSliceAction.getPath() != null) {
+					directoryAux.deleteDirectory(dn, createSliceAction.getPath());
+					logger.debug("delete directory " +createSliceAction.getPath() + " due to failed transaction " + e);
+				}
+				throw new NoSuchElementException("Could not create slice ");
+			}
+
+			logger.debug("created slice id: " + slice.getId() + " terminationtime "
+					+ slice.getTerminationTime() + " slicesize "
+					+ slice.getTotalStorageSize());
+
+	        ChownSliceConfiglet csc = system.getInstanceDir().getConfiglet(ChownSliceConfiglet.class, "sliceChown");
+
+	        logger.debug( "setting owner of " + slice.getId() + " to " + localUser);
+	        ProcessBuilderAction chownAct = csc.createChownSliceAction( localUser,
+	                slice.getSubspace().getPath() + File.separator + slice.getKind().getSliceDirectory(),
+	                slice.getDirectoryId() );
+	        logger.debug( "calling " + chownAct.getProcessBuilder().command().toString() );
+	        chownAct.getProcessBuilder().redirectErrorStream(true);
+	        chownAct.call();
+	        logger.debug("Output for chown:" + chownAct.getOutputReceiver().toString());
+
+	        return slice.getId();
+	    }
 	public Taskling deleteSlice(final String subspaceId, final String sliceId)
 			throws NoSuchElementException {
 

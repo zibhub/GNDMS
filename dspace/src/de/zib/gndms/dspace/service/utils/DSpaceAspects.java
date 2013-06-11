@@ -85,15 +85,15 @@ public class DSpaceAspects {
                     .getContext()
                     .getAuthentication()
                     .getPrincipal();
-            final String localUser = userDetails.getLocalUser();
+            final String dn = userDetails.getUsername();
             final String owner = slice.getOwner();
 
             // TODO: check for user / group rights here
             // ATTENTION: group can be null
 
-            if( ! owner.equals( localUser ) ) {
-                logger.debug( "User " + localUser + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
-                throw new UnauthorizedException( "User " + localUser + " does not own slice " + sliceId + "." );
+            if( ! owner.equals( dn ) ) {
+                logger.debug( "User " + dn + " tried to access slice " + sliceId + ", owned by " + slice.getOwner() + "." );
+                throw new UnauthorizedException( "User " + dn + " does not own slice " + sliceId + "." );
             }
         }
 
