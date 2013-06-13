@@ -350,7 +350,7 @@ define 'gndms' do
 
     desc 'Shared graph database model classes'
     define 'neomodel', :layout => dmsTestLayout('neomodel', 'gndms-neomodel') do
-      compile.with project('common'), project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, JODA_TIME, OPENJPA, COMMONS_LANG
+      compile.with project('common'), project('model'), project('stuff'), JETBRAINS_ANNOTATIONS, NEODATAGRAPH, JODA_TIME, OPENJPA, SLF4J, COMMONS_LANG
       
       test.with COMMONS_IO
       test.compile

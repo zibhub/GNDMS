@@ -31,11 +31,16 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.index.lucene.ValueContext;
+import org.neo4j.kernel.DeadlockDetectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Task
@@ -66,7 +71,8 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public static final String TASK_STATE_IDX = "taskStateIdx";
     public static final String TERMINATION_TIME_IDX = "terminationTimeIdx";
     public static final String RESOURCE_ID_IDX = "resourceIdIdx" ;
-
+    private final AtomicInteger counter = new AtomicInteger();
+    private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public static enum TaskRelationships implements RelationshipType {
@@ -142,11 +148,24 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     }
 
     public void setTaskFlowType( @Nullable TaskFlowType taskFlowType ) {
+		counter.incrementAndGet();
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel != null)
             rel.delete();
-        if ( taskFlowType != null)
-            repr().createRelationshipTo( taskFlowType.repr(getReprSession()), TaskRelationships.OFFER_TYPE_REL);
+        if ( taskFlowType != null){
+			try {
+				repr().createRelationshipTo(
+						taskFlowType.repr(getReprSession()),
+						TaskRelationships.OFFER_TYPE_REL);
+			} catch (DeadlockDetectedException e) {
+				if (counter.get() < 3) {
+					logger.error("setting TaskFlowType failed, retrying... ");
+					setTaskFlowType(taskFlowType);
+				} else
+					throw new IllegalStateException("setting TaskFlowType failed "+e);
+
+			}
+        }
     }
 
     public @Nullable
