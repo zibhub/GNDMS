@@ -79,7 +79,8 @@ public class SliceReaper extends PeriodicalJob {
             }
 
             if( slice.getDiskUsage() > slice.getTotalStorageSize() )
-                if( onSliceTooBig( slice ) )
+//            	 logInformation(slice, "");
+//                if( onSliceTooBig( slice ) )
                     continue;
         }
     }
@@ -133,6 +134,17 @@ public class SliceReaper extends PeriodicalJob {
         return false;
     }
 
+
+	public void logInformation(de.zib.gndms.infra.dspace.Slice slice,
+			final String additionalMessage) {
+		logger.warn("Slice " + slice.getSubspace().getId() + "/"
+				+ slice.getKind().getId() + "/" + slice.getId()
+				+ " exceeds Quota.\n\n" + "Owner: " + slice.getOwner() + "\n"
+				+ "Size: " + slice.getTotalStorageSize() + " Bytes\n"
+				+ "DiskUsage: " + slice.getDiskUsage() + " Bytes\n"
+				+ "TerminationTime: " + slice.getTerminationTime()
+				+ additionalMessage, "text/plain");
+	}
 
     public void sendQuotaMail(
             final String recipient,
