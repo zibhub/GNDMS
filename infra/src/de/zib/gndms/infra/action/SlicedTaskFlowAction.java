@@ -194,10 +194,8 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
 				&& getContract().getExpectedSize() > 0) {
 			sconf.setSize(getContract().getExpectedSize());
 		} else {
-			if (getQuoteCalculator() != null
-					&& getQuoteCalculator().getPreferredQuote() != null
-					&& getQuoteCalculator().getPreferredQuote()
-							.getExpectedSize() != null) {
+			if (null != getQuoteCalculator().getPreferredQuote()
+					.getExpectedSize()) {
 
 				sconf.setSize(getQuoteCalculator().getPreferredQuote()
 						.getExpectedSize());
