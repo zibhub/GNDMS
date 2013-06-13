@@ -52,6 +52,7 @@ import org.springframework.web.client.RestTemplate;
 import javax.inject.Inject;
 import javax.net.ssl.SSLContext;
 import javax.persistence.EntityManager;
+
 import java.util.LinkedList;
 
 /**
@@ -122,7 +123,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
             final InterSliceTransferOrder order = getOrderBean();
             
 
-            if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() ) {
+            if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() && null !=getOrder().getOrderBean().ExpectedSliceSize()) {
 
                 final ResponseEntity< SliceInformation > sourceSliceConfigResponse
                         = sliceClient.getSliceInformation( order.getSourceSlice(), getOrder().getDNFromContext() );
@@ -130,12 +131,15 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                         = sliceClient.getSliceInformation( order.getDestinationSpecifier(), getOrder().getDNFromContext() );
                 final long sliceSize = destinationSliceConfigResponse.getBody().getSize();
                 final long sliceUsage = destinationSliceConfigResponse.getBody().getDiskUsage();
-                final long needSize = sourceSliceConfigResponse.getBody().getDiskUsage();
-                
+
+                //needSize is the estimation slice size of the order. The ordered data can be the subset of files in the source slice
+                final long needSize = Long.valueOf(getOrder().getOrderBean().ExpectedSliceSize());;
+                final long sourceSliceSize = sourceSliceConfigResponse.getBody().getSize();
 
                 logger.debug("Destination sliceSize "+sliceSize);
                 logger.debug("Destination sliceUsage "+sliceUsage);
                 logger.debug("source needSize "+needSize);
+                logger.debug("source slice size "+sourceSliceSize);
 
                 if( sliceUsage + needSize > sliceSize )
                     throw new IllegalStateException(
@@ -244,6 +248,13 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 		if (specifier.getUriMap().containsKey(UriFactory.SLICE)) {
 			// we got a slice specifier
 			sliceSpecifier = specifier;
+			logger.debug("destination slice specifier " + specifier.getUrl());
+			final ResponseEntity<SliceInformation> destinationSliceConfigResponse = sliceClient
+					.getSliceInformation(specifier, getOrder()
+							.getDNFromContext());
+
+			logger.debug("destination slice size "+destinationSliceConfigResponse.getBody().getSize());
+
 
 		} else {
 			// must be a slice kind specifier
@@ -258,8 +269,8 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 
 			SliceConfiguration sconf = new SliceConfiguration();
 
-			if (getAcceptedQuote() != null) {
-				logger.debug("getAcceptedQuote getExpectedSize"
+			if (null!=getAcceptedQuote().getExpectedSize()) {
+				logger.debug("Quote expectedSize "
 						+ getAcceptedQuote().getExpectedSize());
 				sconf.setSize(getAcceptedQuote().getExpectedSize());
 			}
@@ -272,9 +283,9 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
 			sconf.setTerminationTime(sourceSliceConfigResponse.getBody()
 					.getTerminationTime());
 
-			logger.debug("sconf.getTerminationTime "
+			logger.debug("slice terminationTime "
 					+ sconf.getTerminationTime());
-			logger.debug("sconf.getSize " + sconf.getSize());
+			logger.debug("slice size " + sconf.getSize());
 
 			ResponseEntity<Specifier<Void>> sliceSpecifierResponse = subspaceClient
 					.createSlice(specifier, sconf.getStringRepresentation(),
