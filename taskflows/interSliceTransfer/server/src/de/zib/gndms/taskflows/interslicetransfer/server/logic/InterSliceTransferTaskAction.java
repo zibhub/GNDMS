@@ -121,9 +121,8 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
         // check for quotas
         {
             final InterSliceTransferOrder order = getOrderBean();
-            
 
-            if( null != order.getSourceSlice() && null != order.getDestinationSpecifier() && null !=getOrder().getOrderBean().ExpectedSliceSize()) {
+            if( (null != order.getSourceSlice()) && (null != order.getDestinationSpecifier()) && (null !=acceptedQuote.getExpectedSize())) {
 
                 final ResponseEntity< SliceInformation > sourceSliceConfigResponse
                         = sliceClient.getSliceInformation( order.getSourceSlice(), getOrder().getDNFromContext() );
@@ -133,7 +132,7 @@ public class InterSliceTransferTaskAction extends TaskFlowAction<InterSliceTrans
                 final long sliceUsage = destinationSliceConfigResponse.getBody().getDiskUsage();
 
                 //needSize is the estimation slice size of the order. The ordered data can be the subset of files in the source slice
-                final long needSize = Long.valueOf(getOrder().getOrderBean().ExpectedSliceSize());;
+                final long needSize = acceptedQuote.getExpectedSize();
                 final long sourceSliceSize = sourceSliceConfigResponse.getBody().getSize();
 
                 logger.debug("Destination sliceSize "+sliceSize);
