@@ -25,31 +25,31 @@ import org.joda.time.DateTime;
 import javax.persistence.*;
 
 
-/**
- * GridResource + terminationTime
- **/
-@Entity( name="TimedGridResources" )
-@Table( name="Timed_Grid_Resources", schema="dspace" )
-public class TimedGridResource extends GridResource implements TimedGridResourceItf {
+///**
+// * GridResource + terminationTime
+// **/
+//@Entity( name="TimedGridResources" )
+//@Table( name="Timed_Grid_Resources", schema="dspace" )
+public class TimedGridResource extends GridResource  {
 
-    private DateTime terminationTime;
-
-    protected TimedGridResource() {
-        super();
-    }
-
-    @Persistent
-    @Column(name="tod", nullable=false)
-    @Temporal( TemporalType.TIMESTAMP)
-    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
-    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
-    public DateTime getTerminationTime() {
-        return terminationTime;
-    }
-
-
-    public void setTerminationTime( DateTime terminationTime ) {
-        this.terminationTime = terminationTime;
-    }
+//    private DateTime terminationTime;
+//
+//    protected TimedGridResource() {
+//        super();
+//    }
+//
+//    @Persistent
+//    @Column(name="tod", nullable=false)
+//    @Temporal( TemporalType.TIMESTAMP)
+//    @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+//    @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+//    public DateTime getTerminationTime() {
+//        return terminationTime;
+//    }
+//
+//
+//    public void setTerminationTime( DateTime terminationTime ) {
+//        this.terminationTime = terminationTime;
+//    }
 }
 

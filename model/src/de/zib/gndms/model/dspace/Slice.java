@@ -19,7 +19,13 @@ package de.zib.gndms.model.dspace;
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
 import de.zib.gndms.common.dspace.service.SliceInformation;
+import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.TimedGridResource;
+import de.zib.gndms.model.common.TimedGridResourceItf;
+
+import org.apache.openjpa.persistence.Externalizer;
+import org.apache.openjpa.persistence.Factory;
+import org.apache.openjpa.persistence.Persistent;
 import org.joda.time.DateTime;
 
 import javax.persistence.*;
@@ -32,9 +38,8 @@ import javax.persistence.*;
  */
 @Entity( name="Slices" )
 @Table( name="slices", schema="dspace" )
-@Inheritance( strategy = InheritanceType.JOINED )
 //@MappedSuperclass
-public class Slice extends TimedGridResource {
+public class Slice extends GridResource implements TimedGridResourceItf{
  
     private String directoryId;
 
@@ -49,14 +54,19 @@ public class Slice extends TimedGridResource {
     private long totalStorageSize;
 
     private boolean published;
+ 
+    private DateTime terminationTime;
+    
+
+
 
     protected Slice( ) { }
 
     public Slice ( String idParam, DateTime ttParam, String didParam, SliceKind kndParam,
                    Subspace subsParam, String ownParam, long tssParam ) {
-        super( );
+    	super();
         setId( idParam );
-        setTerminationTime ( ttParam );
+        terminationTime= ttParam;
         published = false;
         directoryId = didParam;
         kind = kndParam;
@@ -67,7 +77,7 @@ public class Slice extends TimedGridResource {
 
     
     public Slice ( String didParam, SliceKind kndParam, Subspace subsParam, String ownParam ) {
-        super( );
+    	super();
         published = false;
         directoryId = didParam;
         kind = kndParam;
@@ -146,6 +156,9 @@ public class Slice extends TimedGridResource {
         return totalStorageSize;
     }
 
+    public void setTotalStorageSize( long totalStorageSize ) {
+        this.totalStorageSize = totalStorageSize;
+    }
 
     public void setPublished( boolean published ) {
         this.published = published;
@@ -157,10 +170,21 @@ public class Slice extends TimedGridResource {
         return published;
     }
 
+    
+  @Persistent
+  @Column(name="termination_time", nullable=false, updatable=true)
+  @Temporal( TemporalType.TIMESTAMP)
+  @Factory( "de.zib.gndms.model.util.JodaTimeForJPA.toDateTime" )
+  @Externalizer( "de.zib.gndms.model.util.JodaTimeForJPA.fromDateTime" )
+  public DateTime getTerminationTime() {
+      return terminationTime;
+  }
 
-    public void setTotalStorageSize( long totalStorageSize ) {
-        this.totalStorageSize = totalStorageSize;
-    }
+
+  public void setTerminationTime( DateTime terminationTime ) {
+      this.terminationTime = terminationTime;
+  }
+
     
 
     @Transient

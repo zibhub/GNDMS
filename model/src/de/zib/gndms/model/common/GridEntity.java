@@ -29,7 +29,11 @@ import javax.persistence.*;
 @MappedSuperclass
 public abstract class GridEntity extends ModelEntity {
     
-	private int version;
+    private int version;
+
+    // @Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
+	// String systemId
+	
 
     @Version
     public int getVersion() {
@@ -39,9 +43,6 @@ public abstract class GridEntity extends ModelEntity {
     public void setVersion(int version) {
         this.version = version;
     }
-
-    // @Column(name="sys_id", nullable=false, length=16, columnDefinition="CHAR", updatable=false)
-	// String systemId
 }
 
 
