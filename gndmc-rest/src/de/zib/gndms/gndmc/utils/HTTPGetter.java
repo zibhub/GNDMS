@@ -50,8 +50,9 @@ public class HTTPGetter {
 
     protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
     
-    private int timeout = 10000; // default: 10ms
-    
+    private int read_timeout = 86400000; //ms - 24 Stunden
+    static final private int CONNECTION_TIMEOUT = 10000;
+	
     private String keyStoreLocation;
     private String trustStoreLocation;
     private String password; // TODO: don't use same password for keystore and key?!
@@ -187,8 +188,8 @@ public class HTTPGetter {
     {
         CustomSSLContextRequestFactory requestFactory = new CustomSSLContextRequestFactory( sslContext );
         RestTemplate rt = new RestTemplate( requestFactory );
-        requestFactory.setConnectTimeout( getTimeout() );
-        requestFactory.setReadTimeout( getTimeout() );
+        requestFactory.setConnectTimeout(CONNECTION_TIMEOUT );
+        requestFactory.setReadTimeout( getReadTimeout() );
 
         try {
             return rt.execute( url, method, requestCallback, new ResponseExtractor< EnhancedResponseExtractor >() {
@@ -244,12 +245,12 @@ public class HTTPGetter {
     }
 
 
-    public int getTimeout() {
-        return timeout;
+    public int getReadTimeout() {
+        return read_timeout;
     }
 
 
-    public void setTimeout( int timeout ) {
-        this.timeout = timeout;
+    public void setReadTimeout( int timeout ) {
+        this.read_timeout = timeout;
     }
 }
