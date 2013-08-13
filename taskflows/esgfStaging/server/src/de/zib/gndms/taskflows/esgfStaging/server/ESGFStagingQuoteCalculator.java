@@ -40,6 +40,8 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
     private final String trustStoreLocation;
     private final String trustStorePassword;
 
+    private static final long DEFAULT_FILESIZE =10737418240L; //10 GB
+
     ESGFStagingQuoteCalculator( final String trustStoreLocation, final String trustStorePassword ) {
         this.trustStoreLocation = trustStoreLocation;
         this.trustStorePassword = trustStorePassword;
@@ -110,10 +112,17 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
             }
 
             // sum size of file from header
-            {
-                final long fileSize = responseExtractor.getHeaders().getContentLength();
-                sumFileSizes += fileSize;
-            }
+			{
+				long fileSize = responseExtractor.getHeaders().getContentLength();
+				logger.info("responseExtractor header " + responseExtractor.getHeaders().toString());
+
+				//due to a bug some server deliver content-lenght 0 if the size of a file is larger than 2 GB, 
+				//the workaround is to set filesize to a default value
+				if (fileSize <= 0) {
+					fileSize = DEFAULT_FILESIZE;
+				}
+				sumFileSizes += fileSize;
+			}
         }
 
         // TODO: estimate bandwidth to get better estimations for transfertime
