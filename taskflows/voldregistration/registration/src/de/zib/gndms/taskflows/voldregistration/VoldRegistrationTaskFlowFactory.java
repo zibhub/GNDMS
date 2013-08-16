@@ -170,7 +170,7 @@ public class VoldRegistrationTaskFlowFactory extends DefaultTaskFlowFactory< Vol
         		type = Type.valueOf(ttype); }
         	catch (IllegalArgumentException e) {}
         }
-        if( !getOfferTypeConfig().hasOption( "sitName" ) ) {
+        if( !getOfferTypeConfig().hasOption( "siteName" ) ) {
             logger.error( "site name for Vold registation not set" );
         }
         String name = getOfferTypeConfig().getOption("siteName","");
