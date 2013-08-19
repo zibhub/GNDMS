@@ -1,7 +1,7 @@
 #!/bin/bash
 
 VERSION="0.6.4"
-args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" )
+#args=( "-uri" "https://${GNDMS_HOST:-$(hostname -f)}:${GNDMS_PORT:-8443}/gndms/c3grid/" )
 
 cp="$HOME/.m2/repository/commons-codec/commons-codec/1.4/commons-codec-1.4.jar:$cp"
 cp="$HOME/.m2/repository/org/slf4j/jcl-over-slf4j/1.6.3/jcl-over-slf4j-1.6.3.jar:$cp"
@@ -39,6 +39,7 @@ cp="$HOME/.m2/repository/xpp3/xpp3_min/1.1.4c/xpp3_min-1.1.4c.jar:$cp"
 cp="$HOME/.m2/repository/stax/stax/1.2.0/stax-1.2.0.jar:$cp"
 cp="$GNDMS_SOURCE/taskflows/staging/client/staging-client/production:$cp"
 
-props=( )
+#props=( )
 
-exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.staging.client.ProviderStageInExample ${args[@]} "$@"
+#exec java -cp $cp ${props[@]} de.zib.gndms.taskflows.staging.client.ProviderStageInExample ${args[@]} "$@"
+exec java -cp $cp de.zib.gndms.taskflows.staging.client.ProviderStageInExample "$@"
