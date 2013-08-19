@@ -30,6 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+
 import java.io.File;
 import java.util.UUID;
 
@@ -147,8 +149,8 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
             directoryAux = getInjector().getInstance( DirectoryAux.class );
 
         // get nondetached objects
-        Subspace sp = em.find( Subspace.class, getModel().getId() );
-        sliceKind = em.find( SliceKind.class, sliceKind.getId() );
+        Subspace sp = em.find( Subspace.class, getModel().getId());
+        sliceKind = em.find( SliceKind.class, sliceKind.getId());
 
         if( ! sp.getCreatableSliceKinds( ).contains( sliceKind ) )
             throw new IllegalStateException("SliceKind not assigned to Subspace");
@@ -185,17 +187,12 @@ public class CreateSliceAction extends CreateTimedGridResourceAction<Subspace, S
         sl.setId( getId( ) );
         sl.setTerminationTime( getTerminationTime( ) );
         sl.setTotalStorageSize( storageSize );
-        logger.debug("space before available "+sp.getAvailableSize());
-
-        sp.requestSpace( sl.getTotalStorageSize() );
-        logger.debug("avail space after requesting "+sp.getAvailableSize());
 
         setPathForSlice(f.getAbsolutePath());
 		try {
 			em.persist(sl);
 		} catch (Exception e) {
 			logger.debug("couldn't execute transaction " + e);
-			sp.releaseSpace(sl.getTotalStorageSize());
 			directoryAux.deleteDirectory(uid, f.getAbsolutePath());
 		}
 

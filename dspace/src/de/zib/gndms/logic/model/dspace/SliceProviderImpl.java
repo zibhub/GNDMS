@@ -32,6 +32,8 @@ import de.zib.gndms.model.gorfx.types.ModelIdHoldingOrder;
 import de.zib.gndms.model.util.GridResourceCache;
 import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.neomodel.gorfx.Taskling;
+
+import org.apache.openjpa.persistence.InvalidStateException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +41,12 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 
 import java.io.File;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * The slice provider which handles the available subspaces providing a mapping
@@ -216,6 +220,9 @@ public class SliceProviderImpl implements SliceProvider {
 				throw new NoSuchElementException("Could not create slice ");
 			}
 
+			updateSubspace(subspaceId, slice.getTotalStorageSize());
+
+			
 			logger.debug("created slice id: " + slice.getId() + " terminationtime "
 					+ slice.getTerminationTime() + " slicesize "
 					+ slice.getTotalStorageSize());
@@ -233,6 +240,55 @@ public class SliceProviderImpl implements SliceProvider {
 
 	        return slice.getId();
 	    }
+
+	 
+	 private synchronized void updateSubspace(String subspaceID, long sliceSize) {
+
+			Subspace subspace;
+			AtomicInteger counter = new AtomicInteger(0);
+			counter.incrementAndGet();
+			logger.info("counter " + counter);
+			EntityManager em = emf.createEntityManager();
+
+			TxFrame tx = new TxFrame(em);
+
+			if (em.getTransaction().isActive()) {
+
+				try {
+					subspace = em.find(Subspace.class, subspaceID);
+					em.lock(subspace, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+					long newSize = subspace.getAvailableSize() - sliceSize;
+					subspace.setAvailableSize(newSize);
+			        logger.debug("available space "+newSize);
+					em.merge(subspace);
+					tx.commit();
+
+				} catch (Exception e) {
+					logger.error("Couldn't update subspace " + e);
+				}
+
+				finally {
+					try {
+						tx.finish();
+					} catch (Exception e) {
+						if (e instanceof InvalidStateException) {
+
+							if (counter.get() <= 3) {
+								logger.error("Updating available space failed, retrying... ");
+								updateSubspace(subspaceID, sliceSize);
+							} else
+								throw new IllegalStateException(
+										"Updating subspace failed "+e);
+						}
+						if (em != null && em.isOpen()) {
+							em.close();
+						}
+					}
+				}
+			}
+		
+	}
+
 	public Taskling deleteSlice(final String subspaceId, final String sliceId)
 			throws NoSuchElementException {
 

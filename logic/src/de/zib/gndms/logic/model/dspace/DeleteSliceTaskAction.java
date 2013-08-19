@@ -33,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -47,12 +48,12 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
 	private SubspaceProvider subspaceProvider;
 	private SliceProvider sliceProvider;
-	private final AtomicInteger counter = new AtomicInteger();
+	private AtomicInteger counter;
 
 
 	public DeleteSliceTaskAction() {
-
 		super(ModelIdHoldingOrder.class);
+		counter = new AtomicInteger(0);
 	}
 
 	@Override
@@ -157,6 +158,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
 		Subspace subspace;
 		counter.incrementAndGet();
+		logger.debug("counter "+counter);
 
 		EntityManager em = getEmf().createEntityManager();
 
@@ -166,6 +168,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
 			try {
 				subspace = em.find(Subspace.class, subspaceID);
+				em.lock(subspace, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 				long newSize = subspace.getAvailableSize() + sliceSize;
 				subspace.setAvailableSize(newSize);
 				em.merge(subspace);
@@ -180,14 +183,13 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 					tx.finish();
 				} catch (Exception e) {
 					if (e instanceof InvalidStateException) {
-						logger.error("InvalidStateException: Couldn't update subspace "
-								+ e);
-						if (counter.get() < 3) {
-							logger.error("retry to update available space... ");
+
+						if (counter.get() <= 3) {
+							logger.error("Updating available space failed, retrying... ");
 							updateSubspace(subspaceID, sliceSize);
 						} else
 							throw new IllegalStateException(
-									"Updating subspace failed");
+									"Updating subspace failed " + e);
 					}
 					if (em != null && em.isOpen()) {
 						em.close();

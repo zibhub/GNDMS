@@ -74,9 +74,16 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 	    getScriptFileByParam(config, "stagingCommand");
 
         restoreSecurityContext();
-        createNewSlice();
+		try {
+			createNewSlice();
+		} catch (Exception e) {
+			super.onFailed(wid, TaskState.FAILED, isRestartedTask, altTaskState);
+		}
         
         String gndmsUser = System.getProperty("user.name");
+
+        logger.debug("slice created, changing owner to " + gndmsUser);
+
         changeSliceOwner(findSlice(getSliceId()), gndmsUser);
 
         super.onCreated(wid, state, isRestartedTask, altTaskState);
@@ -93,10 +100,13 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
         }
 
         final Slice sliceModel = findSlice();
+		if (null == sliceModel) {
+			throw new IllegalStateException("Could not find slice id");
+		}
 
         doStaging(getOfferTypeConfig(), getOrderBean(), sliceModel);
       // TODO: wieso war das auskommentiert? Wie sollte das stattdessen fuktionieren?
-       changeSliceOwner( sliceModel ) ;
+        changeSliceOwner( sliceModel ) ;
         transitWithPayload( createResult(), TaskState.FINISHED );
         //super.onInProgress(wid, state, isRestartedTask, altTaskState);
     }
@@ -148,9 +158,11 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 		final TxFrame txf = new TxFrame(em);
 		try {
 			slice = findSlice();
-			if (slice == null)
+			if (slice == null) {
 				// MAYBE log this somewhere?
+				logger.info("slice doesn't exist");
 				return;
+			}
 			sliceDir = new File(slice.getSubspace().getPathForSlice(slice));
 			txf.commit();
 		}
