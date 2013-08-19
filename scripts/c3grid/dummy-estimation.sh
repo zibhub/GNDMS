@@ -20,7 +20,7 @@ done
 
 [ -z "${HAVE_LIKELY}" ] && echo "c3grid.StageFileRequest.Estimate.ExecutionLikelyUntil=5000"
 [ -z "${HAVE_VALID}" ] && echo "c3grid.StageFileRequest.Estimate.ResultValidUntil=600000"
-[ -z "${HAVE_MAXSIZE}" ] && echo "c3grid.StageFileRequest.Estimate.MaxSize=123456"
+[ -z "${HAVE_MAXSIZE}" ] && echo "c3grid.StageFileRequest.Estimate.MaxSize=854053"
 
 # exit 255 if unfulfillable
 # exit 254 if permission denied for DN
