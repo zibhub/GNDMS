@@ -13,12 +13,12 @@ repositories.remote << 'http://google-gson.googlecode.com/svn/mavenrepo'
 repositories.remote << 'http://guiceyfruit.googlecode.com/svn/repo/releases'
 repositories.remote << 'http://download.java.net/maven/2'
 repositories.remote << 'http://static.appfuse.org/repository'
-repositories.remote << 'http://repository.jboss.org/maven2'
+#repositories.remote << 'http://repository.jboss.org/maven2'
 repositories.remote << 'http://google-maven-repository.googlecode.com/svn/repository'
-repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
+#repositories.remote << 'http://repository.jboss.org/nexus/content/groups/public'
 repositories.remote << 'http://repo.marketcetera.org/maven'
 repositories.remote << 'http://people.apache.org/repo/m2-incubating-repository'
-
+repositories.remote << 'http://repo1.maven.org/maven2'
 
 # Don't touch below unless you know what you are doing
 # --------------------------------------------------------------------------------------------------
@@ -192,9 +192,9 @@ COMMONS_IO = transitive(['commons-io:commons-io:jar:2.0.1'])
 JETTY = ['org.mortbay.jetty:jetty:jar:6.1.11', 'org.mortbay.jetty:jetty-util:jar:6.1.11']
 GROOVY = ['org.codehaus.groovy:groovy:jar:1.6.9']
 ARGS4J = 'args4j:args4j:jar:2.0.14'
-DB_DERBY = ['org.apache.derby:derby:jar:10.5.3.0', 'org.apache.derby:derbytools:jar:10.5.3.0']
+DB_DERBY = ['org.apache.derby:derby:jar:10.10.1.1', 'org.apache.derby:derbytools:jar:10.10.1.1']
 
-HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.0', 'org.apache.httpcomponents:httpcore-nio:jar:4.0', 'org.apache.httpcomponents:httpclient:jar:4.0.1']
+HTTP_CORE = ['org.apache.httpcomponents:httpcore:jar:4.2', 'org.apache.httpcomponents:httpcore-nio:jar:4.2', 'org.apache.httpcomponents:httpclient:jar:4.2.5']
 JNA = [ 'com.sun.jna:jna:jar:3.0.9' ]
 
 # Grouped GT4 dependencies
@@ -251,7 +251,7 @@ VOLD_CLIENT = voldjars([ 'vold-common-0.1.0.jar', 'vold-client-0.1.0.jar' ])
 
 XSTREAM_DEPS= [ CGLIB, DOM4J, JETTISON, WSTX, JDOM, XOM, XPP, STAX, JODA_TIME ]
 # OpenJPA is required by gndms:model
-OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.1.1']
+OPENJPA = [ COMMONS_LANG, 'org.apache.openjpa:openjpa-all:jar:2.2.2']
 
 # NEODATAGRAPH = transitive('org.springframework.data:spring-data-neo4j:jar:1.0.0.M2')
 
