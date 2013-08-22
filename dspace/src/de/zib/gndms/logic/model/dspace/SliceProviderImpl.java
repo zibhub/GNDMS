@@ -25,6 +25,7 @@ import de.zib.gndms.logic.action.ProcessBuilderAction;
 import de.zib.gndms.logic.model.ModelUpdateListener;
 import de.zib.gndms.model.common.GridResource;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.QuotaExceededException;
 import de.zib.gndms.model.dspace.Slice;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -258,6 +259,10 @@ public class SliceProviderImpl implements SliceProvider {
 					subspace = em.find(Subspace.class, subspaceID);
 					em.lock(subspace, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 					long newSize = subspace.getAvailableSize() - sliceSize;
+					
+					  if( sliceSize > subspace.getAvailableSize() ){
+				            throw new QuotaExceededException( "It would need " + ( sliceSize - subspace.getAvailableSize() ) + " Bytes more space to create a ressource of " + sliceSize + " Bytes." );
+					  }
 					subspace.setAvailableSize(newSize);
 			        logger.debug("available space "+newSize);
 					em.merge(subspace);
