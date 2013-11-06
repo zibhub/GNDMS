@@ -166,7 +166,7 @@ body>#header {height:14px; }
 #stats {
   position: relative;
   top: 32px;
-  left: -86px;
+  left: 0px;
   padding: 0px;
   margin: 0px;
 	border-width: 4px;
