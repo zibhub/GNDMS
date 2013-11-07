@@ -5,8 +5,8 @@ version: 0.3.x
 layout: main
 ---
 
-Generation N Data Management System
-===================================
+Generation N Data Management System {{ page.version }}
+======================================================
 
 The Generation N Data Management System (**GNDMS**) is a set of 
 [Globus Toolkit 4](http://www.globus.org) WSRF services and associated tools
