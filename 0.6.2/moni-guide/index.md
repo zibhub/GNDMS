@@ -1,7 +1,7 @@
 ---
 title: GNDMDS Monitoring and Configuration Shell Guide
 root: ../..
-version: 0.6.x
+version: 0.6.2
 layout: wikistyle
 ---
 
