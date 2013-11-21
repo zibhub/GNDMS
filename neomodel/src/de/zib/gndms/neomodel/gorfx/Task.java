@@ -71,7 +71,9 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public static final String TASK_STATE_IDX = "taskStateIdx";
     public static final String TERMINATION_TIME_IDX = "terminationTimeIdx";
     public static final String RESOURCE_ID_IDX = "resourceIdIdx" ;
-    private final AtomicInteger counter = new AtomicInteger();
+    private AtomicInteger counter;
+    private AtomicInteger counter1;
+    private AtomicInteger counter3;
     private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
@@ -84,6 +86,9 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
 
     public Task(@NotNull ReprSession session, @NotNull String typeNick, @NotNull Node underlying) {
         super(session, typeNick, underlying);
+		counter = new AtomicInteger(0);
+		counter1 = new AtomicInteger(0);
+		counter3 = new AtomicInteger(0);
     }
 
 
@@ -139,16 +144,33 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         setProperty(DESCRIPTION_P, description);
     }
 
-    public TaskFlowType getTaskFlowType() {
-        final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
-        if (rel == null)
-            return null;
-        else
-            return new TaskFlowType(reprSession(), session().getGridName(), rel.getEndNode());
-    }
+	public TaskFlowType getTaskFlowType() {
+		TaskFlowType type = null;
+		counter1.getAndIncrement();
+		logger.debug("counter1 "+counter1);
+		try {
+			final Relationship rel = repr().getSingleRelationship(
+					TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
+			if (rel == null)
+				return null;
+			else
+				type = new TaskFlowType(reprSession(), session().getGridName(),
+						rel.getEndNode());
+		} catch (DeadlockDetectedException e) {
+			if (counter1.get() <= 3) {
+				logger.error("getting TaskFlowType failed, retrying... ");
+				getTaskFlowType();
+			} else
+				throw new IllegalStateException("getting TaskFlowType failed "
+						+ e);
+		}
+		return type;
+
+	}
 
     public void setTaskFlowType( @Nullable TaskFlowType taskFlowType ) {
 		counter.incrementAndGet();
+		logger.debug("counter "+counter);
         final Relationship rel = repr().getSingleRelationship(TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
         if (rel != null)
             rel.delete();
@@ -158,7 +180,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
 						taskFlowType.repr(getReprSession()),
 						TaskRelationships.OFFER_TYPE_REL);
 			} catch (DeadlockDetectedException e) {
-				if (counter.get() < 3) {
+				if (counter.get() <= 3) {
 					logger.error("setting TaskFlowType failed, retrying... ");
 					setTaskFlowType(taskFlowType);
 				} else
@@ -167,6 +189,39 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
 			}
         }
     }
+
+	public synchronized void createAndSetTaskFlowType() {
+		TaskFlowType type = null;
+		counter3.getAndIncrement();
+		logger.debug("counter3 createAndSetTaskFlowType " + counter3);
+		try {
+			final Relationship rel = repr().getSingleRelationship(
+					TaskRelationships.OFFER_TYPE_REL, Direction.OUTGOING);
+			if (rel != null) {
+
+				type = new TaskFlowType(reprSession(), session().getGridName(),
+						rel.getEndNode());
+			}
+			if (rel != null) {
+				rel.delete();
+			}
+			if (type != null) {
+
+				repr().createRelationshipTo(type.repr(getReprSession()),
+						TaskRelationships.OFFER_TYPE_REL);
+
+			}
+
+		} catch (DeadlockDetectedException e) {
+			if (counter3.get() <= 3) {
+				logger.error("creating and setting TaskFlowType failed, retrying... ");
+				getTaskFlowType();
+			} else
+				throw new IllegalStateException(
+						"creating and setting TaskFlowType failed " + e);
+		}
+
+	}
 
     public @Nullable
     DateTime getTerminationTime() {
@@ -319,7 +374,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
         Task subTask = session().createTask();
         Relationship rel = subTask.repr(reprSession()).createRelationshipTo(repr(),
                 TaskRelationships.PARENT_REL);
-        subTask.setTaskFlowType( getTaskFlowType() );
+        subTask.createAndSetTaskFlowType();
         subTask.setContract(getContract());
         subTask.setDescription(getDescription());
         subTask.setPayload(getPayload());
@@ -376,7 +431,7 @@ public class Task extends NodeGridResource<TaskAccessor> implements TaskAccessor
     public @Nullable Serializable getPayload() {
         return getProperty(Serializable.class, PAYLOAD_P, null);
     }
-    public void setPayload(final @Nullable Serializable payload) {
+    public synchronized void setPayload(final @Nullable Serializable payload) {
         if (payload == null && hasProperty(PAYLOAD_P))
             removeProperty(PAYLOAD_P);
         else
