@@ -220,8 +220,14 @@ public class SliceProviderImpl implements SliceProvider {
 				}
 				throw new NoSuchElementException("Could not create slice ");
 			}
-
+		try {
 			updateSubspace(subspaceId, slice.getTotalStorageSize());
+		} catch (RuntimeException e) {
+
+			directoryAux.deleteDirectory(dn, createSliceAction.getPath());
+			throw new RuntimeException(
+					"Slice creation failed " + e);
+		}
 
 			
 			logger.debug("created slice id: " + slice.getId() + " terminationtime "
@@ -257,7 +263,7 @@ public class SliceProviderImpl implements SliceProvider {
 
 				try {
 					subspace = em.find(Subspace.class, subspaceID);
-					em.lock(subspace, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+					em.lock(subspace, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 					long newSize = subspace.getAvailableSize() - sliceSize;
 					
 					  if( sliceSize > subspace.getAvailableSize() ){
@@ -270,6 +276,10 @@ public class SliceProviderImpl implements SliceProvider {
 
 				} catch (Exception e) {
 					logger.error("Couldn't update subspace " + e);
+					if (e instanceof QuotaExceededException){
+						throw new RuntimeException(
+								"no available space - couldn't create a slice " + e);
+					}
 				}
 
 				finally {
