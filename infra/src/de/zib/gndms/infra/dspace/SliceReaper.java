@@ -18,8 +18,13 @@ package de.zib.gndms.infra.dspace;
 
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.SliceProvider;
+import de.zib.gndms.model.common.QuotaExceededException;
 import de.zib.gndms.model.dspace.Slice;
+import de.zib.gndms.model.dspace.Subspace;
+import de.zib.gndms.model.util.TxFrame;
 import de.zib.gndms.stuff.threading.PeriodicalJob;
+
+import org.apache.openjpa.persistence.InvalidStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +37,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -43,6 +52,8 @@ import java.util.Properties;
  */
 public class SliceReaper extends PeriodicalJob {
     public static final String LIST_ALL_SLICES = "listAllSlices";
+    final private static String LIST_ALL_SLICES_OF_SUBSPACE = "listSlicesOfSubspace";
+
 
     private long period; // in milliseconds
     private String from;
@@ -60,35 +71,116 @@ public class SliceReaper extends PeriodicalJob {
         return "SliceReaper";
     }
 
-    protected void call() {
-        EntityManager em = emf.createEntityManager();
-        Query query = em.createNamedQuery( LIST_ALL_SLICES );
-        for( Object o : query.getResultList() ) {
-            final Slice sliceModel = Slice.class.cast( o );
-            final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
+	protected void call() {
+		EntityManager em = emf.createEntityManager();
+		try {
+			Query query = em.createNamedQuery(LIST_ALL_SLICES);
+			for (Object o : query.getResultList()) {
+				final Slice sliceModel = Slice.class.cast(o);
+				final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice(
+						sliceModel);
 
-            if( null == slice ) {
-                // this is not happening
-                continue;
-            }
+				if (null == slice) {
+					// this is not happening
+					continue;
+				}
 
-            // perhaps, slice is too old
-            if( slice.getTerminationTime().isBeforeNow() ) {
-                if( onSliceTooOld( slice ) )
-                    continue;
-            }
+				// perhaps, slice is too old
+				if (slice.getTerminationTime().isBeforeNow()) {
+					if (onSliceTooOld(slice))
+						continue;
+				}
+			}
+		} finally {
+			em.close();
+		}
 
-            if( slice.getDiskUsage() > slice.getTotalStorageSize() )
-//            	 logInformation(slice, "");
-//                if( onSliceTooBig( slice ) )
-                    continue;
-        }
-    }
+		adjustSubspace();
+	}
+		
 
+	private void adjustSubspace() {
+		List<String> subspaces = new ArrayList<String>();
+		EntityManager em = emf.createEntityManager();
 
-    private boolean onSliceTooOld( Slice slice ) {
+		Query query1 = em.createNamedQuery("listAllSubspaceIds");
+
+		for (Object o : query1.getResultList()) {
+			final String id = String.class.cast(o);
+			subspaces.add(id);
+		}
+		em.close();
+
+		for (String id : subspaces) {
+
+			EntityManager entityManager = emf.createEntityManager();
+
+			logger.info("Subspace id " + id);
+
+			Query query3 = entityManager
+					.createNamedQuery("getUsedSpace")
+					.setParameter("subspace", id);
+			long usedSize = Long.parseLong(query3.getSingleResult().toString());
+			logger.info("Subspace " + id + " Used Storage Size " + usedSize);
+
+				TxFrame tx = new TxFrame(entityManager);
+
+				if (entityManager.getTransaction().isActive()) {
+
+					try {
+						Subspace subspace = entityManager.find(Subspace.class, id);
+
+						logger.debug("subspace " + id + " avail space: "
+								+ subspace.getAvailableSize());
+						long newSize = subspace.getTotalSize() - usedSize;
+
+						if (subspace.getAvailableSize() != newSize) {
+							entityManager.lock(subspace, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+					
+						subspace.setAvailableSize(newSize);
+						logger.debug("Update subspace: " + id
+								+ " available space set to: "
+								+ newSize);
+				        entityManager.merge(subspace);
+						tx.commit();
+						}
+					} catch (Exception e) {
+						logger.error("Couldn't update subspace " + e);
+						
+					}
+
+					finally {
+						try {
+							tx.finish();
+						} catch (Exception e) {
+							if (e instanceof InvalidStateException) {
+
+								
+									logger.error("Updating available space failed... ");
+								
+							if (entityManager != null && entityManager.isOpen()) {
+								entityManager.close();
+							}
+						}
+					}
+						
+						EntityManager manager = emf.createEntityManager();
+						Subspace subspace1 = manager.find(Subspace.class, id);
+						logger.debug("Subspace: " + id
+								+ " available space is: "
+								+ subspace1.getAvailableSize());
+						manager.close();
+				}
+
+			}
+
+		}
+
+	}
+
+	private boolean onSliceTooOld( Slice slice ) {
         try {
-            sliceProvider.deleteSlice( slice.getSubspace().getId(), slice.getId() );
+            sliceProvider.deleteSlice( slice.getSubspace().getId(), slice.getId(), true );
         } catch( NoSuchElementException e ) {
             logger.error( "Could not delete slice " + slice.getId(), e );
         }

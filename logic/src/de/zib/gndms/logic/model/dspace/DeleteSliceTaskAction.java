@@ -49,6 +49,7 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 	private SubspaceProvider subspaceProvider;
 	private SliceProvider sliceProvider;
 	private AtomicInteger counter;
+	private boolean updateSpaceRequired =true;
 
 
 	public DeleteSliceTaskAction() {
@@ -149,8 +150,9 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 		deleteModelEntity(Slice.class);
 		sliceProvider.invalidate(slice.getId());
 
-		updateSubspace(subspaceID, sliceSize);
-
+		if (updateSpaceRequired) {
+			updateSubspace(subspaceID, sliceSize);
+		}
 		autoTransitWithPayload(new VoidTaskResult());
 	}
 
@@ -158,7 +160,8 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
 		Subspace subspace;
 		counter.incrementAndGet();
-		logger.debug("counter "+counter);
+		logger.debug("counter " + counter);
+		Exception lastException = null;
 
 		EntityManager em = getEmf().createEntityManager();
 
@@ -168,49 +171,39 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 
 			try {
 				subspace = em.find(Subspace.class, subspaceID);
-				em.lock(subspace, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
 				long newSize = subspace.getAvailableSize() + sliceSize;
+				em.lock(subspace, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
 				subspace.setAvailableSize(newSize);
+				logger.debug("Subspace "+subspaceID+" available space " + newSize);
 				em.merge(subspace);
 				tx.commit();
-
 			} catch (Exception e) {
 				logger.error("Couldn't update subspace " + e);
+				lastException = e;
+
 			}
 
 			finally {
-				try {
-					tx.finish();
-				} catch (Exception e) {
-					if (e instanceof InvalidStateException) {
 
-						if (counter.get() <= 3) {
-							logger.error("Updating available space failed, retrying... ");
-							updateSubspace(subspaceID, sliceSize);
-						} else
-							throw new IllegalStateException(
-									"Updating subspace failed " + e);
-					}
-					if (em != null && em.isOpen()) {
-						em.close();
-					}
+				tx.finish();
+				if (em != null && em.isOpen()) {
+					em.close();
+
+				}
+				if (null != lastException
+						&& lastException instanceof InvalidStateException) {
+
+					if (counter.get() <= 3) {
+						logger.error("Updating available space failed, retrying... ");
+						updateSubspace(subspaceID, sliceSize);
+					} else
+						throw new IllegalStateException(
+								"Updating subspace failed " + lastException);
 				}
 			}
 		}
-
 	}
 
-	private void updateSubspace(Subspace sp) {
-		EntityManager em = getEmf().createEntityManager();
-		TxFrame tx = new TxFrame(em);
-		try {
-			em.merge(sp);
-			tx.commit();
-		} finally {
-			tx.finish();
-		}
-
-	}
 
 	@Inject
 	public void setSliceProvider(SliceProvider sliceProvider) {
@@ -220,5 +213,10 @@ public class DeleteSliceTaskAction extends ModelTaskAction<ModelIdHoldingOrder> 
 	@Inject
 	public void setSubspaceProvider(SubspaceProvider subspaceProvider) {
 		this.subspaceProvider = subspaceProvider;
+	}
+
+	public void requiredUpdateSpace(boolean updateSpace) {
+		updateSpaceRequired = updateSpace;
+		
 	}
 }

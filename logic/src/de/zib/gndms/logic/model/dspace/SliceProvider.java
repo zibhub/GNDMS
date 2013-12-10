@@ -60,7 +60,7 @@ public interface SliceProvider {
 
     void updateSlice( Slice slice, EntityManager entityManager );
 
-    Taskling deleteSlice( String subspaceId, String sliceId ) throws NoSuchElementException;
+    Taskling deleteSlice( String subspaceId, String sliceId, boolean updateRequired ) throws NoSuchElementException;
     
     void invalidate( String sliceId );
 

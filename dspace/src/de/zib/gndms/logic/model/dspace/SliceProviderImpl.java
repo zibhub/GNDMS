@@ -178,10 +178,12 @@ public class SliceProviderImpl implements SliceProvider {
 			}
 			throw new NoSuchElementException("Could not create slice ");
 		}
+		updateSubspace(subspaceId, slice.getTotalStorageSize());
 
 		logger.debug("created slice id: " + slice.getId() + " terminationtime "
 				+ slice.getTerminationTime() + " slicesize "
 				+ slice.getTotalStorageSize());
+
 		return slice.getId();
 	}
 
@@ -250,9 +252,9 @@ public class SliceProviderImpl implements SliceProvider {
 
 	 
 	 private synchronized void updateSubspace(String subspaceID, long sliceSize) {
-
+		 	AtomicInteger counter = new AtomicInteger(0);
 			Subspace subspace;
-			AtomicInteger counter = new AtomicInteger(0);
+			
 			counter.incrementAndGet();
 			logger.info("counter " + counter);
 			EntityManager em = emf.createEntityManager();
@@ -269,7 +271,7 @@ public class SliceProviderImpl implements SliceProvider {
 					  if( sliceSize > subspace.getAvailableSize() ){
 				            throw new QuotaExceededException( "It would need " + ( sliceSize - subspace.getAvailableSize() ) + " Bytes more space to create a ressource of " + sliceSize + " Bytes." );
 					  }
-					subspace.setAvailableSize(newSize);
+					subspace.setAvailableSize(Math.min(newSize, subspace.getTotalSize()));
 			        logger.debug("available space "+newSize);
 					em.merge(subspace);
 					tx.commit();
@@ -304,7 +306,7 @@ public class SliceProviderImpl implements SliceProvider {
 		
 	}
 
-	public Taskling deleteSlice(final String subspaceId, final String sliceId)
+	public Taskling deleteSlice(final String subspaceId, final String sliceId, boolean updateRequired)
 			throws NoSuchElementException {
 
 		if (!cache.exists(sliceId)) {
@@ -323,6 +325,7 @@ public class SliceProviderImpl implements SliceProvider {
 		system.getInstanceDir().getSystemAccessInjector()
 				.injectMembers(deleteAction);
 		deleteAction.setEmf(emf);
+		deleteAction.requiredUpdateSpace(updateRequired);
 		// actionConfigurer.configureAction(deleteAction);
 
 		final Order order = new ModelIdHoldingOrder(sliceId);
