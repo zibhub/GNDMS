@@ -2,4 +2,5 @@ lsi:         false
 markdown:    maruku
 permalink:   pretty
 pygments:    true
-exclude:     excluded,.git
+exclude:     [excluded,.git]
+
