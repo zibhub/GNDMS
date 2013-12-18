@@ -18,15 +18,15 @@ package de.zib.gndms.model.dspace;
 
 
 import de.zib.gndms.common.dspace.SliceConfiguration;
-import de.zib.gndms.common.dspace.service.SliceInformation;
 import de.zib.gndms.model.common.GridResource;
-import de.zib.gndms.model.common.TimedGridResource;
 import de.zib.gndms.model.common.TimedGridResourceItf;
 
 import org.apache.openjpa.persistence.Externalizer;
 import org.apache.openjpa.persistence.Factory;
 import org.apache.openjpa.persistence.Persistent;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 
@@ -57,6 +57,7 @@ public class Slice extends GridResource implements TimedGridResourceItf{
  
     private DateTime terminationTime;
     
+	private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
 
@@ -187,15 +188,27 @@ public class Slice extends GridResource implements TimedGridResourceItf{
 
     
 
-    @Transient
-    public void setConfiguration( SliceConfiguration sliceConfiguration ) {
-        if( sliceConfiguration.getSize() != null )
-            setTotalStorageSize( sliceConfiguration.getSize() );
-        if( sliceConfiguration.getTerminationTime() != null )
-            setTerminationTime( sliceConfiguration.getTerminationTime() );
-        if( sliceConfiguration.getGroup() != null )
-            setGroup( sliceConfiguration.getGroup() );
-    }
+	@Transient
+	public void setConfiguration(SliceConfiguration sliceConfiguration) {
+		if (sliceConfiguration.getSize() != null) {
+			setTotalStorageSize(sliceConfiguration.getSize());
+			logger.info("slice " + this.getId()
+					+ " slice size has been updated to "
+					+ sliceConfiguration.getSize());
+		}
+		if (sliceConfiguration.getTerminationTime() != null) {
+			setTerminationTime(sliceConfiguration.getTerminationTime());
+			logger.info("slice " + this.getId()
+					+ " termination time has been updated to "
+					+ sliceConfiguration.getTerminationTime());
+		}
+
+		if (sliceConfiguration.getGroup() != null) {
+			setGroup(sliceConfiguration.getGroup());
+			logger.info("slice " + this.getId() + " group has been updated to "
+					+ sliceConfiguration.getGroup());
+		}
+	}
 
 
     @Transient
