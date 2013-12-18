@@ -19,12 +19,23 @@ import de.zib.gndms.common.model.gorfx.types.*;
 import de.zib.gndms.common.rest.Facets;
 import de.zib.gndms.common.rest.GNDMSResponseHeader;
 import de.zib.gndms.common.rest.Specifier;
+
+
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
+
 
 import java.util.List;
 import java.util.UUID;
+
+
+import java.lang.reflect.*;
+import java.lang.Math;
 
 /**
  * @author try ma ik jo rr a zib
@@ -40,10 +51,10 @@ import java.util.UUID;
 public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
 
     private GORFXClient gorfxClient; ///< A ready to uses instance of the gorfx client.
-    private TaskFlowClient tfClient; ///< A ready to uses instance of the taskflow client.
+    public TaskFlowClient tfClient; ///< A ready to uses instance of the taskflow client.
     private TaskClient taskClient;   ///< A ready to uses instance of the task client.
-    private long pollingDelay = 1000; ///< delay in ms to poll the task status, once the task is running.
-
+    private int pollingDelay = 1000; ///< delay in ms to poll the task status, once the task is running.
+    protected final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
     /**
      * @brief Executes a complete task flow.
@@ -93,81 +104,193 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      * the tasflow execution.
      * @param wid the workflow id
      */
-    public void execTF( Order order, String dn, boolean withQuote, final Quote desiredQuote,
-                        final String wid ) {
+	public void execTF(Order order, String dn, boolean withQuote,
+			final Quote desiredQuote, final String wid) {
+		GNDMSResponseHeader context = setupContext(new GNDMSResponseHeader());
 
-        GNDMSResponseHeader context = setupContext(new GNDMSResponseHeader());
+		if (null == gorfxClient) {
+			throw new IllegalStateException(
+					"You need to set gorfxClient before executing a TaskFlow!");
+		}
 
-        if( null == gorfxClient ) {
-            throw new IllegalStateException( "You need to set gorfxClient before executing a TaskFlow!" );
-        }
+		/**
+		 * \code this is important
+		 */
+		// ResponseEntity<Specifier<Facets>> res =gorfxClient.createTaskFlow(
+		// order.getTaskFlowType(), order, dn, wid, context);
 
-        /**
-         * \code this is important
-         */              
+		// sends the order and creates the task flow
 
-        // sends the order and creates the task flow
-        ResponseEntity<Specifier<Facets>> res = gorfxClient.createTaskFlow( order.getTaskFlowType(), order, dn,
-                wid, context );
+		Class clz0 = gorfxClient.getClass();
+		Class[] argumentTypes0 = { order.getTaskFlowType().getClass(),
+				Order.class, dn.getClass(), wid.getClass(), MultiValueMap.class };
+		Object[] arguments0 = { order.getTaskFlowType(), order, dn, wid,
+				context };
 
-        if ( !HttpStatus.CREATED.equals( res.getStatusCode() ) ) {
-            throw new RuntimeException(
-                    "createTaskFlow failed "
-                            + res.getStatusCode().name()
-                            + " (" + res.getStatusCode() + ")"
-                            + " on URL " + gorfxClient.getServiceURL()
-            );
-        }
+		ResponseEntity<Specifier<Facets>> res0 = (ResponseEntity<Specifier<Facets>>) call(
+				clz0, gorfxClient, "createTaskFlow", argumentTypes0, arguments0, 3);
 
-        // the taskflow id is stored under "id" in the urlmap
-        String tid = res.getBody().getUriMap().get( "id" );
+		if (res0 instanceof ResponseEntity) {
+			logger.debug(res0.toString());
+		}
 
-        Integer q = null;
-        if( withQuote ) {
-            if( null == tfClient ) {
-                throw new IllegalStateException( "No TaskFlowClient set." );
-            }
+		if (res0 == null)
+			throw new RuntimeException("createTaskFlow failed");
+		if (!HttpStatus.CREATED.equals(res0.getStatusCode())) {
+			throw new RuntimeException("createTaskFlow failed "
+					+ res0.getStatusCode().name() + " (" + res0.getStatusCode()
+					+ ")" + " on URL " + gorfxClient.getServiceURL());
+		}
 
-            if( desiredQuote != null ) {
-                tfClient.setQuote( order.getTaskFlowType(), tid, desiredQuote, dn, wid );
-            }
-            // queries the quotes for the task flow
-            ResponseEntity<List<Specifier<Quote>>> res2 = tfClient.getQuotes( order.getTaskFlowType(), tid, dn,
-                    wid );
+		// the taskflow id is stored under "id" in the urlmap
+		String tid = res0.getBody().getUriMap().get("id");
 
-            if ( !HttpStatus.OK.equals( res2.getStatusCode() ) )
-                throw new RuntimeException( "getQuotes failed " + res2.getStatusCode().name() );
+		Integer q = null;
+		if (withQuote) {
+			if (null == tfClient) {
+				throw new IllegalStateException("No TaskFlowClient set.");
+			}
 
-            // lets the implementors of this class choose a quote
-            q = selectQuote( res2.getBody() );
-        }
+			if (desiredQuote != null) {
 
-        //
-        // 'til here it is valid to change the order and request new quotes
-        // 
-        
-        // accepts quote q and triggers task creation
-        ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask( order.getTaskFlowType(), tid, q, dn,
-                wid );
+				Class clz1 = tfClient.getClass();
+				Class[] argumentTypes1 = { order.getTaskFlowType().getClass(),
+						tid.getClass(), desiredQuote.getClass(), dn.getClass(),
+						wid.getClass() };
+				Object[] arguments1 = { order.getTaskFlowType(), tid,
+						desiredQuote, dn, wid };
+				logger.debug("calling set Quote");
 
-        if(! HttpStatus.CREATED.equals( res3.getStatusCode() ) )
-            throw new RuntimeException( "createTask failed " + res3.getStatusCode().name() );
+				call(clz1, tfClient, "setQuote", argumentTypes1, arguments1, 3);
 
-        final Specifier<Facets> taskSpecifier = res3.getBody();
+			}
+			// queries the quotes for the task flow
 
-        // let the implementor do smart things with the task specifier
-        handleTaskSpecifier( taskSpecifier );
+			Class clz2 = tfClient.getClass();
+			Class[] argumentTypes2 = { order.getTaskFlowType().getClass(),
+					tid.getClass(), dn.getClass(), wid.getClass() };
+			Object[] arguments2 = { order.getTaskFlowType(), tid, dn, wid };
+			logger.debug("calling get Quotes");
 
+			ResponseEntity<List<Specifier<Quote>>> res2 = (ResponseEntity<List<Specifier<Quote>>>) call(
+					clz2, tfClient, "getQuotes", argumentTypes2, arguments2, 3);
 
-        // the task id is stored under "taskId" in the specifiers urlmap
-        waitForFinishOrFail( taskSpecifier, this, taskClient, pollingDelay, dn, wid );
+			if (res2 instanceof ResponseEntity) {
+				logger.debug(res2.toString());
+			}
 
-        /**
-         * \endcode
-         */
-    }
+			if (res2 == null)
+				throw new RuntimeException("getQuotes failed ");
+			if (!HttpStatus.OK.equals(res2.getStatusCode()))
+				throw new RuntimeException("getQuotes failed "
+						+ res2.getStatusCode().name());
 
+			// lets the implementors of this class choose a quote
+			q = selectQuote(res2.getBody());
+		}
 
+		//
+		// 'til here it is valid to change the order and request new quotes
+		//
+
+		// accepts quote q and triggers task creation
+		// ResponseEntity<Specifier<Facets>> res3 = tfClient.createTask(
+		// order.getTaskFlowType(), tid, q, dn,
+		// wid );
+
+		Class clz3 = tfClient.getClass();
+		Class[] argumentTypes3 = { order.getTaskFlowType().getClass(),
+				tid.getClass(), q.getClass(), dn.getClass(), wid.getClass() };
+		Object[] arguments3 = { order.getTaskFlowType(), tid, q, dn, wid };
+		
+		logger.debug("calling createTask");
+
+		ResponseEntity<Specifier<Facets>> res3 = (ResponseEntity<Specifier<Facets>>) call(
+				clz3, tfClient, "createTask", argumentTypes3, arguments3, 3);
+		if (res3 == null)
+			throw new RuntimeException("createTask failed ");
+
+		if (!HttpStatus.CREATED.equals(res3.getStatusCode()))
+			throw new RuntimeException("createTask failed "
+					+ res3.getStatusCode().name());
+
+		final Specifier<Facets> taskSpecifier = res3.getBody();
+
+		// let the implementor do smart things with the task specifier
+		handleTaskSpecifier(taskSpecifier);
+
+		// the task id is stored under "taskId" in the specifiers urlmap
+		// waitForFinishOrFail( taskSpecifier, this, taskClient, pollingDelay,
+		// dn, wid );
+
+		Class[] argumentTypes = { taskSpecifier.getClass(),
+				TaskStatusHandler.class, TaskClient.class, int.class,
+				dn.getClass(), wid.getClass() };
+		Object[] arguments = { taskSpecifier, this, taskClient, pollingDelay,
+				dn, wid };
+		logger.debug("calling status of the request");
+
+		call(this.getClass(), this, "waitForFinishOrFail", argumentTypes,
+				arguments, 3);
+		/**
+		 * \endcode
+		 */
+		
+	}
+
+	public Object call(Class clz, Object objectToCall, String methodToCall,
+			Class[] argumentTypes, Object[] arguments, int retries) {
+		Object expectedResult = null;
+		try {
+
+			expectedResult = callMethod(
+					clz.getMethod(methodToCall, argumentTypes), objectToCall,
+					retries, arguments);
+
+		} catch (SecurityException e) {
+			logger.debug("calling  " + methodToCall + " failed: " + e);
+		} catch (NoSuchMethodException e) {
+			logger.debug("calling  " + methodToCall + " failed: " + e);
+		}
+
+		return expectedResult;
+	}
+    
+	public Object callMethod(Method m, Object o, int retries, Object... params) {
+		int numberOfRetries = 1;
+		Exception lastException = null;
+		Object result = null;
+
+		boolean done = false;
+		while (!done && (numberOfRetries++ <= retries)) {
+
+			try {
+				result = m.invoke(o, params);
+				done = true;
+			} catch (ResourceAccessException e) {
+				lastException = e;
+				logger.debug("Rest-Attempt failed, retrying..." + e);
+			} catch (IllegalArgumentException e) {
+				logger.debug("calling method failed " + e);
+				break;
+			} catch (IllegalAccessException e) {
+				logger.debug("calling method failed " + e);
+				break;
+			} catch (InvocationTargetException e) {
+				logger.debug("calling method failed " + e);
+				break;
+			} catch (Exception e) {
+				lastException = e;
+			}
+		}
+		if (!done) {
+			throw new RuntimeException(
+					String.format(
+							"Multiple Attempts of Method-calls %s failed",
+							m.getName()), lastException);
+		}
+		return result;
+	}
     /**
      * Polls a running task, until its either finished or failed.
      *
@@ -183,7 +306,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
     public static TaskStatus waitForFinishOrFail( final Specifier<Facets> taskSpecifier,
                                                   final TaskStatusHandler statusHandler,
                                                   final TaskClient taskClient, 
-                                                  final long pollingDelay,
+                                                  final int pollingDelay,
                                                   final String dn,
                                                   final String wid )
     {
@@ -193,6 +316,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
 
         ResponseEntity<TaskStatus> stat;
         boolean done = false;
+        int numberOfPolls =0;
         do {
             // queries the status of the task execution
             stat = taskClient.getStatus( taskId, dn, wid );
@@ -203,7 +327,8 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
             // allows the implementor to do something with the task status
             statusHandler.handleStatus( ts );
             try {
-                Thread.sleep( pollingDelay );
+                Thread.sleep( Math.min(pollingDelay+500*numberOfPolls, pollingDelay+150 ));
+                numberOfPolls++;
             } catch ( InterruptedException e ) {
                 throw new RuntimeException( e );
             }
@@ -257,7 +382,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      */
     public static TaskStatus waitForFinishOrFail( final Specifier<Facets> taskSpecifier,
                                                   final TaskClient taskClient,
-                                                  final long pollingDelay,
+                                                  final int pollingDelay,
                                                   final String dn,
                                                   final String wid )
     {
@@ -420,7 +545,7 @@ public abstract class AbstractTaskFlowExecClient implements TaskStatusHandler {
      * 
      * @param pollingDelay The new value of ::pollingDelay.
      */
-    public void setPollingDelay( long pollingDelay ) {
+    public void setPollingDelay( int pollingDelay ) {
         this.pollingDelay = pollingDelay;
     }
 
