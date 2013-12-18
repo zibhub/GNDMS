@@ -111,14 +111,16 @@ public abstract class ModelTaskAction<O extends ModelIdHoldingOrder> extends
 		M model;
 		EntityManager em = getEmf().createEntityManager();
 		TxFrame tx = new TxFrame(em);
-		try {
-			model = em.find(modelClass, modelId);
-			em.remove(model);
-			tx.commit();
-		} finally {
-			tx.finish();
-			if (em != null && em.isOpen()) {
-				em.close();
+		if (em.getTransaction().isActive()) {
+			try {
+				model = em.find(modelClass, modelId);
+				em.remove(model);
+				tx.commit();
+			} finally {
+				tx.finish();
+				if (em != null && em.isOpen()) {
+					em.close();
+				}
 			}
 		}
 	}
