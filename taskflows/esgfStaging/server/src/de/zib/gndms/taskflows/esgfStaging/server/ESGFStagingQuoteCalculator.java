@@ -86,7 +86,7 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
             setupSSL = prepareProxy();
         }
         catch( Throwable e ) {
-            logger.error( "Could not authenticate against ESGF Provider." );
+			logger.error("Could not authenticate against ESGF Provider. " + e);
             throw new UnsatisfiableOrderException( "Could not authenticate against ESGF Provider.", e );
         }
 
@@ -162,9 +162,13 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
         final SetupSSL setupSSL = new SetupSSL();
 
         final MyProxyToken token = getOrder().getMyProxyToken().get( ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) );
-        if( null == token )
-            throw new IllegalArgumentException( "No for purpose " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
-
+		if (null == token) {
+			logger.error("cannot get MyProxyToken");
+			logger.error("No for purpose "	+ ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get(0)+ " token provided in Order.");
+			throw new IllegalArgumentException("No for purpose "
+					+ ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get(0)
+					+ " token provided in Order.");
+		}
         final String password = token.getPassword();
 
         setupSSL.setTrustStoreLocation( trustStoreLocation );
@@ -181,7 +185,7 @@ public class ESGFStagingQuoteCalculator extends AbstractQuoteCalculator<ESGFStag
             getCredentialProvider().installCredentials( params );
         }
         catch ( Exception e ) {
-            logger.debug( "Couldn't deploy credentials " );
+			logger.debug("Couldn't deploy credentials " + e);
             throw new IllegalStateException( "Couldn't deploy credentials: ", e );
         }
 
