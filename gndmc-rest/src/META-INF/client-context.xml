@@ -10,7 +10,7 @@
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate">
         <constructor-arg>
             <bean class="org.springframework.http.client.SimpleClientHttpRequestFactory">
-                <property name="connectTimeout" value="10000"/>
+                <property name="connectTimeout" value="20000"/>
             </bean>
         </constructor-arg>
         <property name="messageConverters">
