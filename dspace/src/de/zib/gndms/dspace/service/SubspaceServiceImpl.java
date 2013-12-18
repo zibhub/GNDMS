@@ -32,6 +32,7 @@ import de.zib.gndms.kit.security.SpringSecurityContextHolder;
 import de.zib.gndms.logic.model.dspace.NoSuchElementException;
 import de.zib.gndms.logic.model.dspace.*;
 import de.zib.gndms.model.common.NoSuchResourceException;
+import de.zib.gndms.model.common.QuotaExceededException;
 import de.zib.gndms.model.common.types.GNDMSUserDetailsInterface;
 import de.zib.gndms.model.dspace.SliceKind;
 import de.zib.gndms.model.dspace.Subspace;
@@ -59,6 +60,7 @@ import javax.persistence.PersistenceUnit;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @RequestMapping(value = "/dspace")
@@ -373,15 +375,22 @@ public class SubspaceServiceImpl implements SubspaceService {
         	GNDMSUserDetailsInterface userDetails = ( GNDMSUserDetailsInterface ) securityContextHolder.getSecurityContext().getAuthentication().getPrincipal();
 
 			String slice = null;
+            Specifier<Void> spec = new Specifier<Void>();
 			try {
-				slice = sliceProvider.createSlice( subspaceId, sliceKindId, dn, userDetails.getLocalUser(), terminationTime, sliceSize );
+				slice = sliceProvider.createSlice(subspaceId, sliceKindId, dn,
+						userDetails.getLocalUser(), terminationTime, sliceSize);
 			} catch (Exception e) {
-				logger.error("failed to create a slice "+e);
+				logger.error("failed to create a slice " + e);
+				if (e instanceof QuotaExceededException) {
+					return new ResponseEntity<Specifier<Void>>(spec, headers,
+							HttpStatus.METHOD_FAILURE);
+				} else
+					return new ResponseEntity<Specifier<Void>>(spec, headers,
+							HttpStatus.NOT_FOUND);
 			}
             
             subspaceProvider.invalidate( subspaceId );
             // generate specifier and return it
-            Specifier<Void> spec = new Specifier<Void>();
 
 			if (slice == null) {
 				logger.error("failed to create a slice ");
@@ -389,13 +398,13 @@ public class SubspaceServiceImpl implements SubspaceService {
 						HttpStatus.NOT_FOUND);
 			}
 
-            HashMap<String, String> urimap = new HashMap<String, String>( 2 );
+            Map<String, String> urimap = new ConcurrentHashMap<String, String>();
             urimap.put( UriFactory.SERVICE, "dspace" );
             urimap.put( UriFactory.SUBSPACE, subspaceId );
             urimap.put( UriFactory.SLICE_KIND, sliceKindId );
             urimap.put( UriFactory.SLICE, slice );
             urimap.put( UriFactory.BASE_URL, baseUrl );
-            spec.setUriMap( new HashMap<String, String>( urimap ) );
+            spec.setUriMap( new ConcurrentHashMap<String, String>( urimap ) );
             spec.setUrl( uriFactory.sliceUri( urimap, null ) );
 
             return new ResponseEntity< Specifier< Void > >( spec, headers,

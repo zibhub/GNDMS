@@ -147,7 +147,8 @@ public class SliceProviderImpl implements SliceProvider {
 	}
 
 	@Override
-	public String createSlice( String subspaceId, String sliceKindId, String dn, DateTime ttm, long sliceSize ) throws NoSuchElementException{
+	public String createSlice(String subspaceId, String sliceKindId, String dn,
+			DateTime ttm, long sliceSize) throws NoSuchElementException {
 
 		if (!sliceKindProvider.exists(subspaceId, sliceKindId)) {
 			logger.info("Illegal Access: slicekind " + sliceKindId
@@ -171,14 +172,24 @@ public class SliceProviderImpl implements SliceProvider {
 			slice = createSliceAction.call();
 		} catch (Exception e) {
 			logger.error("couldn't execute transaction " + e);
-			//do cleanUp - remove currently created directory on the filesystem if the slice couldn't be commited into database.
+			// do cleanUp - remove currently created directory on the filesystem
+			// if the slice couldn't be commited into database.
 			if (createSliceAction.getPath() != null) {
 				directoryAux.deleteDirectory(dn, createSliceAction.getPath());
-				logger.debug("delete directory " +createSliceAction.getPath() + " due to failed transaction " + e);
+				logger.debug("delete directory " + createSliceAction.getPath()
+						+ " due to failed transaction " + e);
 			}
 			throw new NoSuchElementException("Could not create slice ");
 		}
-		updateSubspace(subspaceId, slice.getTotalStorageSize());
+		try {
+			updateSubspace(subspaceId, slice.getTotalStorageSize());
+		} catch (Exception e) {
+			if (slice != null) {
+				deleteSlice(subspaceId, slice.getId(), false);
+			}
+			directoryAux.deleteDirectory(dn, createSliceAction.getPath());
+			throw new RuntimeException("Slice creation failed " + e);
+		}
 
 		logger.debug("created slice id: " + slice.getId() + " terminationtime "
 				+ slice.getTerminationTime() + " slicesize "
@@ -233,7 +244,7 @@ public class SliceProviderImpl implements SliceProvider {
 				deleteSlice(subspaceId, slice.getId(), false);
 			}
 			directoryAux.deleteDirectory(dn, createSliceAction.getPath());
-			throw new RuntimeException("Slice creation failed " + e);
+			throw new QuotaExceededException("Slice creation failed " + e);
 		}
 		logger.debug("created slice id: " + slice.getId() + " terminationtime "
 				+ slice.getTerminationTime() + " slicesize "
@@ -285,7 +296,7 @@ public class SliceProviderImpl implements SliceProvider {
 				} catch (Exception e) {
 					logger.error("Couldn't update subspace " + e);
 					if (e instanceof QuotaExceededException){
-						throw new RuntimeException(
+						throw new QuotaExceededException(
 								"no available space - couldn't create a slice " + e);
 					}
 				}

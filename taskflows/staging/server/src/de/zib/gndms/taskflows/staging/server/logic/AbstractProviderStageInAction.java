@@ -78,6 +78,7 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 			createNewSlice();
 		} catch (Exception e) {
 			super.onFailed(wid, TaskState.FAILED, isRestartedTask, altTaskState);
+			throw new RuntimeException("slice creation failed "+e);
 		}
         
         String gndmsUser = System.getProperty("user.name");
@@ -150,7 +151,7 @@ public abstract class AbstractProviderStageInAction extends SlicedTaskFlowAction
 		// Implement in subclass
 	}
 
-	protected void cancelStaging() {
+	public void cancelStaging() {
 		final Slice slice;
 		final File sliceDir;
 

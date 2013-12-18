@@ -252,7 +252,7 @@ public class SliceServiceImpl implements SliceService {
 
 		try {
             // submit action
-            final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId);
+            final Taskling ling = sliceProvider.deleteSlice(subspaceId, sliceId, true);
 
             // get service facets of task
             final TaskClient client = new TaskClient( localBaseUrl );

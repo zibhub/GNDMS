@@ -62,8 +62,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends TaskFlowAction< K > {
 
     public static final long DEFAULT_SLICE_SIZE = 100*1024*1024; // 100MB
-    private final AtomicInteger counter = new AtomicInteger();
-
+    
     private GridConfig gridConfig;
 
 
@@ -88,11 +87,11 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected Slice findSlice( final String sliceId ) {
+    protected synchronized Slice findSlice( final String sliceId ) {
         getLogger().info( "findSlice(" + ( sliceId == null ? "null" : '"' + sliceId + '"' ) + ')' );
-        if (sliceId == null)
+        if (sliceId == null){
             return null;
-
+        }
 
         final EntityManager em = getEntityManager();
         final TxFrame txf = new TxFrame(em);
@@ -116,22 +115,35 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected Slice findSlice() {
-        return findSlice( getSliceId() );
-    }
+	protected synchronized Slice findSlice() {
+		if (getSliceSpecifier() == null) {
+			return null;
+		}
+		if (null != getSliceSpecifier().getUriMap()) {
+			return findSlice(getSliceId());
+		} else
+			return null;
+	}
 
 
-    protected String getSliceId( ) {
+    protected synchronized String getSliceId( ) {
         final Specifier<Void> sliceSpecifier = getSliceSpecifier();
 
         if( null == sliceSpecifier )
-            throw new NoSuchResourceException( "Could not get slice Id." );
+            throw new NoSuchResourceException( "Slice specifier doesn't exist." );
+
+        if( null == sliceSpecifier.getUriMap() )
+            throw new NoSuchResourceException( "UriMap is not set" );
+
+        if( null == sliceSpecifier.getUriMap().get( UriFactory.SLICE ) )
+            throw new NoSuchResourceException( "Slice isn't set in the UriMap." );
+
 
         return sliceSpecifier.getUriMap().get( UriFactory.SLICE );
     }
 
 
-    protected Specifier< Void > getSliceSpecifier( ) {
+    protected synchronized Specifier< Void > getSliceSpecifier( ) {
         // maybe cache the slice id
         final Session session = getDao().beginSession();
         try {
@@ -146,13 +158,13 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected void setSliceSpecifier( final Specifier< Void > sliceSpec, final Session session ) {
+    protected synchronized void setSliceSpecifier( final Specifier< Void > sliceSpec, final Session session ) {
         final Task task = getTask( session );
         task.setPayload(sliceSpec);
     }
 
 
-    protected void setSliceSpecifier( Specifier<Void> sliceSpec) {
+    protected synchronized void setSliceSpecifier( Specifier<Void> sliceSpec) {
         final Session session = getDao().beginSession();
         try {
             setSliceSpecifier(sliceSpec, session );
@@ -180,11 +192,10 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 	protected synchronized void createNewSlice()
-			throws MandatoryOptionMissingException {
+			throws MandatoryOptionMissingException, IllegalStateException, RuntimeException {
 		final ConfigProvider config = getOfferTypeConfig();
-		counter.incrementAndGet();
-		logger.debug("counter "+counter.get());
 
+		logger.debug("config subspace "+config.getOption("subspace"));
 		final String subspaceId = config.getOption("subspace");
 		String sliceKindId = config.getOption("sliceKind");
 
@@ -215,18 +226,23 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
                 getOrder().getDNFromContext() );
 
 		if (!HttpStatus.CREATED.equals(sliceResponseEntity.getStatusCode())) {
-			if (counter.get() < 3) {
-				logger.error("Slice creation failed, retrying... ");
-				createNewSlice();
+			if (HttpStatus.METHOD_FAILURE.equals(sliceResponseEntity
+					.getStatusCode())) {
+				throw new RuntimeException(
+						"Failed to create a slice: not enough space available");
 			} else
-				throw new IllegalStateException("Slice creation failed");
+				throw new RuntimeException("Failed to create a slice ");
 		}
 
 		setSliceSpecifier(sliceResponseEntity.getBody());
 
 		// to provoke nasty test condition uncomment the following line
 		// throw new NullPointerException( );
-		getLogger().info("createNewSlice() = " + getSliceId());
+
+		if (null != sliceResponseEntity.getBody().getUriMap()) {
+//			logger.info("createNewSlice() = " + getSliceId());
+		}
+		else throw  new IllegalStateException("couldn't create slice" );
 	}
 
     protected synchronized void deleteSlice( final String sliceId ) {
@@ -238,9 +254,11 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     }
 
 
-    protected synchronized void killSlice() {
-        deleteSlice(getSliceId());
-    }
+	protected synchronized void killSlice() {
+		if (null != getSliceSpecifier() && null !=getSliceSpecifier().getUriMap()) {
+			deleteSlice(getSliceId());
+		}
+	}
 
 
     protected synchronized void changeSliceOwner( Slice slice ) {
@@ -275,7 +293,7 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
         getLogger().debug("Output for chown:" + chownAct.getOutputReceiver().toString());
     }
     
-    protected  void changeSliceOwner( Slice slice , String user) {
+    protected  synchronized void changeSliceOwner( Slice slice , String user) {
 
         ChownSliceConfiglet csc = getConfigletProvider().getConfiglet( ChownSliceConfiglet.class, "sliceChown" );
 
@@ -302,8 +320,11 @@ public abstract class SlicedTaskFlowAction< K extends AbstractOrder > extends Ta
     
     protected synchronized void checkQuotas() throws Exception {
         final Slice sliceModel = findSlice();
+		if (null == sliceModel) {
+			throw new IllegalStateException("Slice doesn't exist");
+		}
         final de.zib.gndms.infra.dspace.Slice slice = new de.zib.gndms.infra.dspace.Slice( sliceModel );
-        final long sliceSize = slice.getTotalStorageSize();
+        final long sliceSize = sliceModel.getTotalStorageSize();
         final long sliceUsage = slice.getDiskUsage();
         
         getQuoteCalculator().setOrder( ( DelegatingOrder )getOrder() );
