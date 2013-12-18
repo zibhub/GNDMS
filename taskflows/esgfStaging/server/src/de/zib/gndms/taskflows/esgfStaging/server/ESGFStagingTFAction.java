@@ -187,7 +187,7 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
 
 				if (!checksum.equals(compareMD5)) {
 					String compareSHA256 = makeChecksum(outFile, "SHA-256");
-					logger.info("checksum compareSHA256 "+compareSHA256);
+					logger.info("checksum SHA256 "+compareSHA256);
 
 					if (!checksum.equals(compareSHA256)) {
 						transit(TaskState.FAILED);
