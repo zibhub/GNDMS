@@ -42,6 +42,7 @@ import javax.persistence.Table;
 @NamedQuery(name="listAllSubspaces", query="SELECT DISTINCT x FROM Subspaces x"),
 @NamedQuery(name="getSubspace", query="SELECT x FROM Subspaces x WHERE x.name.nameScope = :uriScopeParam " +
     "AND x.name.localName = :uriLocalParam"),
+@NamedQuery(name="getUsedSpace", query="SELECT SUM(x.totalStorageSize) FROM Slices x WHERE x.subspace.id = :subspace"),
 @NamedQuery(name="getSubspaceKey", query="SELECT x.name FROM Subspaces x WHERE x.id = :idParam"),
 @NamedQuery(name="listSupportedSchemas", query="SELECT DISTINCT x.name.nameScope FROM Subspaces x" ),
 @NamedQuery(name="listSlicekindsOfSubspace",
