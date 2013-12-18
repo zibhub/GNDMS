@@ -36,6 +36,8 @@ import org.globus.ftp.GridFTPClient;
 import org.globus.ftp.exception.ClientException;
 import org.globus.ftp.exception.ServerException;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import java.io.IOException;
@@ -51,6 +53,8 @@ import java.util.concurrent.TimeoutException;
  * User: mjorra, Date: 01.10.2008, Time: 17:57:57
  */
 public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
+
+	private final Logger logger = LoggerFactory.getLogger( this.getClass() );
 
 
     public FileTransferTaskAction() {
@@ -99,10 +103,14 @@ public class FileTransferTaskAction extends TaskFlowAction<FileTransferOrder> {
         ensureOrder();
 
         Map<String, String> files = getOrderBean().getFileMap();
+
         FTPTransferState transferState = resumeOrInitTransferState( files );
 
         URI suri = new URI ( getOrderBean().getSourceURI() );
         URI duri = new URI ( getOrderBean().getDestinationURI( ) );
+
+        logger.debug("source URI "+suri);
+        logger.debug("destination URI "+duri);
 
         GridFTPClient src = createGridFTPClient( suri );
         try {
