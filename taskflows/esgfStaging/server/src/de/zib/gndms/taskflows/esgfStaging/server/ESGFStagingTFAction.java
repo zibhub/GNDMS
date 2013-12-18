@@ -79,7 +79,7 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
 
 
     @Override
-    protected void onCreated(
+    protected synchronized void onCreated(
             @NotNull String wid,
             @NotNull TaskState state,
             boolean isRestartedTask,
@@ -108,9 +108,13 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
             attachSlice( getOrderBean().getSliceId() );
         }
         else {
+        	try{
             createNewSlice();
+        	}catch (Exception e){
+        		throw new RuntimeException("Could not create slice "+e);
+        	}
 
-            if( getOrderBean().hasSliceConfiguration() ) {
+			if (getOrderBean().hasSliceConfiguration() && null != findSlice()) {
                 findSlice().setConfiguration( getOrderBean().getSliceConfiguration() );
             }
         }
@@ -120,7 +124,7 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
 
 
     @Override
-    protected void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
+    protected synchronized void onInProgress( @NotNull String wid, @NotNull TaskState state, boolean isRestartedTask, boolean altTaskState ) throws Exception {
         final ESGFStagingOrder order = getOrderBean();
 
         // check for quotas
@@ -130,6 +134,9 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
 
         final Map< String, String > urls = order.getUrls();
         final Slice slice = findSlice();
+		if (null == slice) {
+			throw new IllegalStateException("Could not find slice id");
+		}
         final String slicePath = slice.getSubspace().getPathForSlice( slice );
 
         // get certificate and private key by credentials
@@ -138,7 +145,7 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
             setupSSL = prepareProxy();
         }
         catch( Throwable e ) {
-            logger.error( "Could not authenticate against ESGF Provider." );
+			logger.error("Could not authenticate against ESGF Provider." + e);
             transit( TaskState.FAILED );
             throw new Exception( "Could not authenticate against ESGF Provider.", e );
         }
@@ -171,15 +178,24 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
             }
 
             // check for correct checksum
-            {
-                String checksum = urls.get( url );
-                String compare = makeMD5( outFile );
+			{
+				String checksum = urls.get(url);
+				String compareMD5 = makeChecksum(outFile, "MD5");
+				logger.info("expected checksum "+checksum);
+				logger.info("checksum md5 "+compareMD5);
+				
 
-                if( ! checksum.equals( compare) ) {
-                    transit(TaskState.FAILED);
-                    throw new Exception( "Downloaded file " + outFile.getName() + " has wrong checksum." );
-                }
-            }
+				if (!checksum.equals(compareMD5)) {
+					String compareSHA256 = makeChecksum(outFile, "SHA-256");
+					logger.info("checksum compareSHA256 "+compareSHA256);
+
+					if (!checksum.equals(compareSHA256)) {
+						transit(TaskState.FAILED);
+						throw new Exception("Downloaded file "
+								+ outFile.getName() + " has wrong checksum.");
+					}
+				}
+			}
 
             setProgress( ++progress );
         }
@@ -220,8 +236,11 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
         final SetupSSL setupSSL = new SetupSSL();
         
         final MyProxyToken token = getOrder().getMyProxyToken().get( ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) );
-        if( null == token )
+        if( null == token ){
+        	logger.error("cannot get MyProxyToken");
+			logger.error("No for purpose "	+ ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get(0)+ " token provided in Order.");           
             throw new IllegalArgumentException( "No for purpose " + ESGFStagingTaskFlowMeta.REQUIRED_AUTHORIZATION.get( 0 ) + " token provided in Order." );
+    }
 
         final String password = token.getPassword();
         final String trustStoreLocation = getOfferTypeConfig().getOption( "trustStoreLocation" );
@@ -241,7 +260,7 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
             getCredentialProvider().installCredentials( params );
         }
         catch ( Exception e ) {
-            logger.debug( "Couldn't deploy credentials " );
+            logger.debug( "Couldn't deploy credentials " +e );
             throw new IllegalStateException( "Couldn't deploy credentials: ", e );
         }
 
@@ -249,8 +268,8 @@ public class ESGFStagingTFAction extends SlicedTaskFlowAction< ESGFStagingOrder 
     }
     
     
-    public static String makeMD5( File file ) throws Exception {
-        final MessageDigest md = MessageDigest.getInstance( "MD5" );
+    public static String makeChecksum( File file, String type ) throws Exception {
+        final MessageDigest md = MessageDigest.getInstance( type );
         final FileInputStream fis = new FileInputStream( file );
         final byte[] dataBytes = new byte[1024];
  
